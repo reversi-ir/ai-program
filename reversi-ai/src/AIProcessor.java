@@ -63,7 +63,7 @@ public class AIProcessor
   @Override
   public String getName()
   {
-    return "ランダムに置くサンプルプログラム";
+    return "チームB MasterProgram";
   }
 
 }
