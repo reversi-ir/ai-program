@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="lib/p2p-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/reversi-1.0b.jar"/>
 	<classpathentry kind="lib" path="lib/takedarts-util-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/1516833/Desktop/AI-reversi/reversi-standalone-1.0b/reversi-standalone.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
