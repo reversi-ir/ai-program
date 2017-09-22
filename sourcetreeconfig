@@ -3,7 +3,7 @@
   <AutoRefresh>true</AutoRefresh>
   <AutoRefreshRemotes>true</AutoRefreshRemotes>
   <IncomingSavedCount>0</IncomingSavedCount>
-  <LastCheckedRemotes>2017-09-22T11:43:12.8892682+09:00</LastCheckedRemotes>
+  <LastCheckedRemotes>2017-09-22T12:37:00.2592599+09:00</LastCheckedRemotes>
   <LastUsedView>FileStatus</LastUsedView>
   <LogBranchFilterIndex>0</LogBranchFilterIndex>
   <OutgoingSavedCount>0</OutgoingSavedCount>
@@ -15,9 +15,7 @@
       <Type>GitHub</Type>
     </RepositoryRemoteProjectLink>
   </RemoteProjectLinks>
-  <SidebarExpandedItems>
-    <string>ブランチ</string>
-  </SidebarExpandedItems>
+  <SidebarExpandedItems />
   <SidebarWidth>210</SidebarWidth>
   <SubtreeLinks />
 </RepositoryCustomSettings>
