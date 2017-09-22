@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: Atsushi TAKEDA
+Main-Class: jp.takedarts.reversi.standalone.StandaloneApplication
+Class-Path: ./log4j-1.2.15.jar ./p2p-1.0.jar ./reversi-1.0b.jar ./take
+ darts-util-1.0.jar
+

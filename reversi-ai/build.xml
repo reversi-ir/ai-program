@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Reversi/AI/Sample" default="all" basedir=".">
+  <!-- properties -->
+  <property name="version" value="1.0" />
+
+  <property name="target.jar" value="reversi-ai.jar" />
+
+  <property name="build.dir" value="build" />
+  <property name="src.dir" value="src" />
+  <property name="lib.dir" value="lib" />
+  <property name="manifest.file" value="manifest.mf" />
+
+  <!-- default target -->
+  <target name="all" depends="jar" />
+
+  <!-- compile sources -->
+  <target name="compile">
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/classes" />
+
+    <!-- compile -->
+    <javac destdir="${build.dir}/classes"
+           debug="on"
+           optimize="off"
+           deprecation="off"
+           encoding="utf-8"
+           source="1.8"
+           target="1.8"
+           includeantruntime="false">
+      <src path="${src.dir}" />
+      <classpath>
+        <fileset dir="${lib.dir}" includes="*.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!--- create jar archive -->
+  <target name="jar" depends="compile">
+    <!-- create jar file -->
+    <jar destfile="${build.dir}/${target.jar}"
+         manifest="${manifest.file}">
+      <fileset dir="${build.dir}/classes" />
+      <fileset dir="${src.dir}" excludes="**/*.java" />
+    </jar>
+  </target>
+
+  <!-- clean directories -->
+  <target name="clean" description="clean directories" >
+    <delete dir="${build.dir}" />
+  </target>
+</project>
