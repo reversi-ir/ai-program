@@ -50,7 +50,7 @@ public class MonteCarloProcessor
   @Override
   public String getName()
   {
-    return "テスト";
+    return "テスト2";
   }
 
 }
