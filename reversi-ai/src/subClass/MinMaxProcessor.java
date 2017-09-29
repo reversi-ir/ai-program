@@ -8,7 +8,7 @@ import jp.takedarts.reversi.Processor;
  *
  * @author Atsushi TAKEDA
  */
-public class SampleProcessor extends Processor {
+public class MinMaxProcessor extends Processor {
 	/**
 	 * 評価テーブル。
 	 */
