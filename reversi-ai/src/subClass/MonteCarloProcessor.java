@@ -11,7 +11,7 @@ import jp.takedarts.reversi.Processor;
  *
  * @author Atushi TAKEDA
  */
-public class SampleProcessor
+public class MonteCarloProcessor
 		extends Processor {
 
 	/*
