@@ -52,7 +52,7 @@ public class MonteCarloProcessor
 		Piece opponentPiece = Piece.opposite(piece);
 
 		//次に置ける場所全ての勝率を求める
-		for (int t = 0; t <= count; t++) {
+		for (int t = 0; t < count; t++) {
 
 			//次における場所に置いた想定の盤面
 			Board nextBoard = new Board(board.getBoard());
@@ -69,19 +69,12 @@ public class MonteCarloProcessor
 
 			//次の一手を置いたと仮定し、その後100回プレイアウト
 			for (int s = 0; s < 5; s++) {
-				
-				System.out.println(s);
 
 				//1回プレイアウト(ランダム)
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
-					
-					System.out.println("ef");
 
 					//相手ターン
-					if (!playBoard.hasEnablePositions(opponentPiece)) {
-						continue;
-
-					} else {
+					if (playBoard.hasEnablePositions(opponentPiece)) {
 
 						// 次に置ける場所の一覧を探す
 						int[][] opponentPositions = new int[64][2];
@@ -93,7 +86,7 @@ public class MonteCarloProcessor
 									opponentPositions[opponentCount][0] = p;
 									opponentPositions[opponentCount][1] = q;
 									opponentCount++;
-																	
+
 								}
 							}
 						}
@@ -106,13 +99,9 @@ public class MonteCarloProcessor
 						int b = opponentPositions[opponentIndex][1];
 
 						playBoard.putPiece(a, b, opponentPiece);
-					}
-
-					//自分のターン
-					if (!playBoard.hasEnablePositions(piece)) {
-						continue;
-
 					} else {
+
+						//自分のターン
 
 						// 次に置ける場所の一覧を探す
 						int[][] myPositions = new int[64][2];
@@ -139,30 +128,18 @@ public class MonteCarloProcessor
 
 						playBoard.putPiece(c, d, piece);
 
-//						System.out.println("c");
 
-						
 					}
 
-//					System.out.println("e");
 
 				}
 
 				//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
 				//	    		value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
-				
-				System.out.println("f");
-				
-				int countPiece = playBoard.countPiece(piece);
-				int countOpponentPiece = playBoard.countPiece(opponentPiece);				
 
-				System.out.println("d");
-				
-				
-				System.out.println(countPiece);
-				System.out.println(countOpponentPiece);
-				
-				
+				int countPiece = playBoard.countPiece(piece);
+				int countOpponentPiece = playBoard.countPiece(opponentPiece);
+
 				//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
 				if (countPiece > countOpponentPiece) {
 					value += 1;
@@ -173,11 +150,11 @@ public class MonteCarloProcessor
 				playBoard = new Board(nextBoard.getBoard());
 
 			}
-			System.out.println(value);
-			
+//			System.out.println(value);
+
 			winCount[t] = value;
-			
-//			System.out.println(winCount);
+
+			//			System.out.println(winCount);
 
 		}
 
