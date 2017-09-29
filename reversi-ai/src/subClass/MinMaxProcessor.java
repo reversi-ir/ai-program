@@ -187,6 +187,6 @@ public class SampleProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "改良版MIN-MAX法を用いたプログラム6";
+		return "改良版MIN-MAX法を用いたプログラム7";
 	}
 }
