@@ -28,6 +28,7 @@ public class AIProcessor
 	 * @return 次の手を置く場所
 	 */
 	@Override
+
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 
 		// 次に置ける場所の一覧を探す
