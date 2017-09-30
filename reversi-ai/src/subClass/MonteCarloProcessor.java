@@ -67,8 +67,8 @@ public class MonteCarloProcessor
 			//評価値（勝った回数or駒の最終獲得数）
 			int value = 0;
 
-			//次の一手を置いたと仮定し、その後100回プレイアウト
-			for (int s = 0; s < 5; s++) {
+			//次の一手を置いたと仮定し、その後2000回プレイアウト
+			for (int s = 0; s < 2000; s++) {
 
 				//1回プレイアウト(ランダム)
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -144,17 +144,15 @@ public class MonteCarloProcessor
 				if (countPiece > countOpponentPiece) {
 					value += 1;
 				}
-				//	    		System.out.println(s);
-				//	    		System.out.println(value);
+
 
 				playBoard = new Board(nextBoard.getBoard());
 
 			}
-//			System.out.println(value);
 
+			//勝った回数を格納
 			winCount[t] = value;
 
-			//			System.out.println(winCount);
 
 		}
 
