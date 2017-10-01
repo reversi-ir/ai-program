@@ -3,6 +3,8 @@ package nuralNetwork;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 public class TestPerceptron
@@ -25,16 +27,10 @@ public class TestPerceptron
 
         // 入力データ配列 x =(x軸,y軸)の配列と,正解データ配列 answer
     	String[] csvAll;
-    	double[][] position = null;
-    	int[] xPosition;
-    	int[] yPosition;
-    	String[] color;
-    	double[]   answer;
-
-    	xPosition=new int[100];
-    	yPosition=new int[100];
-    	answer= new double [100];
-    	color =new String[100];
+    	List<Integer> xPosition=new ArrayList<Integer>();
+    	List<Integer> yPosition=new ArrayList<Integer>();
+    	List<String> color=new ArrayList<String>();
+    	List<Double> answer=new ArrayList<Double>();
 
 
         // パーセプトロンの動作確認
@@ -46,7 +42,6 @@ public class TestPerceptron
 
            //読み込んだファイルを１行ずつ処理する
              String line;
-             int intCnt=0;
              while ((line = br.readLine()) != null) {
         	 	//区切り文字","で分割する
             	csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -54,17 +49,16 @@ public class TestPerceptron
             	for (int i=0 ;i<csvAll.length;i+=4) {
 
             		//1手ずつ情報を配列へ格納していく
-	            	color[intCnt] = csvAll[i];
-	            	xPosition[intCnt]=Integer.parseInt(csvAll[i+1].replace("[",""))-1;
-	            	yPosition[intCnt]=Integer.parseInt(csvAll[i+2].replace("]","").trim())-1;
-	            	answer[intCnt]=Double.parseDouble(csvAll[i+3]);
+	            	color.add(csvAll[i]);
+	            	xPosition.add(Integer.parseInt(csvAll[i+1].replace("[",""))-1);
+	            	yPosition.add(Integer.parseInt(csvAll[i+2].replace("]","").trim())-1);
+	            	answer.add(Double.parseDouble(csvAll[i+3]));
 
-	            	intCnt+=1;
             	}
 
 				// 多層パーセプトロンの作成
 				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 40 , 1 );
-				mlp.learn( position , answer );
+				mlp.learn( xPosition , yPosition,color,answer );
 
          	 }
 
@@ -156,7 +150,8 @@ class MultiLayerPerceptron
      * @param x
      * @param answer
      */
-    public void learn( double[][] x , double[] answer )
+    public void learn( List<Integer> xPosition , List<Integer> yPosition, List<String> color,
+    		List<Double> answer)
     {
         // 変数初期化
         double[]    in      = null;                           // i回目の試行で利用する教師入力データ
@@ -174,8 +169,8 @@ class MultiLayerPerceptron
             System.out.println( String.format( "Trial:%d" , i ) );
 
             // 使用する教師データを選択
-            in  = x[ i % answer.length ];
-            ans = answer[ i % answer.length ];
+            in  = x[ i % answer.size() ];
+            ans = answer[ i % answer.size() ];
 
             // 出力値を推定：中間層の出力計算
             for( int j=0 ; j<middleNumber ; j++ )
