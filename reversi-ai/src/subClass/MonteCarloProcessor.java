@@ -31,18 +31,6 @@ public class MonteCarloProcessor
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 
-<<<<<<< HEAD
-  /**
-   * この人工知能の名前を返す。
-   *
-   * @return 人工知能の名前
-   */
-  @Override
-  public String getName()
-  {
-    return "ブランチ";
-  }
-=======
 		// 次に置ける場所の一覧を探す
 		int[][] positions = new int[64][2];
 		int count = 0;
@@ -203,6 +191,5 @@ public class MonteCarloProcessor
 	public String getName() {
 		return "原始モンテカルロ法プログラム";
 	}
->>>>>>> refs/remotes/origin/master
 
 }
