@@ -4,13 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 public class TestPerceptron
 {
     /**
      * 多層パーセプトロンの実装
-     * @author karura
+     * @author Kamata
      * @param args
      */
     public static void main(String[] args)
@@ -25,47 +24,69 @@ public class TestPerceptron
     {
 
         // 入力データ配列 x =(x軸,y軸)の配列と,正解データ配列 answer
-    	final double[][] x ;
-    	final double[]   answer;
+    	String[] csvAll;
+    	double[][] position = null;
+    	int[] xPosition;
+    	int[] yPosition;
+    	String[] color;
+    	double[]   answer;
 
-    	x=new double[8][8];
-    	answer= new double [50];
+    	xPosition=new int[100];
+    	yPosition=new int[100];
+    	answer= new double [100];
+    	color =new String[100];
 
 
         // パーセプトロンの動作確認
         try
         {
         	// 教師データ読み込み
-        	 FileReader fr = new FileReader("Othello.latest.278042.csv");
+        	 FileReader fr = new FileReader("C:\\Users\\kamat\\Desktop\\GGFConvert\\test.ggf.csv");
              BufferedReader br = new BufferedReader(fr);
 
            //読み込んだファイルを１行ずつ処理する
              String line;
-             StringTokenizer token;
+             int intCnt=0;
              while ((line = br.readLine()) != null) {
-                 //区切り文字","で分割する
-                 token = new StringTokenizer(line, ",");
-             }
+        	 	//区切り文字","で分割する
+            	csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
 
-             //読み込み終了
-             br.close();
+            	for (int i=0 ;i<csvAll.length;i+=4) {
 
-            // 標準出力をファイルに関連付ける
-            String      fileName    = System.getProperty( "user.dir" )
-                                      + "/"
-                                      + "TestMultiLayerPerceptron.log";
-            PrintStream out         = new PrintStream( fileName );
-            System.setOut( out );
+            		//1手ずつ情報を配列へ格納していく
+	            	color[intCnt] = csvAll[i];
+	            	xPosition[intCnt]=Integer.parseInt(csvAll[i+1].replace("[",""))-1;
+	            	yPosition[intCnt]=Integer.parseInt(csvAll[i+2].replace("]","").trim())-1;
+	            	answer[intCnt]=Double.parseDouble(csvAll[i+3]);
 
-            // 多層パーセプトロンの作成
-            MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 2 , 65 );
-            mlp.learn( x , answer );
+	            	intCnt+=1;
+            	}
+
+				// 多層パーセプトロンの作成
+				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 40 , 1 );
+				mlp.learn( position , answer );
+
+         	 }
+
+			 //読み込み終了
+			 br.close();
+
+
+			 // 標準出力をファイルに関連付ける
+		    String      fileName    = System.getProperty( "user.dir" )
+		                              + "/"
+		                              + "TestMultiLayerPerceptron.log";
+		    PrintStream out         = new PrintStream( fileName );
+		    System.setOut( out );
+
 
             // ファイルを閉じる
             out.close();
 
+
         }catch( Exception e ){
-            e.printStackTrace();
+
+        	e.printStackTrace();
         }
     }
 }
@@ -86,7 +107,7 @@ public class TestPerceptron
  * v:結合加重
  * θ:閾値
  * 誤差逆伝播学習則(バックプロパゲーション)を利用
- * @author kamata
+ * @author Kamata
  *
  */
 class MultiLayerPerceptron
@@ -268,7 +289,7 @@ class MultiLayerPerceptron
 
     /**
      * 多層パーセプトロン内部で利用するニューロン
-     * @author karura
+     * @author Kamata
      */
     class Neuron
     {
@@ -348,6 +369,7 @@ class MultiLayerPerceptron
         /**
          *
          * 入力iに対する結合加重を取得
+         *
          * @param i
          * @return
          */

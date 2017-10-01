@@ -10,12 +10,12 @@ public class Standalone {
 
 		Board testBoard = new Board();
 
-		testBoard.putPiece(3, 3, Piece.BLACK);
-		testBoard.putPiece(4, 4, Piece.BLACK);
+		testBoard.putPiece(3, 3, Piece.WHITE);
+		testBoard.putPiece(4, 4, Piece.WHITE);
 
-		testBoard.putPiece(3, 4, Piece.WHITE);
-		testBoard.putPiece(4, 3, Piece.WHITE);
-				
+		testBoard.putPiece(3, 4, Piece.BLACK);
+		testBoard.putPiece(4, 3, Piece.BLACK);
+
 		//自分(black)　←ここを更新
 		MinMaxProcessor myProcessor = new MinMaxProcessor();
 		Piece piece = Piece.BLACK;
@@ -27,12 +27,12 @@ public class Standalone {
 		System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
 		System.out.println("AI(WHITE)(相手)：　" + opponentProcessor.getName());
 		System.out.println("");
-		
-		
+
+
 		System.out.println(testBoard);
 		System.out.println("");
-		
-		
+
+
 		while (testBoard.hasEnablePositions(piece) || testBoard.hasEnablePositions(opponentPiece)) {
 
 			//自分の手を置く
@@ -63,10 +63,10 @@ public class Standalone {
 			System.out.println(testBoard);
 			System.out.println("");
 		}
-		
+
 		System.out.println("黒の数：　" + testBoard.countPiece(piece));
 		System.out.println("白の数：　" + testBoard.countPiece(opponentPiece));
-		
+
 	}
 
 }
