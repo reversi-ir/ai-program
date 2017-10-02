@@ -28,18 +28,13 @@ public class Standalone {
 		System.out.println("AI(WHITE)(相手)：　" + opponentProcessor.getName());
 		System.out.println("");
 
-
 		System.out.println(testBoard);
 		System.out.println("");
-
 
 		while (testBoard.hasEnablePositions(piece) || testBoard.hasEnablePositions(opponentPiece)) {
 
 			//自分の手を置く
-			if (!testBoard.hasEnablePositions(piece)) {
-				continue;
-
-			} else {
+			if (testBoard.hasEnablePositions(piece)) {
 
 				Position myPosition = myProcessor.nextPosition(testBoard, piece, 30000);
 				testBoard.putPiece(myPosition, piece);
@@ -47,15 +42,21 @@ public class Standalone {
 				System.out.println(testBoard);
 				System.out.println("");
 
-			}
-			//相手の手を置く
-			if (!testBoard.hasEnablePositions(opponentPiece)) {
-				continue;
+			} else if (!testBoard.hasEnablePositions(piece)) {
 
-			} else {
+				System.out.println(piece + "：　パス");
+				System.out.println("");
+			}
+
+			if (testBoard.hasEnablePositions(opponentPiece)) {
 
 				Position opponentPosition = opponentProcessor.nextPosition(testBoard, opponentPiece, 30000);
 				testBoard.putPiece(opponentPosition, opponentPiece);
+				System.out.println("");
+
+			} else if (!testBoard.hasEnablePositions(opponentPiece)) {
+
+				System.out.println(opponentPiece + "：　パス");
 				System.out.println("");
 
 			}
