@@ -3,8 +3,13 @@ package nuralNetwork;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
+
+import jp.takedarts.reversi.Board;
+import jp.takedarts.reversi.Piece;
 public class TestPerceptron
 {
     /**
@@ -25,16 +30,10 @@ public class TestPerceptron
 
         // 入力データ配列 x =(x軸,y軸)の配列と,正解データ配列 answer
     	String[] csvAll;
-    	double[][] position = null;
-    	int[] xPosition;
-    	int[] yPosition;
-    	String[] color;
-    	double[]   answer;
-
-    	xPosition=new int[100];
-    	yPosition=new int[100];
-    	answer= new double [100];
-    	color =new String[100];
+    	List<Integer> xPosition=new ArrayList<Integer>();
+    	List<Integer> yPosition=new ArrayList<Integer>();
+    	List<String> color=new ArrayList<String>();
+    	List<Double> answer=new ArrayList<Double>();
 
 
         // パーセプトロンの動作確認
@@ -46,7 +45,6 @@ public class TestPerceptron
 
            //読み込んだファイルを１行ずつ処理する
              String line;
-             int intCnt=0;
              while ((line = br.readLine()) != null) {
         	 	//区切り文字","で分割する
             	csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -54,17 +52,16 @@ public class TestPerceptron
             	for (int i=0 ;i<csvAll.length;i+=4) {
 
             		//1手ずつ情報を配列へ格納していく
-	            	color[intCnt] = csvAll[i];
-	            	xPosition[intCnt]=Integer.parseInt(csvAll[i+1].replace("[",""))-1;
-	            	yPosition[intCnt]=Integer.parseInt(csvAll[i+2].replace("]","").trim())-1;
-	            	answer[intCnt]=Double.parseDouble(csvAll[i+3]);
+	            	color.add(csvAll[i]);
+	            	xPosition.add(Integer.parseInt(csvAll[i+1].replace("[",""))-1);
+	            	yPosition.add(Integer.parseInt(csvAll[i+2].replace("]","").trim())-1);
+	            	answer.add(Double.parseDouble(csvAll[i+3]));
 
-	            	intCnt+=1;
             	}
 
 				// 多層パーセプトロンの作成
 				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 40 , 1 );
-				mlp.learn( position , answer );
+				mlp.learn( xPosition , yPosition,color,answer );
 
          	 }
 
@@ -156,110 +153,151 @@ class MultiLayerPerceptron
      * @param x
      * @param answer
      */
-    public void learn( double[][] x , double[] answer )
+    public void learn( List<Integer> xPosition , List<Integer> yPosition, List<String> color,
+    		List<Double> answer)
     {
         // 変数初期化
-        double[]    in      = null;                           // i回目の試行で利用する教師入力データ
-        double      ans     = 0;                              // i回目の試行で利用する教師出力データ
+    	double []    in     = null;                           // i回目の試行で利用する教師入力データ
+        double      ans     = 0;                               // i回目の試行で利用する教師出力データ
         double[]    h       = new double[ middleNumber ];     // 中間層の出力
         double[]    o       = new double[ outputNumber ];     // 出力層の出力
+        String BoardValue   = null;                           //盤面の値を一時的に格納する文字列
+        String[] BoardValueArry   = null;                    //盤面の値を一時的に格納する文字型配列
 
+        //初期盤面の作成
+        Board testBoard = new Board();
 
         // 学習
-        int succeed = 0;        // 連続正解回数を初期化
-        for( int i=0 ; i<MAX_TRIAL ; i++ )
+        for( int num=0 ; num<answer.size() ; num++ )
         {
-            // 行間を空ける
-            System.out.println();
-            System.out.println( String.format( "Trial:%d" , i ) );
 
-            // 使用する教師データを選択
-            in  = x[ i % answer.length ];
-            ans = answer[ i % answer.length ];
-
-            // 出力値を推定：中間層の出力計算
-            for( int j=0 ; j<middleNumber ; j++ )
+	        int succeed = 0;        // 連続正解回数を初期化
+	        
+	        //配列に格納した座標を盤面にセット
+            if (color.get(num).equals("B"))
             {
-                h[j] = middleNeurons[j].output( in );
+            	testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
             }
+        	else
+        	{
+        		testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+            };
 
-            // 出力値を推定：出力層の出力計算
-            for( int j=0 ; j<outputNumber ; j++ )
+            //評価値が未設定の場合は次のデータへ進む
+            if(answer.get(num)==0.0)
             {
-                o[j] = outputNeurons[j].output( h );
+            	continue;
             }
-            System.out.println( String.format( "[input] %f , %f" , in[0] , in[1] ) );
-            System.out.println( String.format( "[answer] %f" , ans ) );
-            System.out.println( String.format( "[output] %f" , o[0] ) );
-            System.out.println( String.format( "[middle] %f , %f" , h[0] , h[1] ) );
+            
+            
+	        for( int i=0 ; i<MAX_TRIAL ; i++ )
+	        {
+	            // 行間を空ける
+	            System.out.println();
+	            System.out.println( String.format( "Trial:%d" , i ) );
 
-            // 評価・判定
-            boolean successFlg  = true;
-            for( int j=0 ; j<outputNumber ; j++ )
-            {
-                // 出力層ニューロンの学習定数δを計算
-                double delta = ( ans - o[j] ) * o[j] * ( 1.0d - o[j] );
+	            //更新後の盤面を取得
+	            BoardValue=testBoard.getBoardString();
 
-                // 教師データとの誤差が十分小さい場合は次の処理へ
-                // そうでなければ正解フラグを初期化
-                if( Math.abs( ans - o[j] ) < MAX_GAP ){ continue; }
-                                                  else{ successFlg = false; }
-
-                // 学習
-                System.out.println( "[learn] before o :" + outputNeurons[j] );
-                outputNeurons[j].learn( delta , h );
-                System.out.println( "[learn] after o  :" + outputNeurons[j] );
-
-            }
-
-            // 連続成功回数による終了判定
-            if( successFlg )
-            {
-                // 連続成功回数をインクリメントして、
-                // 終了条件を満たすか確認
-                succeed++;
-                if( succeed >= x.length ){ break; }else{ continue; }
-            }else{
-                succeed = 0;
-            }
-
-            // 中間層の更新
-            for( int j=0 ; j<middleNumber ; j++ )
-            {
-                // 中間層ニューロンの学習定数δを計算
-                double sumDelta = 0;
-                for( int k=0 ; k<outputNumber ; k++ )
-                {
-                    Neuron  n    = outputNeurons[k];
-                    sumDelta    += n.getInputWeightIndexOf(j) * n.getDelta();
-                }
-                double delta = h[j] * ( 1.0d - h[j] ) * sumDelta;
-
-                // 学習
-                System.out.println( "[learn] before m :" + middleNeurons[j] );
-                middleNeurons[j].learn( delta , in );
-                System.out.println( "[learn] after m  :" + middleNeurons[j] );
-            }
+	            //文字列配列化
+	            BoardValueArry=BoardValue.split(",", 0);
 
 
-            // 再度出力
-            // 出力値を推定：中間層の出力計算
-            for( int j=0 ; j<middleNumber ; j++ )
-            {
-                h[j] = middleNeurons[j].output( in );
-            }
+	            //double型の配列へ変換
+	            in=new double [BoardValueArry.length];
 
-            // 出力値を推定：出力層の出力計算
-            for( int j=0 ; j<outputNumber ; j++ )
-            {
-                o[j] = outputNeurons[j].output( h );
-            }
-            System.out.println( String.format( "[input] %f , %f" , in[0] , in[1] ) );
-            System.out.println( String.format( "[output] %f" , o[0] ) );
-            System.out.println( String.format( "[middle] %f , %f" , h[0] , h[1] ) );
+	            for (int intCnt=0 ;intCnt<BoardValueArry.length;intCnt++) {
+	            	in[intCnt]=Double.parseDouble(BoardValueArry[intCnt]);
+	            }
 
 
-        }
+	            //答えの設定
+	            ans = answer.get(num);
+
+	            // 出力値を推定：中間層の出力計算
+	            for( int j=0 ; j<middleNumber ; j++ )
+	            {
+	                h[j] = middleNeurons[j].output( in );
+	            }
+
+	            // 出力値を推定：出力層の出力計算
+	            for( int j=0 ; j<outputNumber ; j++ )
+	            {
+	                o[j] = outputNeurons[j].output( h );
+	            }
+	            System.out.println( String.format( "[input] %f , %f" , in[0] , in[1] ) );
+	            System.out.println( String.format( "[answer] %f" , ans ) );
+	            System.out.println( String.format( "[output] %f" , o[0] ) );
+	            System.out.println( String.format( "[middle] %f , %f" , h[0] , h[1] ) );
+
+	            // 評価・判定
+	            boolean successFlg  = true;
+	            for( int j=0 ; j<outputNumber ; j++ )
+	            {
+	                // 出力層ニューロンの学習定数δを計算
+	                double delta = ( ans - o[j] ) * o[j] * ( 1.0d - o[j] );
+
+	                // 教師データとの誤差が十分小さい場合は次の処理へ
+	                // そうでなければ正解フラグを初期化
+	                if( Math.abs( ans - o[j] ) < MAX_GAP ){ continue; }
+	                                                  else{ successFlg = false; }
+
+	                // 学習
+	                System.out.println( "[learn] before o :" + outputNeurons[j] );
+	                outputNeurons[j].learn( delta , h );
+	                System.out.println( "[learn] after o  :" + outputNeurons[j] );
+
+	            }
+
+	            // 連続成功回数による終了判定
+	            if( successFlg )
+	            {
+	                // 連続成功回数をインクリメントして、
+	                // 終了条件を満たすか確認
+	                succeed++;
+	                if( succeed >= answer.size() ){ break; }else{ continue; }
+	            }else{
+	                succeed = 0;
+	            }
+
+	            // 中間層の更新
+	            for( int j=0 ; j<middleNumber ; j++ )
+	            {
+	                // 中間層ニューロンの学習定数δを計算
+	                double sumDelta = 0;
+	                for( int k=0 ; k<outputNumber ; k++ )
+	                {
+	                    Neuron  n    = outputNeurons[k];
+	                    sumDelta    += n.getInputWeightIndexOf(j) * n.getDelta();
+	                }
+	                double delta = h[j] * ( 1.0d - h[j] ) * sumDelta;
+
+	                // 学習
+	                System.out.println( "[learn] before m :" + middleNeurons[j] );
+	                middleNeurons[j].learn( delta , in );
+	                System.out.println( "[learn] after m  :" + middleNeurons[j] );
+	            }
+
+
+	            // 再度出力
+	            // 出力値を推定：中間層の出力計算
+	            for( int j=0 ; j<middleNumber ; j++ )
+	            {
+	                h[j] = middleNeurons[j].output( in );
+	            }
+
+	            // 出力値を推定：出力層の出力計算
+	            for( int j=0 ; j<outputNumber ; j++ )
+	            {
+	                o[j] = outputNeurons[j].output( h );
+	            }
+	            System.out.println( String.format( "[input] %f , %f" , in[0] , in[1] ) );
+	            System.out.println( String.format( "[output] %f" , o[0] ) );
+	            System.out.println( String.format( "[middle] %f , %f" , h[0] , h[1] ) );
+
+
+	        }
+    	}
 
         // すべての教師データで正解を出すか
         // 収束限度回数を超えた場合に終了
