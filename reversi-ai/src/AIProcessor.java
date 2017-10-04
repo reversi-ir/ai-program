@@ -68,7 +68,7 @@ public class AIProcessor
 			int value = 0;
 
 			//次の一手を置いたと仮定し、その後100回プレイアウト
-			for (int s = 0; s < 2000; s++) {
+			for (int s = 0; s < 1000; s++) {
 
 				//1回プレイアウト(ランダム)
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
