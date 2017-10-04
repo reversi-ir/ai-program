@@ -39,11 +39,16 @@ public class TestPerceptron
         // パーセプトロンの動作確認
         try
         {
-        	// 教師データ読み込み
-        	 FileReader fr = new FileReader("C:\\Users\\kamat\\Desktop\\GGFConvert\\test.ggf.csv");
+        	//教師データの指定
+        	String answerFileName    = System.getProperty( "user.dir" )
+                 						+ "/"
+             						 	+ "test.ggf.csv";
+
+			 // 教師データ読み込み
+        	 FileReader fr = new FileReader(answerFileName);
              BufferedReader br = new BufferedReader(fr);
 
-           //読み込んだファイルを１行ずつ処理する
+             //読み込んだファイルを１行ずつ処理する
              String line;
              while ((line = br.readLine()) != null) {
         	 	//区切り文字","で分割する
@@ -60,7 +65,7 @@ public class TestPerceptron
             	}
 
 				// 多層パーセプトロンの作成
-				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 40 , 1 );
+				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 64 , 1 );
 				mlp.learn( xPosition , yPosition,color,answer );
 
          	 }
@@ -69,7 +74,7 @@ public class TestPerceptron
 			 br.close();
 
 
-			 // 標準出力をファイルに関連付ける
+			// 標準出力をファイルに関連付ける
 		    String      fileName    = System.getProperty( "user.dir" )
 		                              + "/"
 		                              + "TestMultiLayerPerceptron.log";
@@ -172,7 +177,7 @@ class MultiLayerPerceptron
         {
 
 	        int succeed = 0;        // 連続正解回数を初期化
-	        
+
 	        //配列に格納した座標を盤面にセット
             if (color.get(num).equals("B"))
             {
@@ -188,8 +193,8 @@ class MultiLayerPerceptron
             {
             	continue;
             }
-            
-            
+
+
 	        for( int i=0 ; i<MAX_TRIAL ; i++ )
 	        {
 	            // 行間を空ける

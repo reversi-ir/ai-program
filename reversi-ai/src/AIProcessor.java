@@ -67,8 +67,8 @@ public class AIProcessor
 			//評価値（勝った回数or駒の最終獲得数）
 			int value = 0;
 
-			//次の一手を置いたと仮定し、その後100回プレイアウト
-			for (int s = 0; s < 2000; s++) {
+			//次の一手を置いたと仮定し、その後1000回プレイアウト
+			for (int s = 0; s < 1000; s++) {
 
 				//1回プレイアウト(ランダム)
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
