@@ -157,48 +157,61 @@ class MultiLayerPerceptron
     		List<Double> answer)
     {
         // 変数初期化
-        double[]    in      = null;                           // i回目の試行で利用する教師入力データ
-        double      ans     = 0;                              // i回目の試行で利用する教師出力データ
+    	double []    in     = null;                           // i回目の試行で利用する教師入力データ
+        double      ans     = 0;                               // i回目の試行で利用する教師出力データ
         double[]    h       = new double[ middleNumber ];     // 中間層の出力
         double[]    o       = new double[ outputNumber ];     // 出力層の出力
+        String BoardValue   = null;                           //盤面の値を一時的に格納する文字列
+        String[] BoardValueArry   = null;                    //盤面の値を一時的に格納する文字型配列
 
         //初期盤面の作成
         Board testBoard = new Board();
-        System.out.println(testBoard);
-
-		testBoard.putPiece(3, 3, Piece.WHITE);
-		testBoard.putPiece(4, 4, Piece.WHITE);
-
-		testBoard.putPiece(3, 4, Piece.BLACK);
-		testBoard.putPiece(4, 3, Piece.BLACK);
-		System.out.println(testBoard);
 
         // 学習
         for( int num=0 ; num<answer.size() ; num++ )
         {
 
 	        int succeed = 0;        // 連続正解回数を初期化
+	        
+	        //配列に格納した座標を盤面にセット
+            if (color.get(num).equals("B"))
+            {
+            	testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+            }
+        	else
+        	{
+        		testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+            };
+
+            //評価値が未設定の場合は次のデータへ進む
+            if(answer.get(num)==0.0)
+            {
+            	continue;
+            }
+            
+            
 	        for( int i=0 ; i<MAX_TRIAL ; i++ )
 	        {
 	            // 行間を空ける
 	            System.out.println();
 	            System.out.println( String.format( "Trial:%d" , i ) );
 
+	            //更新後の盤面を取得
+	            BoardValue=testBoard.getBoardString();
 
-	            //配列に格納した座標を盤面にセット
-	            if (color.get(num).equals("B"))
-	            {
-	            	testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+	            //文字列配列化
+	            BoardValueArry=BoardValue.split(",", 0);
+
+
+	            //double型の配列へ変換
+	            in=new double [BoardValueArry.length];
+
+	            for (int intCnt=0 ;intCnt<BoardValueArry.length;intCnt++) {
+	            	in[intCnt]=Double.parseDouble(BoardValueArry[intCnt]);
 	            }
-            	else
-            	{
-            		testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
-	            };
-
-	            //System.out.println(getBoardInteger());
 
 
-	            //in  = x[ i % answer.size() ];
+	            //答えの設定
 	            ans = answer.get(num);
 
 	            // 出力値を推定：中間層の出力計算
