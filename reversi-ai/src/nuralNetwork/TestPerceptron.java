@@ -29,6 +29,7 @@ public class TestPerceptron
     {
 
         // 入力データ配列 x =(x軸,y軸)の配列と,正解データ配列 answer
+
     	String[] csvAll;
     	List<Integer> xPosition=new ArrayList<Integer>();
     	List<Integer> yPosition=new ArrayList<Integer>();
@@ -65,7 +66,7 @@ public class TestPerceptron
             	}
 
 				// 多層パーセプトロンの作成
-				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 64 , 1 );
+				MultiLayerPerceptron    mlp = new MultiLayerPerceptron( 64 , 8 , 1 );
 				mlp.learn( xPosition , yPosition,color,answer );
 
          	 }
@@ -96,13 +97,6 @@ public class TestPerceptron
 
 /**
  * 多層パーセプトロンを表すクラス
- *
- * ■x1 → ■m1 → H1
- * 　   　 θ   　 　
- * 　   × 　   　 　 ■ → o1
- * 　   　 　   　 　 θ
- * ■x2 → ■m2 → H2
- * 　   　 θ   　 　
  *
  * x:入力
  * H,o:出力
@@ -238,6 +232,7 @@ class MultiLayerPerceptron
 	            // 評価・判定
 	            boolean successFlg  = true;
 	            for( int j=0 ; j<outputNumber ; j++ )
+
 	            {
 	                // 出力層ニューロンの学習定数δを計算
 	                double delta = ( ans - o[j] ) * o[j] * ( 1.0d - o[j] );
@@ -356,6 +351,7 @@ class MultiLayerPerceptron
             this.inputWeights   = new double[ inputNeuronNum ];
             this.threshold      = r.nextDouble();               // 閾値をランダムに生成
 
+
             // 結合加重を乱数で初期化
             for( int i=0 ; i<inputWeights.length ; i++ )
             { this.inputWeights[i] = r.nextDouble(); }
@@ -400,13 +396,13 @@ class MultiLayerPerceptron
         }
 
         /**
-         * 活性化関数（シグモイド関数）
+         * 活性化関数（ReLU関数）
          * @param x
          * @return
          */
         protected double activation( double x )
         {
-            return 1 / ( 1 + Math.pow( Math.E , -x ) );
+        	return Math.max(0,x);
         }
 
         /**
