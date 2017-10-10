@@ -1,8 +1,12 @@
 package nuralNetwork;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,7 +38,6 @@ public class TestPerceptron {
 		List<Integer> yPosition = new ArrayList<Integer>();
 		List<String> color = new ArrayList<String>();
 		List<Double> answer = new ArrayList<Double>();
-
 
 		// パーセプトロンの動作確認
 		try {
@@ -68,7 +71,7 @@ public class TestPerceptron {
 				}
 
 				// 多層パーセプトロンの作成
-				MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 128, 1);
+				MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 8, 1);
 				mlp.learn(xPosition, yPosition, color, answer);
 
 			}
@@ -97,7 +100,7 @@ public class TestPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 100000; // 最大試行回数
-	protected static final double MAX_GAP = 0.1; // 出力値で許容する誤差の最大値
+	protected static final double MAX_GAP = 0.0005; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -183,11 +186,11 @@ class MultiLayerPerceptron {
 			in = new double[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
+				in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]) / 10;
 			}
 
 			// 答えの設定
-			ans = answer.get(num);
+			ans = answer.get(num) / 100;
 
 			// 評価値が未設定の場合は次のデータへ進む
 			if (ans == 0.0) {
@@ -196,8 +199,8 @@ class MultiLayerPerceptron {
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 				// 行間を空ける
-				System.out.println();
-				System.out.println(String.format("Trial:%d", i));
+				// System.out.println();
+				// System.out.println(String.format("Trial:%d", i));
 
 				// 出力値を推定：中間層の出力計算
 				for (int j = 0; j < middleNumber; j++) {
@@ -209,11 +212,12 @@ class MultiLayerPerceptron {
 					o[j] = outputNeurons[j].output(h);
 				}
 
-				//System.out.println(String.format("[input] %f , %f", in[0], in[1]));
-				System.out.println(String.format("[answer] %f", ans));
-				System.out.println(String.format("[output] %f", o[0]));
-				System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0], h[1], h[2], h[3], h[4],
-						h[5], h[6], h[7]));
+				// System.out.println(String.format("[input] %f , %f", in[0], in[1]));
+				// System.out.println(String.format("[answer] %f", ans));
+				// System.out.println(String.format("[output] %f", o[0]));
+				// System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0],
+				// h[1], h[2], h[3], h[4],
+				// h[5], h[6], h[7]));
 
 				// 評価・判定
 				boolean successFlg = true;
@@ -221,14 +225,20 @@ class MultiLayerPerceptron {
 
 				{
 					// 出力層ニューロンの学習定数δを計算
-					double delta = (ans - o[j]) * o[j] * (0.1d - o[j]);
+					// double delta = (ans - o[j]) * o[j] * (0.1d - o[j]);
+					double delta = 0.5 * Math.pow((ans - o[j]), 2);
 
 					// 教師データとの誤差が十分小さい場合は次の処理へ
 					// そうでなければ正解フラグを初期化
 					if (Math.abs(ans - o[j]) < MAX_GAP) {
+
 						continue;
 					} else {
 						successFlg = false;
+					}
+
+					if (ans < o[j]) {
+						delta = delta * -1;
 					}
 
 					// 学習
@@ -244,6 +254,12 @@ class MultiLayerPerceptron {
 					// 終了条件を満たすか確認
 					succeed++;
 					if (succeed >= answer.size()) {
+						System.out.println(String.format("Trial:%d", i));
+						System.out.println(String.format("[answer] %f", ans));
+						System.out.println(String.format("[output] %f", o[0]));
+						System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0], h[1], h[2], h[3],
+								h[4], h[5], h[6], h[7]));
+						System.out.println();
 						break;
 					} else {
 						continue;
@@ -261,6 +277,10 @@ class MultiLayerPerceptron {
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
 					}
 					double delta = h[j] * (1.0d - h[j]) * sumDelta;
+
+					if (ans < h[j]) {
+						delta = delta * -1;
+					}
 
 					// 学習
 					// System.out.println("[learn] before m :" + middleNeurons[j]);
@@ -280,10 +300,11 @@ class MultiLayerPerceptron {
 					o[j] = outputNeurons[j].output(h);
 				}
 
-				//System.out.println(String.format("[input] %f , %f", in[0], in[1]));
-				System.out.println(String.format("[output] %f", o[0]));
-				System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0], h[1], h[2], h[3], h[4],
-						h[5], h[6], h[7]));
+				// System.out.println(String.format("[input] %f , %f", in[0], in[1]));
+				// System.out.println(String.format("[output] %f", o[0]));
+				// System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0],
+				// h[1], h[2], h[3], h[4],
+				// h[5], h[6], h[7]));
 
 			}
 		}
@@ -291,6 +312,34 @@ class MultiLayerPerceptron {
 		// すべての教師データで正解を出すか
 		// 収束限度回数を超えた場合に終了
 		System.out.println("[finish] " + this);
+
+		// 重みをCSVファイルへ出力する。
+		// 出力先を作成する
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(System.getProperty("user.dir") + "/" + "result.csv", false);
+			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+
+			// 入力→中間時の重みを出力
+			for (Neuron n : middleNeurons) {
+				pw.print(n);
+			}
+			// 改行
+			pw.println();
+
+			// 中間→出力の重みを出力
+			for (Neuron n : outputNeurons) {
+				pw.print(n);
+			}
+
+			// ファイルに書き出す
+			pw.close();
+
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -343,6 +392,7 @@ class MultiLayerPerceptron {
 			this.threshold = r.nextDouble(); // 閾値をランダムに生成
 
 			// 結合加重を乱数で初期化
+
 			for (int i = 0; i < inputWeights.length; i++) {
 				this.inputWeights[i] = r.nextDouble();
 			}
@@ -364,10 +414,9 @@ class MultiLayerPerceptron {
 			for (int i = 0; i < inputWeights.length; i++) {
 				// バックプロパゲーション学習
 				inputWeights[i] += eater * delta * inputValues[i];
+
 			}
 
-			// 閾値の更新
-			threshold -= eater * delta;
 		}
 
 		/**
@@ -394,7 +443,7 @@ class MultiLayerPerceptron {
 		 * 計算
 		 *
 		 * @param inputValues
-		 *           中間ニューロンからの入力値
+		 *            中間ニューロンからの入力値
 		 * @return 推定値
 		 */
 		public double output(double[] inputValues) {
@@ -440,7 +489,6 @@ class MultiLayerPerceptron {
 			return x;
 		}
 
-
 		/**
 		 *
 		 * 入力iに対する結合加重を取得
@@ -470,7 +518,7 @@ class MultiLayerPerceptron {
 		@Override
 		public String toString() {
 			// 出力文字列の作成
-			String output = "weight : ";
+			String output = "";
 			for (int i = 0; i < inputNeuronNum; i++) {
 				output += inputWeights[i] + " , ";
 			}

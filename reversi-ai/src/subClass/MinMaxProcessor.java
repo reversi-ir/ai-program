@@ -188,6 +188,6 @@ public class MinMaxProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "改良版MIN-MAX法を用いたプログラム5.1";
+		return "改良版MIN-MAX法を用いたプログラム5";
 	}
 }
