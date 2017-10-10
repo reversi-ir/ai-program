@@ -1,3 +1,5 @@
+package subClass;
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
@@ -8,7 +10,7 @@ import jp.takedarts.reversi.Processor;
  *
  * @author Atsushi TAKEDA
  */
-public class SampleProcessor extends Processor {
+public class MinMaxProcessor extends Processor {
 	/**
 	 * 評価テーブル。
 	 */
@@ -30,7 +32,6 @@ public class SampleProcessor extends Processor {
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
-		int max = Integer.MIN_VALUE;
 		int x = -1;
 		int y = -1;
 		int[] arg = new int[3];
@@ -66,7 +67,6 @@ public class SampleProcessor extends Processor {
 					x = i;
 					y = j;
 				}
-
 			}
 		}
 
@@ -86,7 +86,7 @@ public class SampleProcessor extends Processor {
 	 *            盤面の状態
 	 * @param piece
 	 *            自分の駒
-	 * @return value 評価値
+	 * @return 評価値
 	 */
 	private int _getValue(Board board, Piece piece) {
 		int value = 0;
@@ -111,36 +111,38 @@ public class SampleProcessor extends Processor {
 	 *            盤面の状態
 	 * @param piece
 	 *            自分の駒
-	 * @return  最小評価値
+	 * @return 最小評価値
 	 */
 
-	private int _getMinValue(Board board, Piece piece) {
-		// 相手の駒を置ける場所に駒を置いてみて、その中の評価値の最小値を求める
-		Piece enemy = Piece.opposite(piece);
-		int min = Integer.MAX_VALUE;
-
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (!board.isEnablePosition(i, j, enemy) {
-					continue;
-				}
-			}
-		}
-		// 盤面の状態をコピーして、相手の駒を置く
-		Board next_board = new Board(board.getBoard());
-
-		next_board.putPiece(i, j, enemy);
-
-		// 駒を置いた後の盤面を評価し、最大の評価値を判定する
-		int value = _getValue(next_board, piece);
-
-		if(min>value) {
-			min = value
-		}
-	}
-
-}return maxvalue;}
+	// private int _getMinValue(Board board, Piece piece) {
+	// // 相手の駒を置ける場所に駒を置いてみて、その中の評価値の最小値を求める
+	// Piece enemy = Piece.opposite(piece);
+	// int min = Integer.MAX_VALUE;
+	//
+	// for (int i = 0; i < 8; i++) {
+	// for (int j = 0; j < 8; j++) {
+	//
+	// // 駒を置けない場合は何もしない
+	// if (!board.isEnablePosition(i, j, enemy)) {
+	// continue;
+	// }
+	//
+	// // 盤面の状態をコピーして、相手の駒を置く
+	// Board next_board = new Board(board.getBoard());
+	//
+	// next_board.putPiece(i, j, enemy);
+	//
+	// // 駒を置いた後の盤面を評価し、最小の評価値を判定する
+	// int value = _getValue(next_board, piece);
+	//
+	// if (min > value) {
+	// min = value;
+	// }
+	// }
+	//
+	// }
+	// return min;
+	// }
 
 	private int[] _getMaxValue(Board board, Piece piece) {
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
@@ -151,28 +153,29 @@ public class SampleProcessor extends Processor {
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
+
 				if (board.isEnablePosition(i, j, enemy)) {
-					log(String.format("相手の候補は(%d, %d)で評価値は%d", i, j,_VALUES[i][j]));
+					log(String.format("相手の候補は(%d, %d)で評価値は%d", i, j, _VALUES[i][j]));
 				}
 
-				if (board.isEnablePosition(i, j, enemy))&& _VALUES[i][j]>value{
-					value =_VALUES[i][j];
-					x=i;
-					y=j;
+				if (board.isEnablePosition(i, j, enemy) && _VALUES[i][j] > value) {
+					value = _VALUES[i][j];
+					x = i;
+					y = j;
 				}
 			}
 		}
 
 		// 盤面の状態をコピーして、相手の駒を置く
-				Board next_board = new Board(board.getBoard());
+		Board next_board = new Board(board.getBoard());
 
-				next_board.putPiece(x, y, enemy);
+		next_board.putPiece(x, y, enemy);
 
-				// 駒を置いた後の盤面における評価値を判定する
-				int maxvalue = _getValue(next_board, piece);
-				int[] arg = {x,y,maxvalue};
+		// 駒を置いた後の盤面における評価値を判定する
+		int maxvalue = _getValue(next_board, piece);
+		int[] arg = { x, y, maxvalue };
 
-				return arg;
+		return arg;
 
 	}
 
@@ -183,6 +186,6 @@ public class SampleProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "改良版MIN-MAX法を用いたプログラム7";
+		return "改良版MIN-MAX法を用いたプログラム10";
 	}
 }
