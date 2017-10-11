@@ -99,7 +99,10 @@ public class AIProcessor
 						int b = opponentPositions[opponentIndex][1];
 
 						playBoard.putPiece(a, b, opponentPiece);
-					} else {
+					}
+
+					//自分のターン
+					if (playBoard.hasEnablePositions(piece)) {
 
 						//自分のターン
 
@@ -128,9 +131,7 @@ public class AIProcessor
 
 						playBoard.putPiece(c, d, piece);
 
-
 					}
-
 
 				}
 
@@ -150,7 +151,7 @@ public class AIProcessor
 				playBoard = new Board(nextBoard.getBoard());
 
 			}
-//			System.out.println(value);
+			//			System.out.println(value);
 
 			winCount[t] = value;
 
