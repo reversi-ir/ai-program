@@ -73,7 +73,7 @@ public class MonteCarloProcessor
 			pw.print(",");
 			pw.print("次の手の評価値(max)");
 			pw.print(",");
-			pw.print("処理時間");
+			pw.print("処理時間(ms)");
 			pw.print(",");
 			pw.print("選択出来る手(" + count + "手）");
 			pw.print(",");
