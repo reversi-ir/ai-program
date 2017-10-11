@@ -132,12 +132,12 @@ class MultiLayerPerceptron {
 
 		// 中間層のニューロン作成
 		for (int i = 0; i < middle; i++) {
-			middleNeurons[i] = new Neuron(input);
+			middleNeurons[i] = new Neuron(input, i);
 		}
 
 		// 出力層のニューロン作成
 		for (int i = 0; i < output; i++) {
-			outputNeurons[i] = new Neuron(middle);
+			outputNeurons[i] = new Neuron(middle, i);
 		}
 
 		// 確認メッセージ
@@ -257,8 +257,6 @@ class MultiLayerPerceptron {
 						System.out.println(String.format("Trial:%d", i));
 						System.out.println(String.format("[answer] %f", ans));
 						System.out.println(String.format("[output] %f", o[0]));
-						System.out.println(String.format("[middle] %f , %f,%f,%f,%f,%f,%f,%f", h[0], h[1], h[2], h[3],
-								h[4], h[5], h[6], h[7]));
 						System.out.println();
 						break;
 					} else {
@@ -315,25 +313,28 @@ class MultiLayerPerceptron {
 
 		// 重みをCSVファイルへ出力する。
 		// 出力先を作成する
-		FileWriter fw = null;
+		FileWriter fwMiddle = null;
+		FileWriter fwOutput = null;
 		try {
-			fw = new FileWriter(System.getProperty("user.dir") + "/" + "result.csv", false);
-			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
 
 			// 入力→中間時の重みを出力
 			for (Neuron n : middleNeurons) {
-				pw.print(n);
+				pwMiddle.print(n);
 			}
-			// 改行
-			pw.println();
+			// 出力ファイルの切り替え
+			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 中間→出力の重みを出力
 			for (Neuron n : outputNeurons) {
-				pw.print(n);
+				pwoutPut.print(n);
 			}
 
 			// ファイルに書き出す
-			pw.close();
+			pwMiddle.close();
+			pwoutPut.close();
 
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
@@ -383,19 +384,129 @@ class MultiLayerPerceptron {
 		 *
 		 * @param inputNeuronNum
 		 *            入力ニューロン数
+		 * @param MiddleNeuronNum
+		 *            初期化する中間層ニューロンの番号
 		 */
-		public Neuron(int inputNeuronNum) {
+		public Neuron(int inputNeuronNum, int middleNeuronNum) {
 			// 変数初期化
 			Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new double[inputNeuronNum];
 			this.threshold = r.nextDouble(); // 閾値をランダムに生成
+			String[] middleWeightsAll;
+			String[] outputWeightsAll= new String[8];
+			String[] middleWeights1 = new String[64];
+			String[] middleWeights2 = new String[64];
+			String[] middleWeights3 = new String[64];
+			String[] middleWeights4 = new String[64];
+			String[] middleWeights5 = new String[64];
+			String[] middleWeights6 = new String[64];
+			String[] middleWeights7 = new String[64];
+			String[] middleWeights8 = new String[64];
+
+			// 中間層重みファイルの読み込み
+			try {
+				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
+				FileReader frMiddle = new FileReader(middleFileName);
+				BufferedReader brMiddle = new BufferedReader(frMiddle);
+
+				// 読み込んだファイルを１行ずつ処理する
+				String lineMiddle;
+
+				while ((lineMiddle = brMiddle.readLine()) != null) {
+					// 区切り文字","で分割する
+					middleWeightsAll = lineMiddle.split(",", 0); // 行をカンマ区切りで配列に変換
+
+					for (int i = 0; i < middleWeightsAll.length; i++) {
+
+						if (i >= 0 && i < 64) {
+							middleWeights1[i] = middleWeightsAll[i];
+						} else if (i >= 64 && i < 128) {
+							middleWeights2[i-64] = middleWeightsAll[i];
+						} else if (i >= 128 && i < 192) {
+							middleWeights3[i-128] = middleWeightsAll[i];
+						} else if (i >= 192 && i < 256) {
+							middleWeights4[i-192] = middleWeightsAll[i];
+						} else if (i >= 256 && i < 320) {
+							middleWeights5[i-256] = middleWeightsAll[i];
+						} else if (i >= 320 && i < 384) {
+							middleWeights6[i-320] = middleWeightsAll[i];
+						} else if (i >= 384 && i < 448) {
+							middleWeights7[i-384] = middleWeightsAll[i];
+						} else if (i >= 448 && i < 512) {
+							middleWeights8[i-448] = middleWeightsAll[i];
+						}
+
+					}
+				}
+
+				// 中間層重みファイル読み込み終了
+				brMiddle.close();
+
+				// 出力層重みファイルの読み込み
+				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
+				FileReader frOutput = new FileReader(OutputFileName);
+				BufferedReader brOutput = new BufferedReader(frOutput);
+
+				// 読み込んだファイルを１行ずつ処理する
+				String lineOutput;
+				while ((lineOutput = brOutput.readLine()) != null) {
+					// 区切り文字","で分割する
+					outputWeightsAll = lineOutput.split(",", 0); // 行をカンマ区切りで配列に変換
+				}
+
+				// 出力層重みファイル読み込み終了
+				brOutput.close();
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
 
 			// 結合加重を乱数で初期化
+			// 中間層の初期化の場合
+			if (inputNeuronNum == 64) {
+				if (middleNeuronNum == 0) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights1[i]);
+					}
+				} else if (middleNeuronNum == 1) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights2[i]);
+					}
+				} else if (middleNeuronNum == 2) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights3[i]);
+					}
+				} else if (middleNeuronNum == 3) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights4[i]);
+					}
+				} else if (middleNeuronNum == 4) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights5[i]);
+					}
+				} else if (middleNeuronNum == 5) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights6[i]);
+					}
+				} else if (middleNeuronNum == 6) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights7[i]);
+					}
+				} else if (middleNeuronNum == 7) {
+					for (int i = 0; i < inputWeights.length; i++) {
+						this.inputWeights[i] = Double.parseDouble(middleWeights8[i]);
+					}
+				}
 
-			for (int i = 0; i < inputWeights.length; i++) {
-				this.inputWeights[i] = r.nextDouble();
+			}else if (inputNeuronNum == 8) {
+				for (int i = 0; i < inputWeights.length; i++) {
+					this.inputWeights[i] = Double.parseDouble(outputWeightsAll[i]);
+				}
 			}
+
+
 		}
 
 		/**
