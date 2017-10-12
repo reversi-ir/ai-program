@@ -1,8 +1,9 @@
 package subClass;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Random;
 
@@ -61,9 +62,13 @@ public class MonteCarloProcessor
 		//相手の石の色
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
+
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\tmp\\result_monte.csv", true);
+			FileOutputStream fos = new FileOutputStream("C:\\Users\\\\1516833\\Desktop\\AI-reversi\\result_monte.csv",true);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
+			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+
 
 			pw.print("自分の駒数(置く前)");
 			pw.print(",");
@@ -205,7 +210,7 @@ public class MonteCarloProcessor
 			pw.print(",");
 			pw.print(board.countPiece(opponentPiece));
 			pw.print(",");
-			pw.print("(" + x + "," + y + ")");
+			pw.print("\"(" + x + "," + y + ")\"");
 			pw.print(",");
 			pw.print(maxValue);
 			pw.print(",");
@@ -214,7 +219,7 @@ public class MonteCarloProcessor
 
 			for (int r = 0; r < count; r++) {
 
-				pw.print("(" + positions[r][0] + "," + positions[r][1] + ")" + "：" + winCount[r]);
+				pw.print("\"(" + positions[r][0] + "," + positions[r][1] + ")\"" + "：" + winCount[r]);
 				pw.print(",");
 
 			}
@@ -227,7 +232,7 @@ public class MonteCarloProcessor
 			log(String.format("next -> (%d, %d)", x, y));
 			log(String.format("評価値 -> %d", maxValue));
 
-			System.out.println("評価値：" + maxValue);
+			//System.out.println("評価値：" + maxValue);
 
 			// 置く場所をPositionオブジェクトに変換して返す
 			return new Position(x, y);
