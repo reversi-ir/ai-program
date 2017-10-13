@@ -46,11 +46,11 @@ public class Standalone_monte {
 
 			
 			//先手(black)　←ここを更新
-			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
+			MinMaxProcessor myProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
 
 			//後手(white)　←ここを更新
-			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
+			MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			System.out.println("AI(BLACK)(先手)：　" + myProcessor.getName());
