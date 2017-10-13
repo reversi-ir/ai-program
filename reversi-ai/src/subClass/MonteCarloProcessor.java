@@ -1,8 +1,9 @@
 package subClass;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Random;
 
@@ -62,20 +63,22 @@ public class MonteCarloProcessor
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\tmp\\result_monte.csv", true);
+			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv", true);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
+			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			pw.print("自分の駒数(置く前)");
+			pw.print("自分の駒数（置く前）");
 			pw.print(",");
 			pw.print("相手の駒数");
 			pw.print(",");
-			pw.print("次の手(座標)");
+			pw.print("次の手（座標）");
 			pw.print(",");
-			pw.print("次の手の評価値(max)");
+			pw.print("次の手の評価値（max）");
 			pw.print(",");
-			pw.print("処理時間(ms)");
+			pw.print("処理時間（ms）");
 			pw.print(",");
-			pw.print("選択出来る手(" + count + "手）");
+			pw.print("選択出来る手（" + count + "手）");
 			pw.print(",");
 			pw.println();
 
@@ -96,7 +99,7 @@ public class MonteCarloProcessor
 				int value = 0;
 
 				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 200; s++) {
+				for (int s = 0; s < 250; s++) {
 
 					//1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -162,15 +165,15 @@ public class MonteCarloProcessor
 					}
 
 					//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-					//	    		value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
+					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-					int countPiece = playBoard.countPiece(piece);
-					int countOpponentPiece = playBoard.countPiece(opponentPiece);
-
-					//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-					if (countPiece > countOpponentPiece) {
-						value += 1;
-					}
+					//					int countPiece = playBoard.countPiece(piece);
+					//					int countOpponentPiece = playBoard.countPiece(opponentPiece);
+					//
+					//					//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
+					//					if (countPiece > countOpponentPiece) {
+					//						value += 1;
+					//					}
 
 					playBoard = new Board(nextBoard.getBoard());
 
@@ -205,7 +208,7 @@ public class MonteCarloProcessor
 			pw.print(",");
 			pw.print(board.countPiece(opponentPiece));
 			pw.print(",");
-			pw.print("(" + x + "," + y + ")");
+			pw.print("\"(" + x + "," + y + ")\"");
 			pw.print(",");
 			pw.print(maxValue);
 			pw.print(",");
@@ -214,7 +217,7 @@ public class MonteCarloProcessor
 
 			for (int r = 0; r < count; r++) {
 
-				pw.print("(" + positions[r][0] + "," + positions[r][1] + ")" + "：" + winCount[r]);
+				pw.print("\"(" + positions[r][0] + "," + positions[r][1] + ")\"" + "：" + winCount[r]);
 				pw.print(",");
 
 			}
@@ -227,7 +230,7 @@ public class MonteCarloProcessor
 			log(String.format("next -> (%d, %d)", x, y));
 			log(String.format("評価値 -> %d", maxValue));
 
-			System.out.println("評価値：" + maxValue);
+			//			System.out.println("評価値：" + maxValue);
 
 			// 置く場所をPositionオブジェクトに変換して返す
 			return new Position(x, y);
