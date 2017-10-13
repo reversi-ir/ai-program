@@ -45,11 +45,11 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			
-			//自分(black)　←ここを更新
+			//先手(black)　←ここを更新
 			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 			Piece piece = Piece.BLACK;
 
-			//相手(white)　←ここを更新
+			//後手(white)　←ここを更新
 			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
