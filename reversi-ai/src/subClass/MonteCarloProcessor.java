@@ -62,7 +62,7 @@ public class MonteCarloProcessor
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\tmp\\result_monte.csv", true);
+			FileWriter fw = new FileWriter( System.getProperty("user.dir") + "/" + "result_Monte", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
 			pw.print("自分の駒数(置く前)");
