@@ -44,12 +44,12 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 
-			//自分(black)　←ここを更新
-			MinMaxProcessor myProcessor = new MinMaxProcessor();
+			//black　←ここを更新
+			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
 
-			//相手(white)　←ここを更新
-			MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
+			//white　←ここを更新
+			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			//System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
@@ -59,12 +59,12 @@ public class Standalone_monte {
 			//System.out.println(testBoard);
 			//System.out.println("");
 
-			pw.print("AI(BLACK)(自分)：");
+			pw.print("AI(BLACK)：");
 			pw.print(",");
 			pw.print(myProcessor.getName());
 			pw.println();
 
-			pw.print("AI(WHITE)(相手)：");
+			pw.print("AI(WHITE)：");
 			pw.print(",");
 			pw.print(opponentProcessor.getName());
 			pw.println();
@@ -83,7 +83,7 @@ public class Standalone_monte {
 //			pw_board.print(testBoard);
 //			pw_board.println();
 
-			for (int test = 1; test <= 1; test++) { //test:対戦回数
+			for (int test = 1; test <= 100; test++) { //test:対戦回数
 
 				long to; //処理時間を所持
 				long time; //実行時間を所持
