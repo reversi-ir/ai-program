@@ -49,7 +49,9 @@ public class TestPerceptron {
 
 			// 教師データの指定
 			String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
-			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
+			// String answerFileName
+			// ="C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
+			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -57,17 +59,16 @@ public class TestPerceptron {
 
 			// 読み込んだファイルを１行ずつ処理する
 			String line;
-			int fileRowNum=0;
+			int fileRowNum = 0;
 			while ((line = br.readLine()) != null) {
 
-				fileRowNum=+fileRowNum+1;
+				fileRowNum = +fileRowNum + 1;
 				System.out.println(String.format("[RowNum] %d", fileRowNum));
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
 
 				for (int i = 0; i < csvAll.length; i += 4) {
-
 
 					// 1手ずつ情報を配列へ格納していく
 					color.add(csvAll[i]);
@@ -78,7 +79,7 @@ public class TestPerceptron {
 				}
 
 				// 多層パーセプトロンの作成
-				MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 8, 1);
+				MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
 				mlp.learn(xPosition, yPosition, color, answer);
 
 			}
@@ -200,9 +201,9 @@ class MultiLayerPerceptron {
 			ans = answer.get(num) / 100;
 
 			// 評価値が未設定の場合は次のデータへ進む
-			if (ans == 0.0) {
-				continue;
-			}
+			// if (ans == 0.0) {
+			// continue;
+			// }
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 				// 行間を空ける
@@ -261,10 +262,10 @@ class MultiLayerPerceptron {
 					// 終了条件を満たすか確認
 					succeed++;
 					if (succeed >= answer.size()) {
-						System.out.println(String.format("Trial:%d", i));
-						//System.out.println(String.format("[answer] %f", ans));
-						//System.out.println(String.format("[output] %f", o[0]));
-						//System.out.println();
+						System.out.print(String.format("Trial:%d", i));
+						System.out.print(String.format("[answer] %f", ans));
+						System.out.println(String.format("[output] %f", o[0]));
+						// System.out.println();
 						break;
 					} else {
 						continue;
@@ -316,7 +317,7 @@ class MultiLayerPerceptron {
 
 		// すべての教師データで正解を出すか
 		// 収束限度回数を超えた場合に終了
-		//System.out.println("[finish] " + this);
+		// System.out.println("[finish] " + this);
 
 		// 結合加重をCSVファイルへ出力する。
 		// 出力先を作成する
@@ -400,16 +401,8 @@ class MultiLayerPerceptron {
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new double[inputNeuronNum];
 			this.threshold = r.nextDouble(); // 閾値をランダムに生成
-			String[] middleWeightsAll;
-			String[] outputWeightsAll= new String[8];
-			String[] middleWeights1 = new String[64];
-			String[] middleWeights2 = new String[64];
-			String[] middleWeights3 = new String[64];
-			String[] middleWeights4 = new String[64];
-			String[] middleWeights5 = new String[64];
-			String[] middleWeights6 = new String[64];
-			String[] middleWeights7 = new String[64];
-			String[] middleWeights8 = new String[64];
+			String[] middleWeightsAll = null;
+			String[] outputWeightsAll = null;
 
 			// 中間層結合加重ファイルの読み込み
 			try {
@@ -424,27 +417,6 @@ class MultiLayerPerceptron {
 					// 区切り文字","で分割する
 					middleWeightsAll = lineMiddle.split(",", 0); // 行をカンマ区切りで配列に変換
 
-					for (int i = 0; i < middleWeightsAll.length; i++) {
-
-						if (i >= 0 && i < 64) {
-							middleWeights1[i] = middleWeightsAll[i];
-						} else if (i >= 64 && i < 128) {
-							middleWeights2[i-64] = middleWeightsAll[i];
-						} else if (i >= 128 && i < 192) {
-							middleWeights3[i-128] = middleWeightsAll[i];
-						} else if (i >= 192 && i < 256) {
-							middleWeights4[i-192] = middleWeightsAll[i];
-						} else if (i >= 256 && i < 320) {
-							middleWeights5[i-256] = middleWeightsAll[i];
-						} else if (i >= 320 && i < 384) {
-							middleWeights6[i-320] = middleWeightsAll[i];
-						} else if (i >= 384 && i < 448) {
-							middleWeights7[i-384] = middleWeightsAll[i];
-						} else if (i >= 448 && i < 512) {
-							middleWeights8[i-448] = middleWeightsAll[i];
-						}
-
-					}
 				}
 
 				// 中間層結合加重ファイル読み込み終了
@@ -470,49 +442,24 @@ class MultiLayerPerceptron {
 				e.printStackTrace();
 			}
 
+			int weightNumber = 0;
+
+			if (middleNeuronNum != 0) {
+				weightNumber = middleNeuronNum * 64;
+			}
+
 			// 結合加重を設定
 			// 中間層の初期化の場合
 			if (inputNeuronNum == 64) {
-				if (middleNeuronNum == 0) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights1[i]);
-					}
-				} else if (middleNeuronNum == 1) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights2[i]);
-					}
-				} else if (middleNeuronNum == 2) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights3[i]);
-					}
-				} else if (middleNeuronNum == 3) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights4[i]);
-					}
-				} else if (middleNeuronNum == 4) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights5[i]);
-					}
-				} else if (middleNeuronNum == 5) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights6[i]);
-					}
-				} else if (middleNeuronNum == 6) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights7[i]);
-					}
-				} else if (middleNeuronNum == 7) {
-					for (int i = 0; i < inputWeights.length; i++) {
-						this.inputWeights[i] = Double.parseDouble(middleWeights8[i]);
-					}
+				for (int i = 0; i < inputWeights.length; i++) {
+					this.inputWeights[i] = Double.parseDouble(middleWeightsAll[weightNumber + i]);
 				}
 
-			}else if (inputNeuronNum == 8) {
+			} else if (inputNeuronNum == 80) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Double.parseDouble(outputWeightsAll[i]);
 				}
 			}
-
 
 		}
 
@@ -588,13 +535,13 @@ class MultiLayerPerceptron {
 		}
 
 		/**
-		 * 活性化関数（ReLU関数）
+		 * 活性化関数（RReLU関数）
 		 *
 		 * @param x
 		 * @return
 		 */
 		protected double activationLReL(double x) {
-			return Math.max(0.01*x, x);
+			return Math.max(0.01 * x, x);
 		}
 
 		/**

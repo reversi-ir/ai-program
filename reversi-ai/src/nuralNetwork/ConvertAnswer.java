@@ -29,9 +29,8 @@ public class ConvertAnswer {
 		// データの変換
 		try {
 
-
 			// 教師データの指定
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/test.ggf.csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -41,7 +40,8 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
+			//fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			while ((line = br.readLine()) != null) {
 
@@ -51,50 +51,55 @@ public class ConvertAnswer {
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
 
-				for (int i = 0; i < csvAll.length; i += 4) {
+				if (csvAll[0].equals("B")) {
 
-					// 1手ずつ情報を配列へ格納していく
-					color.add(csvAll[i]);
-					xPosition.add(Integer.parseInt(csvAll[i + 1].replace("[", "")) - 1);
-					yPosition.add(Integer.parseInt(csvAll[i + 2].replace("]", "").trim()) - 1);
-					answer.add(Double.parseDouble(csvAll[i + 3]));
+					for (int i = 0; i < csvAll.length; i += 4) {
 
-				}
+						// 1手ずつ情報を配列へ格納していく
+						color.add(csvAll[i]);
+						xPosition.add(Integer.parseInt(csvAll[i + 1].replace("[", "")) - 1);
+						yPosition.add(Integer.parseInt(csvAll[i + 2].replace("]", "").trim()) - 1);
+						answer.add(Double.parseDouble(csvAll[i + 3]));
 
-				// 初期盤面の作成
-				Board testBoard = new Board();
+					}
 
-				// 評価値（駒の最終獲得数）
-				int value = 0;
+					// 初期盤面の作成
+					Board testBoard = new Board();
 
-				// 最終局面まで進める
-				for (int num = 0; num < answer.size(); num++) {
+					// 評価値（駒の最終獲得数）
+					int value = 0;
 
-					// 配列に格納した座標を盤面にセット
-					if (color.get(num).equals("B")) {
-						testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
-					} else {
-						testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+					// 最終局面まで進める
+					for (int num = 0; num < answer.size(); num++) {
+
+						// 配列に格納した座標を盤面にセット
+						if (color.get(num).equals("B")) {
+							testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+						} else {
+							testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+						}
+					}
+
+					// 評価値の設定
+					value = testBoard.countPiece(Piece.BLACK) - testBoard.countPiece(Piece.WHITE);
+
+					// 配列の出力
+					for (int outNum = 0; outNum < answer.size(); outNum++) {
+
+						pw.print(color.get(outNum) + ",");
+						pw.print(xPosition.get(outNum) + ",");
+						pw.print(yPosition.get(outNum) + ",");
+
+						if (outNum < answer.size() - 1) {
+							//pw.print(value + ",");
+							pw.print(answer.get(outNum) + ",");
+						} else {
+							//pw.print(value);
+							pw.print(answer.get(outNum));
+						}
 					}
 				}
 
-				//評価値の設定
-				value = testBoard.countPiece(Piece.BLACK) - testBoard.countPiece(Piece.WHITE);
-
-				// 配列の出力
-				for (int outNum = 0; outNum < answer.size(); outNum++) {
-
-					pw.print(color.get(outNum) + ",");
-					pw.print(xPosition.get(outNum)+ ",");
-					pw.print(yPosition.get(outNum)+ ",");
-
-					if (outNum < answer.size() - 1) {
-						pw.print(value+",");
-					} else {
-						pw.print(value);
-					}
-				}
-				
 				xPosition = new ArrayList<Integer>();
 				yPosition = new ArrayList<Integer>();
 				color = new ArrayList<String>();
@@ -109,7 +114,6 @@ public class ConvertAnswer {
 
 			// 読み込み終了
 			br.close();
-
 
 		} catch (Exception e) {
 
