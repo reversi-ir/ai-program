@@ -48,8 +48,8 @@ public class TestPerceptron {
 			System.setOut(out);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
-			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
+			//String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
+			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
 			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
