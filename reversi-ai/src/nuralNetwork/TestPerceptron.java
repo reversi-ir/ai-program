@@ -56,6 +56,9 @@ public class TestPerceptron {
 			FileReader fr = new FileReader(answerFileName);
 			BufferedReader br = new BufferedReader(fr);
 
+			// 多層パーセプトロンの作成
+			MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
+
 			// 読み込んだファイルを１行ずつ処理する
 			String line;
 			int fileRowNum = 0;
@@ -77,8 +80,7 @@ public class TestPerceptron {
 
 				}
 
-				// 多層パーセプトロンの作成
-				MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
+				// 学習
 				mlp.learn(xPosition, yPosition, color, answer);
 
 			}
