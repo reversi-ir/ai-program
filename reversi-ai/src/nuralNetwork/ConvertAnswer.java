@@ -41,7 +41,7 @@ public class ConvertAnswer {
 			int fileRowNum = 0;
 			FileWriter fw = null;
 			//fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			while ((line = br.readLine()) != null) {
 

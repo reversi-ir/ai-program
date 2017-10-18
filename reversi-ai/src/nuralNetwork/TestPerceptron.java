@@ -2,9 +2,9 @@ package nuralNetwork;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,15 +48,11 @@ public class TestPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 			// PrintStream out = new PrintStream(fileName);
 			// System.setOut(out);
-			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
-			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
-			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
-			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 教師データの指定
 			// String answerFileName = System.getProperty("user.dir") + "/" +
 			// "test.ggf.csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
 			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
@@ -69,7 +65,6 @@ public class TestPerceptron {
 			// 読み込んだファイルを１行ずつ処理する
 			String line;
 			int fileRowNum = 0;
-			int flashTrigger = 0;
 
 			while ((line = br.readLine()) != null) {
 
@@ -90,9 +85,7 @@ public class TestPerceptron {
 				}
 
 				// 学習
-				mlp.learn(xPosition, yPosition, color, answer, logOut, pwMiddle, pwoutPut);
-
-				flashTrigger = flashTrigger + 1;
+				mlp.learn(xPosition, yPosition, color, answer, logOut, fwMiddle, fwOutput);
 
 				// 配列のクリア
 				xPosition.clear();
@@ -103,17 +96,6 @@ public class TestPerceptron {
 				// 出力の書き込み
 				logOut.flush();
 
-				// 結合荷重は100件ごとに出力
-				if (flashTrigger == 100) {
-
-					// 出力
-					pwMiddle.flush();
-					pwoutPut.flush();
-
-					// トリガー初期化
-					flashTrigger = 0;
-				}
-
 			}
 
 			// 読み込み終了
@@ -121,8 +103,6 @@ public class TestPerceptron {
 
 			// ファイルを閉じる
 			logOut.close();
-			pwMiddle.close();
-			pwoutPut.close();
 
 		} catch (Exception e) {
 
@@ -191,10 +171,10 @@ class MultiLayerPerceptron {
 	 *
 	 * @param x
 	 * @param answer
-	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
 	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Double> answer,
-			PrintWriter outOut, PrintWriter pwMiddle, PrintWriter pwoutPut) throws FileNotFoundException {
+			PrintWriter outOut, FileWriter fwMiddle, FileWriter fwOutput) throws IOException {
 		// 変数初期化
 
 		double[] in = null; // i回目の試行で利用する教師入力データ
@@ -357,6 +337,10 @@ class MultiLayerPerceptron {
 		// System.out.println("[finish] " + this);
 
 		// 結合加重をCSVファイルへ出力する。
+		fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+		PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
+		fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+		PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 		// 入力→中間時の結合加重を出力
 		for (Neuron n : middleNeurons) {
@@ -367,6 +351,10 @@ class MultiLayerPerceptron {
 		for (Neuron n : outputNeurons) {
 			pwoutPut.print(n);
 		}
+
+		// 出力
+		pwMiddle.close();
+		pwoutPut.close();
 
 	}
 

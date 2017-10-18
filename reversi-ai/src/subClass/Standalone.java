@@ -21,7 +21,7 @@ public class Standalone {
 		Piece piece = Piece.BLACK;
 
 		//相手(white)　←ここを更新
-		MinMaxProcessor opponentProcessor = new MinMaxProcessor();
+		TableProcessor opponentProcessor = new TableProcessor();
 		Piece opponentPiece = Piece.WHITE;
 
 		System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());

@@ -38,7 +38,7 @@ public class Standalone_monte {
 
 			Board playBoard = new Board(testBoard.getBoard());
 
-			
+
 			//自分(black)　←ここを更新
 			MinMaxProcessor myProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
@@ -65,7 +65,7 @@ public class Standalone_monte {
 			pw.println();
 
 			pw.println();
-			
+
 			pw.print("No");
 			pw.print(",");
 			pw.print("黒の駒数");
@@ -84,7 +84,7 @@ public class Standalone_monte {
 				long time; //実行時間を所持
 
 				to = System.currentTimeMillis();
-				
+
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
 
 					//自分の手を置く
@@ -134,12 +134,12 @@ public class Standalone_monte {
 				pw.print(time);
 				pw.println();
 
-				
+
 				pw_board.print(test);
 				pw_board.println();
 				pw_board.print(playBoard);
 				pw_board.println();
-				
+
 				playBoard = new Board(testBoard.getBoard());
 
 			}
