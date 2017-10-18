@@ -169,15 +169,15 @@ public class MonteCarloProcessor extends Processor {
 					}
 
 					// プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
+					//value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-					// int countPiece = playBoard.countPiece(piece);
-					// int countOpponentPiece = playBoard.countPiece(opponentPiece);
+					 int countPiece = playBoard.countPiece(piece);
+					 int countOpponentPiece = playBoard.countPiece(opponentPiece);
 
 					// プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-					// if (countPiece > countOpponentPiece) {
-					// value += 1;
-					// }
+					 if (countPiece > countOpponentPiece) {
+					 value += 1;
+					 }
 
 					playBoard = new Board(nextBoard.getBoard());
 
