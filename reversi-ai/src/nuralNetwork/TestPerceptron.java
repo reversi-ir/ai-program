@@ -2,10 +2,9 @@ package nuralNetwork;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,25 +30,33 @@ public class TestPerceptron {
 	 */
 	public TestPerceptron() {
 
-		// 入力データ配列 x =(x軸,y軸)の配列と,正解データ配列 answer
+		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
 
 		String[] csvAll;
 		List<Integer> xPosition = new ArrayList<Integer>();
 		List<Integer> yPosition = new ArrayList<Integer>();
 		List<String> color = new ArrayList<String>();
 		List<Double> answer = new ArrayList<Double>();
+		FileWriter fwMiddle = null;
+		FileWriter fwOutput = null;
 
 		// パーセプトロンの動作確認
 		try {
 
 			// 標準出力をファイルに関連付ける
 			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
-			PrintStream out = new PrintStream(fileName);
-			System.setOut(out);
+			PrintWriter logOut = new PrintWriter(fileName);
+			// PrintStream out = new PrintStream(fileName);
+			// System.setOut(out);
+			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
+			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 教師データの指定
-			//String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
-			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
+			// String answerFileName = System.getProperty("user.dir") + "/" +
+			// "test.ggf.csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.csv";
 			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
@@ -62,10 +69,12 @@ public class TestPerceptron {
 			// 読み込んだファイルを１行ずつ処理する
 			String line;
 			int fileRowNum = 0;
+			int flashTrigger = 0;
+
 			while ((line = br.readLine()) != null) {
 
 				fileRowNum = +fileRowNum + 1;
-				System.out.println(String.format("[RowNum] %d", fileRowNum));
+				logOut.println(String.format("[RowNum] %d", fileRowNum));
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -81,7 +90,29 @@ public class TestPerceptron {
 				}
 
 				// 学習
-				mlp.learn(xPosition, yPosition, color, answer);
+				mlp.learn(xPosition, yPosition, color, answer, logOut, pwMiddle, pwoutPut);
+
+				flashTrigger = flashTrigger + 1;
+
+				// 配列のクリア
+				xPosition.clear();
+				yPosition.clear();
+				color.clear();
+				answer.clear();
+
+				// 出力の書き込み
+				logOut.flush();
+
+				// 結合荷重は100件ごとに出力
+				if (flashTrigger == 100) {
+
+					// 出力
+					pwMiddle.flush();
+					pwoutPut.flush();
+
+					// トリガー初期化
+					flashTrigger = 0;
+				}
 
 			}
 
@@ -89,7 +120,9 @@ public class TestPerceptron {
 			br.close();
 
 			// ファイルを閉じる
-			out.close();
+			logOut.close();
+			pwMiddle.close();
+			pwoutPut.close();
 
 		} catch (Exception e) {
 
@@ -158,8 +191,10 @@ class MultiLayerPerceptron {
 	 *
 	 * @param x
 	 * @param answer
+	 * @throws FileNotFoundException
 	 */
-	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Double> answer) {
+	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Double> answer,
+			PrintWriter outOut, PrintWriter pwMiddle, PrintWriter pwoutPut) throws FileNotFoundException {
 		// 変数初期化
 
 		double[] in = null; // i回目の試行で利用する教師入力データ
@@ -168,14 +203,15 @@ class MultiLayerPerceptron {
 		double[] o = new double[outputNumber]; // 出力層の出力
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
+		boolean successFlg = true;// 成功フラグ
+		int succeed = 0; // 連続正解回数を初期化
+		double delta = -1000;
 
 		// 初期盤面の作成
 		Board testBoard = new Board();
 
 		// 学習
 		for (int num = 0; num < answer.size(); num++) {
-
-			int succeed = 0; // 連続正解回数を初期化
 
 			// 配列に格納した座標を盤面にセット
 			if (color.get(num).equals("B")) {
@@ -199,7 +235,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 答えの設定
-			ans = answer.get(num) / 100;
+			ans = answer.get(num) * 0.01;
 
 			// 評価値が未設定の場合は次のデータへ進む
 			// if (ans == 0.0) {
@@ -229,13 +265,13 @@ class MultiLayerPerceptron {
 				// h[5], h[6], h[7]));
 
 				// 評価・判定
-				boolean successFlg = true;
+				successFlg = true;
 				for (int j = 0; j < outputNumber; j++)
 
 				{
 					// 出力層ニューロンの学習定数δを計算
 					// double delta = (ans - o[j]) * o[j] * (0.1d - o[j]);
-					double delta = 0.5 * Math.pow((ans - o[j]), 2);
+					delta = 0.5 * Math.pow((ans - o[j]), 2);
 
 					// 教師データとの誤差が十分小さい場合は次の処理へ
 					// そうでなければ正解フラグを初期化
@@ -263,9 +299,9 @@ class MultiLayerPerceptron {
 					// 終了条件を満たすか確認
 					succeed++;
 					if (succeed >= answer.size()) {
-						System.out.print(String.format("Trial:%d", i));
-						System.out.print(String.format("[answer] %f", ans));
-						System.out.println(String.format("[output] %f", o[0]));
+						outOut.print(String.format("Trial:%d", i));
+						outOut.print(String.format("[answer] %f", ans));
+						outOut.println(String.format("[output] %f", o[0]));
 						// System.out.println();
 						break;
 					} else {
@@ -283,7 +319,7 @@ class MultiLayerPerceptron {
 						Neuron n = outputNeurons[k];
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
 					}
-					double delta = h[j] * (1.0d - h[j]) * sumDelta;
+					delta = h[j] * (1.0d - h[j]) * sumDelta;
 
 					if (ans < h[j]) {
 						delta = delta * -1;
@@ -321,33 +357,15 @@ class MultiLayerPerceptron {
 		// System.out.println("[finish] " + this);
 
 		// 結合加重をCSVファイルへ出力する。
-		// 出力先を作成する
-		FileWriter fwMiddle = null;
-		FileWriter fwOutput = null;
-		try {
-			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
-			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
 
-			// 入力→中間時の結合加重を出力
-			for (Neuron n : middleNeurons) {
-				pwMiddle.print(n);
-			}
-			// 出力ファイルの切り替え
-			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
-			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
+		// 入力→中間時の結合加重を出力
+		for (Neuron n : middleNeurons) {
+			pwMiddle.print(n);
+		}
 
-			// 中間→出力の結合加重を出力
-			for (Neuron n : outputNeurons) {
-				pwoutPut.print(n);
-			}
-
-			// ファイルに書き出す
-			pwMiddle.close();
-			pwoutPut.close();
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
+		// 中間→出力の結合加重を出力
+		for (Neuron n : outputNeurons) {
+			pwoutPut.print(n);
 		}
 
 	}
@@ -407,9 +425,20 @@ class MultiLayerPerceptron {
 
 			// 中間層結合加重ファイルの読み込み
 			try {
+				// URL urlMiddle =getClass().getResource("resultMiddle.csv");
+				// InputStream inputStreamMiddle = urlMiddle.openStream();
 				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
+				// BufferedReader brMiddle = new BufferedReader(new
+				// InputStreamReader(inputStreamMiddle));
 				BufferedReader brMiddle = new BufferedReader(frMiddle);
+				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
+				FileReader frOutput = new FileReader(OutputFileName);
+				// URL urlOutput = getClass().getResource("data/resultOutput.csv");
+				// InputStream inputStreamOutput = urlOutput.openStream();
+				// BufferedReader brOutput = new BufferedReader(new
+				// InputStreamReader(inputStreamOutput));
+				BufferedReader brOutput = new BufferedReader(frOutput);
 
 				// 読み込んだファイルを１行ずつ処理する
 				String lineMiddle;
@@ -424,9 +453,6 @@ class MultiLayerPerceptron {
 				brMiddle.close();
 
 				// 出力層結合加重ファイルの読み込み
-				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
-				FileReader frOutput = new FileReader(OutputFileName);
-				BufferedReader brOutput = new BufferedReader(frOutput);
 
 				// 読み込んだファイルを１行ずつ処理する
 				String lineOutput;
