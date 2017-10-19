@@ -61,12 +61,12 @@ public class Standalone_monte {
 
 			pw.print("AI(BLACK)：");
 			pw.print(",");
-			pw.print(myProcessor.getName());
+			pw.print(opponentProcessor.getName());
 			pw.println();
 
 			pw.print("AI(WHITE)：");
 			pw.print(",");
-			pw.print(opponentProcessor.getName());
+			pw.print(myProcessor.getName());
 			pw.println();
 
 			pw.println();
@@ -83,7 +83,7 @@ public class Standalone_monte {
 //			pw_board.print(testBoard);
 //			pw_board.println();
 
-			for (int test = 1; test <= 20; test++) { //test:対戦回数
+			for (int test = 1; test <= 100; test++) { //test:対戦回数
 
 				long to; //処理時間を所持
 				long time; //実行時間を所持

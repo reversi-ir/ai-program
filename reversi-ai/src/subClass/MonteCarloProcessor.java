@@ -66,7 +66,7 @@ public class MonteCarloProcessor extends Processor {
 		try {
 
 			// 出力先を作成する
-			FileOutputStream fos = new FileOutputStream("C:\\Users\\\\1516833\\Desktop\\AI-reversi\\result_monte.csv",
+			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv",
 					true);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
 			BufferedWriter fw = new BufferedWriter(osw);
@@ -103,7 +103,7 @@ public class MonteCarloProcessor extends Processor {
 				int value = 0;
 
 				// 次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 2000; s++) {
+				for (int s = 0; s < 250; s++) {
 
 					// 1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
