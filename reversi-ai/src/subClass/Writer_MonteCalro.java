@@ -7,7 +7,7 @@ import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
 import jp.takedarts.reversi.Processor;
 
-public class MonteCalro_Writer extends Processor {
+public class Writer_MonteCalro extends Processor {
 
 	
 	int maxValue = 0;
@@ -52,10 +52,6 @@ public class MonteCalro_Writer extends Processor {
 
 		//相手の石の色
 		Piece opponentPiece = Piece.opposite(piece);
-//		try {
-			//出力先を作成する
-//			FileWriter fw = new FileWriter("C:\\tmp\\result_monte.csv", true);
-//			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
 			//次に置ける場所全ての勝率を求める
 			for (int t = 0; t < count; t++) {
@@ -74,7 +70,7 @@ public class MonteCalro_Writer extends Processor {
 				int value = 0;
 
 				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 200; s++) {
+				for (int s = 0; s < 100; s++) {
 
 					//1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -175,39 +171,11 @@ public class MonteCalro_Writer extends Processor {
 			int x = positions[maxIndex][0];
 			int y = positions[maxIndex][1];
 
-			//ファイルに書き出す
-
-//			for (int r = 0; r < count; r++) {
-//
-//				pw.print("(" + positions[r][0] + "," + positions[r][1] + ")" + "：" + winCount[r]);
-//				pw.print(",");
-//
-//			}
-//			pw.println();
-//			pw.println();
-//
-//			pw.close();
-
-			// 置く場所をログに出力
-//			log(String.format("next -> (%d, %d)", x, y));
-//			log(String.format("評価値 -> %d", maxValue));
 
 
 			// 置く場所をPositionオブジェクトに変換して返す
 			return new Position(x, y);
 
-//		} 
-//		catch (IOException ex) {
-//			//例外時処理
-//			ex.printStackTrace();
-//
-//			//仮に定義
-//			int x = 0;
-//			int y = 0;
-//
-//			// 置く場所をPositionオブジェクトに変換して返す
-//			return new Position(x, y);
-//		}
 	}
 	
 	public int getValue() {
@@ -224,6 +192,6 @@ public class MonteCalro_Writer extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "原始モンテカルロ法プログラム";
+		return "棋譜用モンテカルロ法プログラム";
 	}
 }

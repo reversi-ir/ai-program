@@ -6,7 +6,7 @@ import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
 
-public class Random_Writer {
+public class Writer_Random {
 	/**
 	   * 乱数を発生させるオブジェクト。
 	   */
@@ -20,11 +20,20 @@ public class Random_Writer {
 	   * @param thinkingTime 思考時間
 	   * @return 次の手を置く場所
 	   */
+	  
+	  int value=0;
 	  public Position nextPosition(Board board, Piece piece, long thinkingTime)
 	  {
 	    // 次に置ける場所の一覧を探す
 	    int[][] positions = new int[64][2];
 	    int count = 0;
+	    
+
+		//相手の石の色
+		Piece opponentPiece = Piece.opposite(piece);
+		
+		//相手の石数-自分の石数
+		value += board.countPiece(opponentPiece) - board.countPiece(piece);
 	 
 	    for (int i = 0; i < 8; i++) {
 	      for (int j = 0; j < 8; j++) {
@@ -45,6 +54,11 @@ public class Random_Writer {
 	    // 置く場所をPositionオブジェクトに変換して返す
 	    return new Position(x, y);
 	  }
+	  
+	  public int getValue() {
+		return value;
+		  
+	  }
 	 
 	  /**
 	   * この人工知能の名前を返す。
@@ -53,6 +67,6 @@ public class Random_Writer {
 	   */
 	  public String getName()
 	  {
-	    return "改良版のサンプルプログラム";
+	    return "棋譜用のランダムプログラム";
 	  }
 }

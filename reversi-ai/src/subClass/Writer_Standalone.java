@@ -8,8 +8,12 @@ import java.io.PrintWriter;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
-
-public class Standalone_writerLog {
+/**
+ * 棋譜用メインクラス
+ * @author 1722549
+ *
+ */
+public class Writer_Standalone {
 	public static void main(String[] args) {
 
 		try {
@@ -31,11 +35,11 @@ public class Standalone_writerLog {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			//自分(black)　←ここを更新
-			MonteCalro_Writer myProcessor = new MonteCalro_Writer();
+			Writer_MonteCalro myProcessor = new Writer_MonteCalro();
 			Piece piece = Piece.BLACK;
 
 			//相手(white)　←ここを更新
-			Random_Writer opponentProcessor = new Random_Writer();
+			Writer_Random opponentProcessor = new Writer_Random();
 			Piece opponentPiece = Piece.WHITE;
 
 
@@ -43,7 +47,7 @@ public class Standalone_writerLog {
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
-
+				System.out.println("test:"+test);
 				to = System.currentTimeMillis();
 
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -55,8 +59,8 @@ public class Standalone_writerLog {
 						playBoard.putPiece(myPosition, piece);
 						
 						//ログ出力
-						pw.print("B,[");
-						pw.print(myPosition.getX()+","+myPosition.getY()+"],");
+						pw.print("B,");
+						pw.print(myPosition.getX()+","+myPosition.getY()+",");
 						pw.print(myProcessor.getValue()+",");
 
 					} else if (!playBoard.hasEnablePositions(piece)) {
@@ -69,8 +73,8 @@ public class Standalone_writerLog {
 						playBoard.putPiece(opponentPosition, opponentPiece);
 						
 						//ログ出力
-						pw.print("W,[");
-						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+"],");
+						pw.print("W,");
+						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+",");
 						pw.print(myProcessor.getValue()+",");
 
 					} else if (!playBoard.hasEnablePositions(opponentPiece)) {
@@ -85,14 +89,6 @@ public class Standalone_writerLog {
 
 				time = System.currentTimeMillis() - to;
 
-//				pw.print(test);
-//				pw.print(",");
-//				pw.print(playBoard.countPiece(piece));
-//				pw.print(",");
-//				pw.print(playBoard.countPiece(opponentPiece));
-//				pw.print(",");
-//				pw.print(time);
-//				pw.println();
 
 
 				playBoard = new Board(testBoard.getBoard());
