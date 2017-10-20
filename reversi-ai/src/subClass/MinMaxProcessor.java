@@ -1,4 +1,5 @@
 package subClass;
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
@@ -13,9 +14,10 @@ public class MinMaxProcessor extends Processor {
 	/**
 	 * 評価テーブル。
 	 */
-	private static int[][] _VALUES = new int[][] { { 9, 2, 8, 6, 6, 8, 2, 9 }, { 2, 1, 4, 5, 5, 4, 1, 2 },
-			{ 8, 4, 6, 5, 5, 6, 4, 8 }, { 6, 5, 5, 4, 4, 5, 5, 6 }, { 6, 5, 5, 4, 4, 5, 5, 6 },
-			{ 8, 4, 6, 5, 5, 6, 4, 8 }, { 2, 1, 4, 5, 5, 4, 1, 2 }, { 9, 2, 8, 6, 6, 8, 2, 9 } };
+	private static int[][] _VALUES = new int[][] { { 120, -20, 20, 5, 5, 20, -20, 120 },
+			{ -20, -40, -5, -5, -5, -5, -40, -20 }, { 20, -5, 15, 3, 3, 15, -5, 20 }, { 5, -5, 3, 3, 3, 3, -5, 5 },
+			{ 5, -5, 3, 3, 3, 3, -5, 5 }, { 20, -5, 15, 3, 3, 15, -5, 20 }, { -20, -40, -5, -5, -5, -5, -40, -20 },
+			{ 120, -20, 20, 5, 5, 20, -20, 120 } };
 
 	/**
 	 * 手番が来たときに、次の手を決定するメソッド。

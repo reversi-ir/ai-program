@@ -8,8 +8,8 @@ import jp.takedarts.reversi.Position;
 import jp.takedarts.reversi.Processor;
 
 /**
-* Reversi人工知能のサンプルプログラム。
-*
+ * Reversi人工知能のサンプルプログラム。
+ *
  * @author Atushi TAKEDA
  */
 public class RandomProcessor
@@ -19,7 +19,7 @@ public class RandomProcessor
    * 乱数を発生させるオブジェクト。
    */
   private Random _random = new Random(System.currentTimeMillis());
- 
+
   /**
    * 手番が来たときに、次の手を決定するメソッド。
    *
@@ -34,7 +34,7 @@ public class RandomProcessor
     // 次に置ける場所の一覧を探す
     int[][] positions = new int[64][2];
     int count = 0;
- 
+
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if (board.isEnablePosition(i, j, piece)) {
@@ -44,19 +44,19 @@ public class RandomProcessor
         }
       }
     }
- 
+
     // 次に置く場所をランダムに決定する
     int index = _random.nextInt(count);
     int x = positions[index][0];
     int y = positions[index][1];
- 
+
     // 置く場所をログに出力
     log(String.format("next -> (%d, %d)", x, y));
- 
+
     // 置く場所をPositionオブジェクトに変換して返す
     return new Position(x, y);
   }
- 
+
   /**
    * この人工知能の名前を返す。
    *
@@ -65,7 +65,7 @@ public class RandomProcessor
   @Override
   public String getName()
   {
-    return "改良版のサンプルプログラム";
+    return "ランダムに手を選ぶサンプルプログラム";
   }
- 
+
 }

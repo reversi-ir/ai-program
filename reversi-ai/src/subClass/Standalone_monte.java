@@ -1,8 +1,9 @@
 package subClass;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import jp.takedarts.reversi.Board;
@@ -22,10 +23,14 @@ public class Standalone_monte {
 		try {
 
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\tmp\\result.csv", false);
+			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result.csv",false);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
+			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			FileWriter fw_board = new FileWriter("C:\\tmp\\resultBoard.csv", false);
+			FileOutputStream fos_board = new FileOutputStream("C:\\tmp\\resultBoard.csv",false);
+			OutputStreamWriter osw_board = new OutputStreamWriter(fos_board, "SJIS");
+			BufferedWriter fw_board = new BufferedWriter(osw_board);
 			PrintWriter pw_board = new PrintWriter(new BufferedWriter(fw_board));
 
 			Board testBoard = new Board();
@@ -38,34 +43,34 @@ public class Standalone_monte {
 
 			Board playBoard = new Board(testBoard.getBoard());
 
-			
-			//自分(black)　←ここを更新
-			MinMaxProcessor myProcessor = new MinMaxProcessor();
+
+			//black　←ここを更新
+			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
 
-			//相手(white)　←ここを更新
-			MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
+			//white　←ここを更新
+			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
-			System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
-			System.out.println("AI(WHITE)(相手)：　" + opponentProcessor.getName());
-			System.out.println("");
+			//System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
+			//System.out.println("AI(WHITE)(相手)：　" + opponentProcessor.getName());
+			//System.out.println("");
 
-			System.out.println(testBoard);
-			System.out.println("");
+			//System.out.println(testBoard);
+			//System.out.println("");
 
-			pw.print("AI(BLACK)(自分)：");
-			pw.print(",");
-			pw.print(myProcessor.getName());
-			pw.println();
-
-			pw.print("AI(WHITE)(相手)：　");
+			pw.print("AI(BLACK)：");
 			pw.print(",");
 			pw.print(opponentProcessor.getName());
 			pw.println();
 
+			pw.print("AI(WHITE)：");
+			pw.print(",");
+			pw.print(myProcessor.getName());
 			pw.println();
-			
+
+			pw.println();
+
 			pw.print("No");
 			pw.print(",");
 			pw.print("黒の駒数");
@@ -83,8 +88,10 @@ public class Standalone_monte {
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
+				System.out.println(test+"回目" );
+
 				to = System.currentTimeMillis();
-				
+
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
 
 					//自分の手を置く
@@ -93,8 +100,8 @@ public class Standalone_monte {
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
 						playBoard.putPiece(myPosition, piece);
 
-						System.out.println(playBoard);
-						System.out.println("");
+						//System.out.println(playBoard);
+						//System.out.println("");
 
 					} else if (!playBoard.hasEnablePositions(piece)) {
 
@@ -106,7 +113,7 @@ public class Standalone_monte {
 
 						Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece, 30000);
 						playBoard.putPiece(opponentPosition, opponentPiece);
-						System.out.println("");
+						//System.out.println("");
 
 					} else if (!playBoard.hasEnablePositions(opponentPiece)) {
 
@@ -115,13 +122,13 @@ public class Standalone_monte {
 
 					}
 
-					System.out.println(playBoard);
-					System.out.println("");
+					//System.out.println(playBoard);
+					//System.out.println("");
 
 				}
 
-				System.out.println("黒の数：　" + playBoard.countPiece(piece));
-				System.out.println("白の数：　" + playBoard.countPiece(opponentPiece));
+				//System.out.println("黒の数：　" + playBoard.countPiece(piece));
+				//System.out.println("白の数：　" + playBoard.countPiece(opponentPiece));
 
 				time = System.currentTimeMillis() - to;
 
@@ -134,12 +141,12 @@ public class Standalone_monte {
 				pw.print(time);
 				pw.println();
 
-				
+
 				pw_board.print(test);
 				pw_board.println();
 				pw_board.print(playBoard);
 				pw_board.println();
-				
+
 				playBoard = new Board(testBoard.getBoard());
 
 			}
