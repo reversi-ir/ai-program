@@ -19,7 +19,7 @@ public class Writer_Standalone {
 		try {
 
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", false);
+			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
 			
