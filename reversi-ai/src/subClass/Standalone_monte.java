@@ -45,14 +45,10 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			
-			//先手(black)　←ここを更新
-			MinMaxProcessor myProcessor = new MinMaxProcessor();
 			//black　←ここを更新
 			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
 
-			//後手(white)　←ここを更新
-			MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
 			//white　←ここを更新
 			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 			Piece opponentPiece = Piece.WHITE;
@@ -67,13 +63,11 @@ public class Standalone_monte {
 //			System.out.println(testBoard);
 //			System.out.println("");
 
-			pw.print("AI(BLACK)(先手)：");
 			pw.print("AI(BLACK)：");
 			pw.print(",");
 			pw.print(opponentProcessor.getName());
 			pw.println();
 
-			pw.print("AI(WHITE)(後手)：　");
 			pw.print("AI(WHITE)：");
 			pw.print(",");
 			pw.print(myProcessor.getName());
