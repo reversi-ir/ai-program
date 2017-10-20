@@ -17,8 +17,7 @@ import jp.takedarts.reversi.Processor;
  *
  * @author Atushi TAKEDA
  */
-public class MonteCarloProcessor
-		extends Processor {
+public class MonteCarloProcessor extends Processor {
 
 	/*
 	 * 乱数を発生させるオブジェクト。
@@ -29,9 +28,12 @@ public class MonteCarloProcessor
 	/**
 	 * 手番が来たときに、次の手を決定するメソッド。<br>
 	 *
-	 * @param board 盤面の状態
-	 * @param piece 自分が打つ駒
-	 * @param thinkingTime 思考時間
+	 * @param board
+	 *            盤面の状態
+	 * @param piece
+	 *            自分が打つ駒
+	 * @param thinkingTime
+	 *            思考時間
 	 * @return 次の手を置く場所
 	 */
 	@Override
@@ -63,7 +65,9 @@ public class MonteCarloProcessor
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
 			//出力先を作成する
-			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte2.csv", true);
+			
+			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv",
+					true);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
 			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
@@ -72,14 +76,14 @@ public class MonteCarloProcessor
 			pw.print(",");
 			pw.print("相手の駒数");
 			pw.print(",");
-			pw.print("次の手（座標）");
+			pw.print("次の手(座標)");
 			pw.print(",");
-			pw.print("次の手の評価値（max）");
+			pw.print("次の手の評価値(max)");
 			pw.print(",");
-			pw.print("処理時間（ms）");
+			pw.print("処理時間(ms)");
 			pw.print(",");
-			pw.print("選択出来る手（" + count + "手）");
-			pw.print(",");
+			pw.print("選択出来る手(" + count + "手）");
+			// pw.print(",");
 			pw.println();
 
 			//次に置ける場所全ての勝率を求める
@@ -99,7 +103,7 @@ public class MonteCarloProcessor
 				int value = 0;
 
 				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 4000; s++) {
+				for (int s = 0; s < 250; s++) {
 
 					//1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -179,7 +183,7 @@ public class MonteCarloProcessor
 
 				}
 
-				//勝った回数を格納
+				// 評価値を格納
 				winCount[t] = value;
 
 			}
@@ -218,7 +222,10 @@ public class MonteCarloProcessor
 			for (int r = 0; r < count; r++) {
 
 				pw.print("\"(" + positions[r][0] + "," + positions[r][1] + ")\"" + "：" + winCount[r]);
+		
+				if (r != count - 1) {
 				pw.print(",");
+				}
 
 			}
 			pw.println();
