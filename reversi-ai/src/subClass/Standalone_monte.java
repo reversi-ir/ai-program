@@ -98,6 +98,7 @@ public class Standalone_monte {
 					if (playBoard.hasEnablePositions(piece)) {
 
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
+
 						playBoard.putPiece(myPosition, piece);
 
 						//System.out.println(playBoard);
