@@ -63,7 +63,7 @@ public class MonteCarloProcessor
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
 			//出力先を作成する
-			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv", true);
+			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte2.csv", true);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
 			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
@@ -99,7 +99,7 @@ public class MonteCarloProcessor
 				int value = 0;
 
 				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 2000; s++) {
+				for (int s = 0; s < 4000; s++) {
 
 					//1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -165,15 +165,15 @@ public class MonteCarloProcessor
 					}
 
 					//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
+//					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-					//					int countPiece = playBoard.countPiece(piece);
-					//					int countOpponentPiece = playBoard.countPiece(opponentPiece);
-					//
-					//					//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-					//					if (countPiece > countOpponentPiece) {
-					//						value += 1;
-					//					}
+										int countPiece = playBoard.countPiece(piece);
+										int countOpponentPiece = playBoard.countPiece(opponentPiece);
+					
+										//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
+										if (countPiece > countOpponentPiece) {
+											value += 1;
+										}
 
 					playBoard = new Board(nextBoard.getBoard());
 
