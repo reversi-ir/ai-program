@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="lib/p2p-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/takedarts-util-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/reversi-1.0b.jar"/>
+	<classpathentry kind="lib" path="data"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

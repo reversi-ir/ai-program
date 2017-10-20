@@ -39,8 +39,8 @@ public class MonteCarloProcessor extends Processor {
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 
-		long to; //処理時間を所持
-		long time; //実行時間を所持
+		long to; // 処理時間を所持
+		long time; // 実行時間を所持
 
 		to = System.currentTimeMillis();
 
@@ -58,14 +58,14 @@ public class MonteCarloProcessor extends Processor {
 			}
 		}
 
-		//それぞれの手で評価値（勝った回数or自分の石-相手の石の数）を格納
+		// それぞれの手で評価値（勝った回数or自分の石-相手の石の数）を格納
 		int[] winCount = new int[count];
 
-		//相手の石の色
+		// 相手の石の色
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
-			//出力先を作成する
-			
+			// 出力先を作成する
+
 			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv",
 					true);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
@@ -86,29 +86,29 @@ public class MonteCarloProcessor extends Processor {
 			// pw.print(",");
 			pw.println();
 
-			//次に置ける場所全ての勝率を求める
+			// 次に置ける場所全ての勝率を求める
 			for (int t = 0; t < count; t++) {
 
-				//次における場所に置いた想定の盤面
+				// 次における場所に置いた想定の盤面
 				Board nextBoard = new Board(board.getBoard());
 				nextBoard.putPiece(positions[t][0], positions[t][1], piece);
 
-				//プレイアウトの結果を保持する盤面
+				// プレイアウトの結果を保持する盤面
 				Board playBoard = new Board(nextBoard.getBoard());
 
-				//			//判定フラグ（次駒を置くのが自分か相手か(自分の場合:0 /相手の場合：1)）
-				//			int playFlag = 1;
+				// //判定フラグ（次駒を置くのが自分か相手か(自分の場合:0 /相手の場合：1)）
+				// int playFlag = 1;
 
-				//評価値（勝った回数or駒の最終獲得数）
+				// 評価値（勝った回数or駒の最終獲得数）
 				int value = 0;
 
-				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
+				// 次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
 				for (int s = 0; s < 250; s++) {
 
-					//1回プレイアウト(ランダム)
+					// 1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
 
-						//相手ターン
+						// 相手ターン
 						if (playBoard.hasEnablePositions(opponentPiece)) {
 
 							// 次に置ける場所の一覧を探す
@@ -136,7 +136,7 @@ public class MonteCarloProcessor extends Processor {
 							playBoard.putPiece(a, b, opponentPiece);
 						}
 
-						//自分のターン
+						// 自分のターン
 						if (playBoard.hasEnablePositions(piece)) {
 
 							// 次に置ける場所の一覧を探す
@@ -168,16 +168,16 @@ public class MonteCarloProcessor extends Processor {
 
 					}
 
-					//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-//					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
+					// プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
+					//value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-										int countPiece = playBoard.countPiece(piece);
-										int countOpponentPiece = playBoard.countPiece(opponentPiece);
-					
-										//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-										if (countPiece > countOpponentPiece) {
-											value += 1;
-										}
+					int countPiece = playBoard.countPiece(piece);
+					int countOpponentPiece = playBoard.countPiece(opponentPiece);
+
+					// プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
+					if (countPiece > countOpponentPiece) {
+						value += 1;
+					}
 
 					playBoard = new Board(nextBoard.getBoard());
 
@@ -188,7 +188,7 @@ public class MonteCarloProcessor extends Processor {
 
 			}
 
-			//評価値配列の中の最大値を計算
+			// 評価値配列の中の最大値を計算
 			int maxValue = 0;
 			int maxIndex = 0;
 			maxValue = winCount[0];
@@ -204,7 +204,7 @@ public class MonteCarloProcessor extends Processor {
 			int x = positions[maxIndex][0];
 			int y = positions[maxIndex][1];
 
-			//ファイルに書き出す
+			// ファイルに書き出す
 
 			time = System.currentTimeMillis() - to;
 
@@ -222,9 +222,10 @@ public class MonteCarloProcessor extends Processor {
 			for (int r = 0; r < count; r++) {
 
 				pw.print("\"(" + positions[r][0] + "," + positions[r][1] + ")\"" + "：" + winCount[r]);
-		
+
 				if (r != count - 1) {
-				pw.print(",");
+					pw.print(",");
+
 				}
 
 			}
@@ -237,16 +238,16 @@ public class MonteCarloProcessor extends Processor {
 			log(String.format("next -> (%d, %d)", x, y));
 			log(String.format("評価値 -> %d", maxValue));
 
-			//			System.out.println("評価値：" + maxValue);
+			// System.out.println("評価値：" + maxValue);
 
 			// 置く場所をPositionオブジェクトに変換して返す
 			return new Position(x, y);
 
 		} catch (IOException ex) {
-			//例外時処理
+			// 例外時処理
 			ex.printStackTrace();
 
-			//仮に定義
+			// 仮に定義
 			int x = 0;
 			int y = 0;
 
