@@ -16,6 +16,7 @@ import jp.takedarts.reversi.Position;
 public class Writer_Standalone {
 	public static void main(String[] args) {
 		
+		long start=System.currentTimeMillis();
 		try {
 
 			//出力先を作成する
@@ -75,7 +76,7 @@ public class Writer_Standalone {
 						//ログ出力
 						pw.print("W,");
 						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+",");
-						pw.print(myProcessor.getValue()+",");
+						pw.print(opponentProcessor.getValue()+",");
 
 					} else if (!playBoard.hasEnablePositions(opponentPiece)) {
 
@@ -93,6 +94,8 @@ public class Writer_Standalone {
 
 				playBoard = new Board(testBoard.getBoard());
 				pw.print("\n");
+				long end=System.currentTimeMillis();
+				System.out.println(start-end);
 			}
 
 			//ファイルに書き出す

@@ -34,7 +34,7 @@ public class Writer_Random {
 		Piece opponentPiece = Piece.opposite(piece);
 		
 		//相手の石数-自分の石数
-		value += board.countPiece(opponentPiece) - board.countPiece(piece);
+		value = board.countPiece(opponentPiece) - board.countPiece(piece);
 	 
 	    for (int i = 0; i < 8; i++) {
 	      for (int j = 0; j < 8; j++) {
