@@ -16,11 +16,11 @@ public class Standalone {
 		testBoard.putPiece(3, 4, Piece.BLACK);
 		testBoard.putPiece(4, 3, Piece.BLACK);
 
-		//自分(black)　←ここを更新
-		PerceptronProcessor myProcessor = new PerceptronProcessor();
+		// 自分(black) ←ここを更新
+		SampleProcessor myProcessor = new SampleProcessor();
 		Piece piece = Piece.BLACK;
 
-		//相手(white)　←ここを更新
+		// 相手(white) ←ここを更新
 		TableProcessor opponentProcessor = new TableProcessor();
 		Piece opponentPiece = Piece.WHITE;
 
@@ -33,10 +33,11 @@ public class Standalone {
 
 		while (testBoard.hasEnablePositions(piece) || testBoard.hasEnablePositions(opponentPiece)) {
 
-			//自分の手を置く
+			// 自分の手を置く
 			if (testBoard.hasEnablePositions(piece)) {
 
 				Position myPosition = myProcessor.nextPosition(testBoard, piece, 30000);
+				System.out.println(myPosition);
 				testBoard.putPiece(myPosition, piece);
 
 				System.out.println(testBoard);
