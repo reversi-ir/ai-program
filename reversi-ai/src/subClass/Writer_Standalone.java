@@ -15,7 +15,6 @@ import jp.takedarts.reversi.Position;
  */
 public class Writer_Standalone {
 	public static void main(String[] args) {
-
 		
 		try {
 
