@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
+
 /**
  * 棋譜用メインクラス
  * @author 1722549
@@ -15,15 +16,13 @@ import jp.takedarts.reversi.Position;
  */
 public class Writer_Standalone {
 	public static void main(String[] args) {
-		
-		long start=System.currentTimeMillis();
+
+		long start = System.currentTimeMillis();
 		try {
 
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", true);
+			FileWriter fw = new FileWriter("C:\\log\\log.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
-
-			
 
 			Board testBoard = new Board();
 
@@ -43,12 +42,11 @@ public class Writer_Standalone {
 			Writer_Random opponentProcessor = new Writer_Random();
 			Piece opponentPiece = Piece.WHITE;
 
-
-			for (int test = 1; test <= 1; test++) { //test:対戦回数
+			for (int test = 1; test <= 30; test++) { //test:対戦回数
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
-				System.out.println("test:"+test);
+				System.out.println("test:" + test);
 				to = System.currentTimeMillis();
 
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -58,11 +56,11 @@ public class Writer_Standalone {
 
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
 						playBoard.putPiece(myPosition, piece);
-						
+
 						//ログ出力
 						pw.print("B,");
-						pw.print(myPosition.getX()+","+myPosition.getY()+",");
-						pw.print(myProcessor.getValue()+",");
+						pw.print(myPosition.getX() + "," + myPosition.getY() + ",");
+						pw.print(myProcessor.getValue() + ",");
 
 					} else if (!playBoard.hasEnablePositions(piece)) {
 						//TODO パスの際の挙動あれば追記
@@ -72,30 +70,26 @@ public class Writer_Standalone {
 
 						Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece, 30000);
 						playBoard.putPiece(opponentPosition, opponentPiece);
-						
+
 						//ログ出力
 						pw.print("W,");
-						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+",");
-						pw.print(opponentProcessor.getValue()+",");
+						pw.print(opponentPosition.getX() + "," + opponentPosition.getY() + ",");
+						pw.print(opponentProcessor.getValue() + ",");
 
 					} else if (!playBoard.hasEnablePositions(opponentPiece)) {
 
 						//TODO パスの際の挙動あれば追記
 
-
 					}
 
 				}
 
-
 				time = System.currentTimeMillis() - to;
-
-
 
 				playBoard = new Board(testBoard.getBoard());
 				pw.print("\n");
-				long end=System.currentTimeMillis();
-				System.out.println(start-end);
+				long end = System.currentTimeMillis();
+				System.out.println(start - end);
 			}
 
 			//ファイルに書き出す
