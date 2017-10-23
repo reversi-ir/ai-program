@@ -8,6 +8,7 @@ import jp.takedarts.reversi.Position;
 
 public class Writer_Random {
 	
+	
 	/**
 	   * 乱数を発生させるオブジェクト。
 	   */
