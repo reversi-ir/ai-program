@@ -21,8 +21,8 @@ public class ReversiPerceptron {
 	public double ReversiPerceptronCreate(Board board) {
 
 		// 多層パーセプトロンの作成
-		MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 8, 1);
-		return EvaluationValueCalculation(8, 1, board, mlp);
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
+		return EvaluationValueCalculation(120, 1, board, mlp);
 
 	}
 

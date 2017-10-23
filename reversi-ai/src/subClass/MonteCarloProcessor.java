@@ -64,15 +64,15 @@ public class MonteCarloProcessor extends Processor {
 		// 相手の石の色
 		Piece opponentPiece = Piece.opposite(piece);
 		try {
-
 			// 出力先を作成する
+
 			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result_monte.csv",
 					true);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
 			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			pw.print("自分の駒数(置く前)");
+			pw.print("自分の駒数（置く前）");
 			pw.print(",");
 			pw.print("相手の駒数");
 			pw.print(",");
@@ -171,13 +171,13 @@ public class MonteCarloProcessor extends Processor {
 					// プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
 					//value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-					 int countPiece = playBoard.countPiece(piece);
-					 int countOpponentPiece = playBoard.countPiece(opponentPiece);
+					int countPiece = playBoard.countPiece(piece);
+					int countOpponentPiece = playBoard.countPiece(opponentPiece);
 
 					// プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-					 if (countPiece > countOpponentPiece) {
-					 value += 1;
-					 }
+					if (countPiece > countOpponentPiece) {
+						value += 1;
+					}
 
 					playBoard = new Board(nextBoard.getBoard());
 
@@ -222,8 +222,10 @@ public class MonteCarloProcessor extends Processor {
 			for (int r = 0; r < count; r++) {
 
 				pw.print("\"(" + positions[r][0] + "," + positions[r][1] + ")\"" + "：" + winCount[r]);
+
 				if (r != count - 1) {
 					pw.print(",");
+
 				}
 
 			}
