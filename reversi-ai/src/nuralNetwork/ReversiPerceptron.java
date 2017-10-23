@@ -36,11 +36,11 @@ public class ReversiPerceptron {
 	public double EvaluationValueCalculation(int middleNumber, int outputNumber, Board board,
 			MultiLayerPerceptron mlp) {
 
-		double[] in = null; // 盤面を保持する配列
+		float[] in = null; // 盤面を保持する配列
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
-		double[] h = new double[middleNumber]; // 中間層の出力
-		double[] o = new double[outputNumber]; // 出力層の出力
+		float[] h = new float[middleNumber]; // 中間層の出力
+		float[] o = new float[outputNumber]; // 出力層の出力
 
 		// 盤面の状態を取得
 		BoardValue = board.getBoardString();
@@ -49,10 +49,10 @@ public class ReversiPerceptron {
 		BoardValueArry = BoardValue.split(",", 0);
 
 		// double型の配列へ変換
-		in = new double[BoardValueArry.length];
+		in = new float[BoardValueArry.length];
 
 		for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-			in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]) / 10;
+			in[intCnt] = Float.parseFloat(BoardValueArry[intCnt]) / 10;
 		}
 
 		// 出力値を推定：中間層の出力計算

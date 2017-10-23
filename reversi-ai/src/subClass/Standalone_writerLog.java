@@ -18,7 +18,7 @@ public class Standalone_writerLog {
 			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", false);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			
+
 
 			Board testBoard = new Board();
 
@@ -35,7 +35,7 @@ public class Standalone_writerLog {
 			Piece piece = Piece.BLACK;
 
 			//相手(white)　←ここを更新
-			Random_Writer opponentProcessor = new Random_Writer();
+			Writer_Random opponentProcessor = new Writer_Random();
 			Piece opponentPiece = Piece.WHITE;
 
 
@@ -53,7 +53,7 @@ public class Standalone_writerLog {
 
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
 						playBoard.putPiece(myPosition, piece);
-						
+
 						//ログ出力
 						pw.print("B,[");
 						pw.print(myPosition.getX()+","+myPosition.getY()+"],");
@@ -67,7 +67,7 @@ public class Standalone_writerLog {
 
 						Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece, 30000);
 						playBoard.putPiece(opponentPosition, opponentPiece);
-						
+
 						//ログ出力
 						pw.print("W,[");
 						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+"],");
