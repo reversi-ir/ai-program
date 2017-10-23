@@ -166,8 +166,6 @@ class MultiLayerPerceptron {
 			outputNeurons[i] = new Neuron(middle, i);
 		}
 
-		// 確認メッセージ
-		// System.out.println("[init] " + this);
 	}
 
 	/**
