@@ -192,7 +192,7 @@ public class AIProcessor
 	 */
 	@Override
 	public String getName() {
-		return "チームB MasterProgram";
+		return "チームB";
 	}
 
 }
