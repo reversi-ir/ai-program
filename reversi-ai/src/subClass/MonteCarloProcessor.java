@@ -103,7 +103,7 @@ public class MonteCarloProcessor extends Processor {
 				int value = 0;
 
 				// 次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 250; s++) {
+				for (int s = 0; s < 1000; s++) {
 
 					// 1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
