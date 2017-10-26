@@ -15,15 +15,15 @@ import jp.takedarts.reversi.Position;
  */
 public class Writer_Standalone {
 	public static void main(String[] args) {
-		
+
 		long start=System.currentTimeMillis();
 		try {
 
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", true);
+			FileWriter fw = new FileWriter("C:\\tmp\\log\\log.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			
+
 
 			Board testBoard = new Board();
 
@@ -44,7 +44,7 @@ public class Writer_Standalone {
 			Piece opponentPiece = Piece.WHITE;
 
 
-			for (int test = 1; test <= 1; test++) { //test:対戦回数
+			for (int test = 1; test <= 20; test++) { //test:対戦回数
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
@@ -58,7 +58,7 @@ public class Writer_Standalone {
 
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
 						playBoard.putPiece(myPosition, piece);
-						
+
 						//ログ出力
 						pw.print("B,");
 						pw.print(myPosition.getX()+","+myPosition.getY()+",");
@@ -72,7 +72,7 @@ public class Writer_Standalone {
 
 						Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece, 30000);
 						playBoard.putPiece(opponentPosition, opponentPiece);
-						
+
 						//ログ出力
 						pw.print("W,");
 						pw.print(opponentPosition.getX()+","+opponentPosition.getY()+",");
