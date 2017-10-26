@@ -32,6 +32,7 @@ public class TestPerceptron {
 
 		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
 
+
 		String[] csvAll;
 		List<Integer> xPosition = new ArrayList<Integer>();
 		List<Integer> yPosition = new ArrayList<Integer>();
