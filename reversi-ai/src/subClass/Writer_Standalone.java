@@ -44,7 +44,7 @@ public class Writer_Standalone {
 			Piece opponentPiece = Piece.WHITE;
 
 
-			for (int test = 1; test <= 100; test++) { //test:対戦回数
+			for (int test = 1; test <= 20; test++) { //test:対戦回数
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
