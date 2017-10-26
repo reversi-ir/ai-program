@@ -28,7 +28,7 @@ public class TableProcessor extends Processor {
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
-		int value = 0;
+		int value = -100;
 		int x = -1;
 		int y = -1;
 
