@@ -37,7 +37,7 @@ public class Standalone {
 			if (testBoard.hasEnablePositions(piece)) {
 
 				Position myPosition = myProcessor.nextPosition(testBoard, piece, 30000);
-				System.out.println(myPosition);
+				// System.out.println(myPosition);
 				testBoard.putPiece(myPosition, piece);
 
 				System.out.println(testBoard);
