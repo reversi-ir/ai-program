@@ -293,23 +293,8 @@ class MultiLayerPerceptron {
 					middleNeurons[j].learn(delta, in);
 				}
 
-				// 再度出力
-				// 出力値を推定：中間層の出力計算
-				// for (int j = 0; j < middleNumber; j++) {
-				// h[j] = middleNeurons[j].outputMiddle(in);
-				// }
-
-				// 出力値を推定：出力層の出力計算
-				// for (int j = 0; j < outputNumber; j++) {
-				// o[j] = outputNeurons[j].output(h);
-				// }
-
 			}
 		}
-
-		// すべての教師データで正解を出すか
-		// 収束限度回数を超えた場合に終了
-		// System.out.println("[finish] " + this);
 
 		// 結合加重をCSVファイルへ出力する。
 		fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
