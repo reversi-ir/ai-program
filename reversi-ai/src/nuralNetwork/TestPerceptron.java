@@ -32,7 +32,6 @@ public class TestPerceptron {
 
 		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
 
-
 		String[] csvAll;
 		List<Integer> xPosition = new ArrayList<Integer>();
 		List<Integer> yPosition = new ArrayList<Integer>();
@@ -296,14 +295,14 @@ class MultiLayerPerceptron {
 
 				// 再度出力
 				// 出力値を推定：中間層の出力計算
-				//for (int j = 0; j < middleNumber; j++) {
-					//h[j] = middleNeurons[j].outputMiddle(in);
-				//}
+				// for (int j = 0; j < middleNumber; j++) {
+				// h[j] = middleNeurons[j].outputMiddle(in);
+				// }
 
 				// 出力値を推定：出力層の出力計算
-				//for (int j = 0; j < outputNumber; j++) {
-					//o[j] = outputNeurons[j].output(h);
-				//}
+				// for (int j = 0; j < outputNumber; j++) {
+				// o[j] = outputNeurons[j].output(h);
+				// }
 
 			}
 		}

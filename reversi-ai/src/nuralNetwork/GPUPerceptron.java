@@ -255,8 +255,10 @@ class MultiLayerPerceptron_GPU {
 						delta = delta * -1;
 					}
 
-					// 学習
+					// 学習パラメーターセット
 					outputNeurons[j].learn(delta, h);
+
+					//GPU実行
 					outputNeurons[j].execute();
 
 				}
@@ -296,23 +298,8 @@ class MultiLayerPerceptron_GPU {
 					middleNeurons[j].learn(delta, in);
 				}
 
-				// 再度出力
-				// 出力値を推定：中間層の出力計算
-				for (int j = 0; j < middleNumber; j++) {
-					h[j] = middleNeurons[j].outputMiddle(in);
-				}
-
-				// 出力値を推定：出力層の出力計算
-				for (int j = 0; j < outputNumber; j++) {
-					o[j] = outputNeurons[j].output(h);
-				}
-
 			}
 		}
-
-		// すべての教師データで正解を出すか
-		// 収束限度回数を超えた場合に終了
-		// System.out.println("[finish] " + this);
 
 		// 結合加重をCSVファイルへ出力する。
 		fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle_GPU.csv", false);
@@ -323,11 +310,13 @@ class MultiLayerPerceptron_GPU {
 		// 入力→中間時の結合加重を出力
 		for (Neuron n : middleNeurons) {
 			pwMiddle.print(n);
+			n.dispose();
 		}
 
 		// 中間→出力の結合加重を出力
 		for (Neuron n : outputNeurons) {
 			pwoutPut.print(n);
+			n.dispose();
 		}
 
 		// 出力
