@@ -44,11 +44,12 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			//black　←ここを更新
-			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
+			PerceptronProcessor opponentProcessor = new PerceptronProcessor();
 			Piece piece = Piece.BLACK;
 
 			//white　←ここを更新
-			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
+			RandomProcessor myProcessor = new RandomProcessor();
+
 			Piece opponentPiece = Piece.WHITE;
 
 			//System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
