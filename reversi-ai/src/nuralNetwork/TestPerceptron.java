@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Logger;
 
 import jp.takedarts.reversi.Board;
@@ -364,7 +363,7 @@ class MultiLayerPerceptron {
 		 */
 		public Neuron(int inputNeuronNum, int middleNeuronNum) {
 			// 変数初期化
-			Random r = new Random();
+			//Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new float[inputNeuronNum];
 			//this.threshold = r.nextFloat(); // 閾値をランダムに生成
