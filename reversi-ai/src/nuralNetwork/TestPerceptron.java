@@ -367,7 +367,7 @@ class MultiLayerPerceptron {
 			Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new float[inputNeuronNum];
-			this.threshold = r.nextFloat(); // 閾値をランダムに生成
+			//this.threshold = r.nextFloat(); // 閾値をランダムに生成
 			String[] middleWeightsAll = null;
 			String[] outputWeightsAll = null;
 
@@ -423,7 +423,7 @@ class MultiLayerPerceptron {
 					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
 				}
 
-			} else if (inputNeuronNum == 80) {
+			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
 				}
