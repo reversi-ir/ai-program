@@ -53,11 +53,12 @@ public class AlphaBetaLylarTwo {
 							pervalueJudge = reversiPerceptron.ReversiPerceptronCreate(boardcal);
 							// System.out.println("pervalueJudge"+pervalueJudge);
 
-							if ((pervalueSecond != 1) && (pervalueJudge >= pervalueSecond)) {
+							if ((pervalueSecond != 10) && (pervalueJudge >= pervalueSecond)) {
 								loop1 = false;
 								loop2 = false;
 								break loop1;
 							}
+							System.out.println("pervalueThird" + pervalueJudge);
 
 							// より評価値の高い値で更新していく
 							if (pervalueThird < pervalueJudge) {
@@ -73,7 +74,6 @@ public class AlphaBetaLylarTwo {
 
 				loop1 = true;
 
-				// System.out.println("pervalueSecond"+pervalueSecond);
 				// System.out.println("pervalueThird" + pervalueThird);
 				// System.out.println("pervalueThird"+pervalueThird);
 
@@ -85,10 +85,11 @@ public class AlphaBetaLylarTwo {
 				// System.out.println("pervalueSecond下段"+pervalueSecond);
 
 				tryBoard = playBoard2;
+				System.out.println("pervalueSecond" + pervalueSecond);
 
 			}
 		}
-		// System.out.println("あああ" + pervalueSecond);
+		System.out.println("bbb" + pervalueSecond);
 
 		return pervalueSecond;
 

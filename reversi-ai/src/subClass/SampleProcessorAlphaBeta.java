@@ -47,7 +47,7 @@ public class SampleProcessorAlphaBeta extends Processor {
 				next_board.putPiece(i, j, piece);
 
 				// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
-				AlphaBeta alphaBeta = new AlphaBeta();
+				AlphaBetaLylarTwo alphaBeta = new AlphaBetaLylarTwo();
 				arg = alphaBeta._getMaxValue(next_board, piece);
 
 				System.out.println(arg);

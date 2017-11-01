@@ -87,7 +87,7 @@ public class AlphaBeta {
 
 			}
 		}
-
+		System.out.println("aaa" + pervalueSecond);
 		return pervalueSecond;
 
 	}
