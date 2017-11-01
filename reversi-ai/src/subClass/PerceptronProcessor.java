@@ -27,6 +27,8 @@ public class PerceptronProcessor extends Processor {
 		int x = -1;
 		int y = -1;
 
+		ReversiPerceptron reversiPerceptron =new ReversiPerceptron();
+
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 
@@ -40,9 +42,7 @@ public class PerceptronProcessor extends Processor {
 
 				next_board.putPiece(i, j, piece);
 
-				ReversiPerceptron reversiPerceptron =new ReversiPerceptron();
-
-				value=reversiPerceptron.ReversiPerceptronCreate(next_board);
+				value=reversiPerceptron.ReversiPerceptronCreate(next_board,piece);
 
 				// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
 				if (value > max) {

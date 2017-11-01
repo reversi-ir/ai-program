@@ -1,6 +1,7 @@
 package nuralNetwork;
 
 import jp.takedarts.reversi.Board;
+import jp.takedarts.reversi.Piece;
 
 public class ReversiPerceptron {
 	/**
@@ -9,8 +10,13 @@ public class ReversiPerceptron {
 	 * @author Kamata
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		new ReversiPerceptron();
+
+	// 多層パーセプトロン
+	MultiLayerPerceptron mlp;
+
+	// コンストラクタ
+	public ReversiPerceptron() {
+		this.mlp = new MultiLayerPerceptron(64, 120, 1);
 	}
 
 	/**
@@ -18,10 +24,17 @@ public class ReversiPerceptron {
 	 *
 	 * @return
 	 */
-	public double ReversiPerceptronCreate(Board board) {
+	public double ReversiPerceptronCreate(Board board, Piece piece) {
 
-		// 多層パーセプトロンの作成
-		MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
+		double answer;
+
+		// 評価値計算
+		answer = EvaluationValueCalculation(120, 1, board, mlp);
+
+		if (piece.equals(Piece.WHITE)) {
+			answer = answer * -1;
+		}
+
 		return EvaluationValueCalculation(120, 1, board, mlp);
 
 	}

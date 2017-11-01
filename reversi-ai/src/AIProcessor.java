@@ -3,9 +3,21 @@ import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
 import jp.takedarts.reversi.Processor;
-import nuralNetwork.ReversiPerceptron;
+import subClass.AlphaBeta;
 
+/**
+ * Reversi人工知能のサンプルプログラム。
+ *
+ * @author Nakanishi
+ */
 public class AIProcessor extends Processor {
+
+	// コンストラクタ
+	AlphaBeta alphaBeta;
+
+	public AIProcessor() {
+		this.alphaBeta = new AlphaBeta();
+	}
 
 	/**
 	 * 手番が来たときに、次の手を決定するメソッド。
@@ -21,41 +33,47 @@ public class AIProcessor extends Processor {
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
-		double value = -100;
-		double max = -100;
 		int x = -1;
 		int y = -1;
+		double arg = -1000;
+		double finalValue = -1000;
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-
 				// 置けるかどうかを確認し、置けないのなら何もしない
 				if (!board.isEnablePosition(i, j, piece)) {
 					continue;
 				}
 
-				// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く
+				// 候補手をコンソールに出力
+				System.out.println(i + "," + j);
+
+				// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
 				Board next_board = new Board(board.getBoard());
 
 				next_board.putPiece(i, j, piece);
 
-				ReversiPerceptron reversiPerceptron =new ReversiPerceptron();
+				// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
+				arg = alphaBeta._getMaxValue(next_board, piece);
 
-				value=reversiPerceptron.ReversiPerceptronCreate(next_board);
+				System.out.println(arg);
 
 				// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
-				if (value > max) {
-					max = value;
+				if (arg > finalValue) {
 					x = i;
 					y = j;
+
+					finalValue = arg;
+
 				}
+
+				/**
+				 * else if((arg<=finalValue)&&(arg == -1)) { x = i; y = j; }
+				 */
+
 			}
 		}
-
-		// 置く場所をログに出力
-		log(String.format("next -> (%d, %d) : %f", x, y, max));
-		System.out.println("評価値：" + max);
-
+		System.out.println("最終評価値は" + finalValue);
 		// 置く場所をPositionオブジェクトに変換して返す
 		return new Position(x, y);
 	}
@@ -67,7 +85,6 @@ public class AIProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "ニューラルネットワークによる評価値を使ったプログラム";
+		return "AlphaBeta+ニューラルネットワーク";
 	}
-
 }
