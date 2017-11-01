@@ -76,23 +76,20 @@ public class AlphaBeta {
 				// System.out.println("pervalueThird" + pervalueThird);
 				// System.out.println("pervalueThird"+pervalueThird);
 
-				if ((pervalueSecond > pervalueThird)&&(loop2)) {
+				if ((pervalueSecond > pervalueThird) && (loop2)) {
 					// System.out.println("pervalueThird"+pervalueThird);
 
 					pervalueSecond = pervalueThird;
 				}
-				 //System.out.println("pervalueSecond下段"+pervalueSecond);
-
+				// System.out.println("pervalueSecond下段"+pervalueSecond);
 
 				tryBoard = playBoard2;
 
 			}
 		}
-		//System.out.println("あああ" + pervalueSecond);
 
 		return pervalueSecond;
 
 	}
-
 
 }

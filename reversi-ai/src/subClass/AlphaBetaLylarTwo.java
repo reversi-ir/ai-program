@@ -24,7 +24,7 @@ public class AlphaBetaLylarTwo {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 
-				// 置けるかどうかを確認し、置けないのなら何もしない(２手目)
+				// 置けるかどうかを確認し、置けないのなら何もしない(4手目)
 				if (!tryBoard.isEnablePosition(i, j, enemy)) {
 					continue;
 				}
@@ -40,14 +40,14 @@ public class AlphaBetaLylarTwo {
 					for (int k = 0; k < 8; k++) {
 						for (int l = 0; l < 8; l++) {
 
-							// 置けるかどうかを確認し、置けないのなら何もしない（３手目）
+							// 置けるかどうかを確認し、置けないのなら何もしない（5手目）
 							if (!playBoard1.isEnablePosition(k, l, piece)) {
 								continue;
 							}
+							// 末端
 							playBoard1.putPiece(k, l, piece);
 
 							Board boardcal = new Board(playBoard1.getBoard());
-
 
 							// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
 							pervalueJudge = reversiPerceptron.ReversiPerceptronCreate(boardcal);
@@ -77,23 +77,21 @@ public class AlphaBetaLylarTwo {
 				// System.out.println("pervalueThird" + pervalueThird);
 				// System.out.println("pervalueThird"+pervalueThird);
 
-				if ((pervalueSecond > pervalueThird)&&(loop2)) {
+				if ((pervalueSecond > pervalueThird) && (loop2)) {
 					// System.out.println("pervalueThird"+pervalueThird);
 
 					pervalueSecond = pervalueThird;
 				}
-				 //System.out.println("pervalueSecond下段"+pervalueSecond);
-
+				// System.out.println("pervalueSecond下段"+pervalueSecond);
 
 				tryBoard = playBoard2;
 
 			}
 		}
-		//System.out.println("あああ" + pervalueSecond);
+		// System.out.println("あああ" + pervalueSecond);
 
 		return pervalueSecond;
 
 	}
-
 
 }

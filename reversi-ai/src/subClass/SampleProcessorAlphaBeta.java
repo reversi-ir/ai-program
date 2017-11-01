@@ -61,19 +61,16 @@ public class SampleProcessorAlphaBeta extends Processor {
 
 				}
 
-				/**else if((arg<=finalValue)&&(arg == -1)) {
-					x = i;
-					y = j;
-				}
-				*/
+				/**
+				 * else if((arg<=finalValue)&&(arg == -1)) { x = i; y = j; }
+				 */
 
 			}
 		}
-		System.out.println("最終評価値は"+finalValue);
+		System.out.println("最終評価値は" + finalValue);
 		// 置く場所をPositionオブジェクトに変換して返す
 		return new Position(x, y);
 	}
-
 
 	/**
 	 * この人工知能の名前を返す。
@@ -82,6 +79,6 @@ public class SampleProcessorAlphaBeta extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "AI+MinMax";
+		return "AI+AlphaBeta";
 	}
 }
