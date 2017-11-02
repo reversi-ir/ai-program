@@ -136,15 +136,15 @@ public class AIProcessor
 				}
 
 				//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-				//	    		value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
+					    		value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
 
-				int countPiece = playBoard.countPiece(piece);
-				int countOpponentPiece = playBoard.countPiece(opponentPiece);
-
-				//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-				if (countPiece > countOpponentPiece) {
-					value += 1;
-				}
+//				int countPiece = playBoard.countPiece(piece);
+//				int countOpponentPiece = playBoard.countPiece(opponentPiece);
+//
+//				//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
+//				if (countPiece > countOpponentPiece) {
+//					value += 1;
+//				}
 				//	    		System.out.println(s);
 				//	    		System.out.println(value);
 

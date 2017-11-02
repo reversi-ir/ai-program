@@ -42,7 +42,7 @@ public class Writer_Standalone {
 			Writer_Random opponentProcessor = new Writer_Random();
 			Piece opponentPiece = Piece.WHITE;
 
-			for (int test = 1; test <= 30; test++) { //test:対戦回数
+			for (int test = 1; test <= 100; test++) { //test:対戦回数
 				long to; //処理時間を所持
 				long time; //実行時間を所持
 
