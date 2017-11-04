@@ -121,7 +121,7 @@ public class TestPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final float MAX_GAP = 0.0005f; // 出力値で許容する誤差の最大値
+	protected static final float MAX_GAP = 0.005f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -212,11 +212,11 @@ class MultiLayerPerceptron {
 			in = new float[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt]) / 10;
+				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt])*0.1f;
 			}
 
 			// 答えの設定
-			ans = answer.get(num) * 0.01f;
+			ans = answer.get(num) *0.01f;
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 
@@ -453,14 +453,14 @@ class MultiLayerPerceptron {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
 				}
-
+				//閾値の設定
 				this.threshold=Float.parseFloat(middlethreshold [middleNeuronNum]);
 
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
 				}
-
+				//閾値の設定
 				this.threshold=Float.parseFloat(outputthreshold [middleNeuronNum]);
 			}
 
