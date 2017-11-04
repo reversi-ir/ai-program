@@ -236,7 +236,7 @@ class MultiLayerPerceptron {
 
 				{
 					// 出力層ニューロンの学習定数δを計算
-					// float delta = (ans - o[j]) * o[j] * (0.1d - o[j]);
+					//delta = (ans - o[j]) * o[j] * (0.1f - o[j]);
 					delta = (float) (0.5f * Math.pow((ans - o[j]), 2));
 
 					// 教師データとの誤差が十分小さい場合は次の処理へ
@@ -284,7 +284,7 @@ class MultiLayerPerceptron {
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
 					}
 					delta = (float) (h[j] * (1.0d - h[j]) * sumDelta);
-					// delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
+					//delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
 
 					if (ans < h[j]) {
 						delta = delta * -1;
@@ -505,7 +505,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 活性化関数を適用して、出力値を計算
-			float out = activationReLU(sum);
+			float out = activationtanh(sum);
 
 			return out;
 		}

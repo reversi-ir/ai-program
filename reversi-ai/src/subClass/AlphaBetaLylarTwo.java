@@ -38,7 +38,7 @@ public class AlphaBetaLylarTwo {
 				playBoard1 = new Board(tryBoard.getBoard());
 				playBoard3 = new Board(tryBoard.getBoard());
 
-				//pervalueThird = -100;
+				pervalueThird = -100;
 
 				loop1: if (loop1) {
 					for (int k = 0; k < 8; k++) {
