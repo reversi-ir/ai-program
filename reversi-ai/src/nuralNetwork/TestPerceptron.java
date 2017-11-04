@@ -366,7 +366,7 @@ class MultiLayerPerceptron {
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
 		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.1f; // 学習係数η
+		protected float eater = 0.05f; // 学習係数η
 
 		/**
 		 * 初期化
@@ -505,7 +505,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 活性化関数を適用して、出力値を計算
-			float out = activationtanh(sum);
+			float out = activationReLU(sum);
 
 			return out;
 		}
