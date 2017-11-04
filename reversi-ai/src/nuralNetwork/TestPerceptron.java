@@ -49,9 +49,9 @@ public class TestPerceptron {
 			// System.setOut(out);
 
 			// 教師データの指定
-			// String answerFileName = System.getProperty("user.dir") + "/" +
-			// "test.ggf.csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
+			//String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
+			String answerFileName =
+			"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
 			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
@@ -120,7 +120,7 @@ public class TestPerceptron {
  */
 class MultiLayerPerceptron {
 	// 定数
-	protected static final int MAX_TRIAL = 100000; // 最大試行回数
+	protected static final int MAX_TRIAL = 10000; // 最大試行回数
 	protected static final float MAX_GAP = 0.0005f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
@@ -186,7 +186,7 @@ class MultiLayerPerceptron {
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
 		boolean successFlg = true;// 成功フラグ
 		int succeed = 0; // 連続正解回数を初期化
-		float delta = -1000f;
+		float delta = 0;
 
 		// 初期盤面の作成
 		Board testBoard = new Board();
@@ -284,6 +284,7 @@ class MultiLayerPerceptron {
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
 					}
 					delta = (float) (h[j] * (1.0d - h[j]) * sumDelta);
+					// delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
 
 					if (ans < h[j]) {
 						delta = delta * -1;
@@ -306,9 +307,23 @@ class MultiLayerPerceptron {
 			pwMiddle.print(n);
 		}
 
+		pwMiddle.println();
+
+		// 入力→中間時の閾値を出力
+		for (Neuron n : middleNeurons) {
+			pwMiddle.print(n.threshold + " , ");
+		}
+
 		// 中間→出力の結合加重を出力
 		for (Neuron n : outputNeurons) {
 			pwoutPut.print(n);
+		}
+
+		pwoutPut.println();
+
+		// 中間→出力の閾値を出力
+		for (Neuron n : outputNeurons) {
+			pwoutPut.print(n.threshold + " , ");
 		}
 
 		// 出力
@@ -363,30 +378,39 @@ class MultiLayerPerceptron {
 		 */
 		public Neuron(int inputNeuronNum, int middleNeuronNum) {
 			// 変数初期化
-			//Random r = new Random();
+			// Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new float[inputNeuronNum];
-			//this.threshold = r.nextFloat(); // 閾値をランダムに生成
+			// this.threshold = r.nextFloat(); // 閾値をランダムに生成
 			String[] middleWeightsAll = null;
+			String[] middlethreshold = null;
 			String[] outputWeightsAll = null;
+			String[] outputthreshold = null;
 
 			// 中間層結合加重ファイルの読み込み
 			try {
 				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
-
 				BufferedReader brMiddle = new BufferedReader(frMiddle);
+
 				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
 				FileReader frOutput = new FileReader(OutputFileName);
 				BufferedReader brOutput = new BufferedReader(frOutput);
 
 				// 読み込んだファイルを１行ずつ処理する
 				String lineMiddle;
+				lineMiddle = brMiddle.readLine();
 
-				while ((lineMiddle = brMiddle.readLine()) != null) {
-					// 区切り文字","で分割する
-					middleWeightsAll = lineMiddle.split(",", 0); // 行をカンマ区切りで配列に変換
+				for (int i = 0; i < 2; i++) {
+					if (i == 0) {
+						// 区切り文字","で分割する
+						middleWeightsAll = lineMiddle.split(",", 0); // 行をカンマ区切りで配列に変換
+					} else {
+						// 区切り文字","で分割する
+						middlethreshold = lineMiddle.split(",", 0); // 行をカンマ区切りで配列に変換
+					}
 
+					lineMiddle = brMiddle.readLine();
 				}
 
 				// 中間層結合加重ファイル読み込み終了
@@ -396,9 +420,17 @@ class MultiLayerPerceptron {
 
 				// 読み込んだファイルを１行ずつ処理する
 				String lineOutput;
-				while ((lineOutput = brOutput.readLine()) != null) {
-					// 区切り文字","で分割する
-					outputWeightsAll = lineOutput.split(",", 0); // 行をカンマ区切りで配列に変換
+				lineOutput = brOutput.readLine();
+
+				for (int i = 0; i < 2; i++) {
+					if (i == 0) {
+						// 区切り文字","で分割する
+						outputWeightsAll = lineOutput.split(",", 0); // 行をカンマ区切りで配列に変換
+					} else {
+						// 区切り文字","で分割する
+						outputthreshold = lineOutput.split(",", 0); // 行をカンマ区切りで配列に変換
+					}
+					lineOutput = brOutput.readLine();
 				}
 
 				// 出力層結合加重ファイル読み込み終了
@@ -422,10 +454,14 @@ class MultiLayerPerceptron {
 					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
 				}
 
+				this.threshold=Float.parseFloat(middlethreshold [middleNeuronNum]);
+
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
 				}
+
+				this.threshold=Float.parseFloat(outputthreshold [middleNeuronNum]);
 			}
 
 		}
@@ -447,6 +483,9 @@ class MultiLayerPerceptron {
 				// バックプロパゲーション学習
 				inputWeights[i] += eater * delta * inputValues[i];
 			}
+
+			// 閾値の更新
+			threshold -= eater * delta;
 
 		}
 

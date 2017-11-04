@@ -12,6 +12,7 @@ import subClass.AlphaBeta;
  */
 public class AIProcessor extends Processor {
 
+
 	// コンストラクタ
 	AlphaBeta alphaBeta;
 
