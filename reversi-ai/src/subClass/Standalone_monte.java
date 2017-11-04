@@ -44,7 +44,7 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			//black　←ここを更新
-			AlphaBetaProcessor myProcessor = new AlphaBetaProcessor();
+			PerceptronProcessor myProcessor = new  PerceptronProcessor();
 			Piece piece = Piece.BLACK;
 
 			//white　←ここを更新
