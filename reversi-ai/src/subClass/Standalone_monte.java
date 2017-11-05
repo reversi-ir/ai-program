@@ -61,12 +61,12 @@ public class Standalone_monte {
 
 			pw.print("AI(BLACK)：");
 			pw.print(",");
-			pw.print(opponentProcessor.getName());
+			pw.print(myProcessor.getName());
 			pw.println();
 
 			pw.print("AI(WHITE)：");
 			pw.print(",");
-			pw.print(myProcessor.getName());
+			pw.print(opponentProcessor.getName());
 
 			pw.println();
 
