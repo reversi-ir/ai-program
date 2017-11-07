@@ -44,10 +44,6 @@ public class AlphaBeta {
 						for (int k = 0; k < 8; k++) {
 							for (int l = 0; l < 8; l++) {
 
-								if (pervalueSecond == -0.0552826002240181) {
-									System.out.println("aaa");
-								}
-
 								// 置けるかどうかを確認し、置けないのなら何もしない（３手目）
 								if (playBoard1.isEnablePosition(k, l, piece)) {
 

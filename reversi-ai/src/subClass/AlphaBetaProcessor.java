@@ -69,7 +69,6 @@ public class AlphaBetaProcessor extends Processor {
 						y = j;
 
 						finalValue = arg;
-
 					}
 
 				} else {

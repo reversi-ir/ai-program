@@ -83,6 +83,7 @@ public class AlphaBetaLylarTwo {
 				loop2 = true;
 			}
 		}
+
 		return pervalueSecond;
 
 	}
