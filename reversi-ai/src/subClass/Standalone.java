@@ -17,11 +17,11 @@ public class Standalone {
 		testBoard.putPiece(4, 3, Piece.BLACK);
 
 		// 自分(black) ←ここを更新
-		PerceptronProcessor myProcessor = new  PerceptronProcessor();
+		AlphaBetaProcessor myProcessor = new AlphaBetaProcessor();
 		Piece piece = Piece.BLACK;
 
 		// 相手(white) ←ここを更新
-		MinMaxProcessor opponentProcessor = new  MinMaxProcessor();
+		MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 		Piece opponentPiece = Piece.WHITE;
 
 		System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
@@ -59,7 +59,6 @@ public class Standalone {
 
 				System.out.println(opponentPiece + "：　パス");
 				System.out.println("");
-
 
 			}
 
