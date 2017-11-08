@@ -31,6 +31,7 @@ public class ConvertAnswer {
 
 			// 教師データの指定
 			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
+			//String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
