@@ -5,9 +5,10 @@ import jp.takedarts.reversi.Piece;
 
 public class AlphaBeta {
 
-	//コンストラクタ
+	// コンストラクタ
 	AlphaBetaLylarTwo alphaBetaLylarTwo;
-	public AlphaBeta(){
+
+	public AlphaBeta() {
 		this.alphaBetaLylarTwo = new AlphaBetaLylarTwo();
 	}
 
@@ -15,10 +16,10 @@ public class AlphaBeta {
 
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
 		Piece enemy = Piece.opposite(piece);
-		Board playBoard1 = board;
-		Board playBoard2 = board;
-		Board playBoard3 = board;
-		Board tryBoard = board;
+		Board playBoard1;
+		Board playBoard2 = new Board(board.getBoard());
+		Board playBoard3;
+		Board tryBoard = new Board(board.getBoard());
 		boolean loop1 = true;
 		boolean loop2 = true;
 		double pervalueThird = -100;
@@ -29,69 +30,63 @@ public class AlphaBeta {
 			for (int j = 0; j < 8; j++) {
 
 				// 置けるかどうかを確認し、置けないのなら何もしない(２手目)
-				if (!tryBoard.isEnablePosition(i, j, enemy)) {
-					continue;
-				}
-				tryBoard.putPiece(i, j, enemy);
+				if (tryBoard.isEnablePosition(i, j, enemy)) {
 
-				// 相手が置いた盤面を別変数に格納
-				playBoard1 = new Board(tryBoard.getBoard());
-				playBoard3 = new Board(tryBoard.getBoard());
+					tryBoard.putPiece(i, j, enemy);
 
-				pervalueThird = -100;
+					// 相手が置いた盤面を別変数に格納
+					playBoard1 = new Board(tryBoard.getBoard());
+					playBoard3 = new Board(tryBoard.getBoard());
 
-				loop1: if (loop1) {
-					for (int k = 0; k < 8; k++) {
-						for (int l = 0; l < 8; l++) {
+					pervalueThird = -100;
 
-							// 置けるかどうかを確認し、置けないのなら何もしない（３手目）
-							if (!playBoard1.isEnablePosition(k, l, piece)) {
-								continue;
+					loop1: if (loop1) {
+						for (int k = 0; k < 8; k++) {
+							for (int l = 0; l < 8; l++) {
+
+								// 置けるかどうかを確認し、置けないのなら何もしない（３手目）
+								if (playBoard1.isEnablePosition(k, l, piece)) {
+
+									playBoard1.putPiece(k, l, piece);
+
+									Board boardcal = new Board(playBoard1.getBoard());
+
+									// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
+									pervalueJudge = alphaBetaLylarTwo._getMaxValue(boardcal, piece);
+
+									if ((pervalueSecond != 100) && (pervalueJudge >= pervalueSecond)) {
+										loop1 = false;
+										loop2 = false;
+										break loop1;
+									}
+
+									// より評価値の高い値で更新していく
+									if (pervalueThird < pervalueJudge) {
+
+										pervalueThird = pervalueJudge;
+
+									}
+									playBoard1 = new Board(playBoard3.getBoard());
+								}
 							}
-							playBoard1.putPiece(k, l, piece);
-
-							Board boardcal = new Board(playBoard1.getBoard());
-
-							// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
-							pervalueJudge = alphaBetaLylarTwo._getMaxValue(boardcal, piece);
-							// System.out.println("pervalueJudge"+pervalueJudge);
-
-							if ((pervalueSecond != 100) && (pervalueJudge >= pervalueSecond)) {
-								loop1 = false;
-								loop2 = false;
-								break loop1;
-							}
-
-							// より評価値の高い値で更新していく
-							if (pervalueThird < pervalueJudge) {
-								// System.out.println("pervalueJudge" + pervalueJudge);
-
-								pervalueThird = pervalueJudge;
-								// System.out.println("pervalueThird"+pervalueThird);
-							}
-							playBoard1 = playBoard3;
 						}
 					}
+
+					loop1 = true;
+
+					if ((pervalueSecond > pervalueThird) && (loop2)) {
+
+						pervalueSecond = pervalueThird;
+					}
+
+					System.out.println("pervalueSecond" + pervalueSecond);
+
+					tryBoard = new Board(playBoard2.getBoard());
 				}
-
-				loop1 = true;
-
-				// System.out.println("pervalueSecond"+pervalueSecond);
-				// System.out.println("pervalueThird" + pervalueThird);
-				// System.out.println("pervalueThird"+pervalueThird);
-
-				if ((pervalueSecond > pervalueThird) && (loop2)) {
-					// System.out.println("pervalueThird"+pervalueThird);
-
-					pervalueSecond = pervalueThird;
-				}
-				// System.out.println("pervalueSecond下段"+pervalueSecond);
-
-				tryBoard = playBoard2;
-
+				loop2 = true;
 			}
+
 		}
-		//System.out.println("aaa" + pervalueSecond);
 		return pervalueSecond;
 
 	}

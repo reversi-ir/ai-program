@@ -3,22 +3,24 @@ package subClass;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import nuralNetwork.ReversiPerceptron;
+
 public class AlphaBetaLylarTwo {
 
-	//コンストラクタ
+	// コンストラクタ
 	ReversiPerceptron reversiPerceptron;
-		public AlphaBetaLylarTwo(){
-			this.reversiPerceptron = new ReversiPerceptron();
-		}
+
+	public AlphaBetaLylarTwo() {
+		this.reversiPerceptron = new ReversiPerceptron();
+	}
 
 	public double _getMaxValue(Board board, Piece piece) {
 
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
 		Piece enemy = Piece.opposite(piece);
-		Board playBoard1 = board;
-		Board playBoard2 = board;
-		Board playBoard3 = board;
-		Board tryBoard = board;
+		Board playBoard4;
+		Board playBoard5 = new Board(board.getBoard());
+		Board playBoard6;
+		Board tryBoardLylarTwo = new Board(board.getBoard());
 		boolean loop1 = true;
 		boolean loop2 = true;
 		double pervalueThird = -100;
@@ -29,71 +31,58 @@ public class AlphaBetaLylarTwo {
 			for (int j = 0; j < 8; j++) {
 
 				// 置けるかどうかを確認し、置けないのなら何もしない(4手目)
-				if (!tryBoard.isEnablePosition(i, j, enemy)) {
-					continue;
-				}
-				tryBoard.putPiece(i, j, enemy);
+				if (tryBoardLylarTwo.isEnablePosition(i, j, enemy)) {
 
-				// 相手が置いた盤面を別変数に格納
-				playBoard1 = new Board(tryBoard.getBoard());
-				playBoard3 = new Board(tryBoard.getBoard());
+					tryBoardLylarTwo.putPiece(i, j, enemy);
 
-				pervalueThird = -100;
+					// 相手が置いた盤面を別変数に格納
+					playBoard4 = new Board(tryBoardLylarTwo.getBoard());
+					playBoard6 = new Board(tryBoardLylarTwo.getBoard());
 
-				loop1: if (loop1) {
-					for (int k = 0; k < 8; k++) {
-						for (int l = 0; l < 8; l++) {
+					pervalueThird = -100;
 
-							// 置けるかどうかを確認し、置けないのなら何もしない（5手目）
-							if (!playBoard1.isEnablePosition(k, l, piece)) {
-								continue;
+					loop1: if (loop1) {
+						for (int k = 0; k < 8; k++) {
+							for (int l = 0; l < 8; l++) {
+
+								// 置けるかどうかを確認し、置けないのなら何もしない（5手目）
+								if (playBoard4.isEnablePosition(k, l, piece)) {
+
+									// 末端
+									playBoard4.putPiece(k, l, piece);
+
+									Board boardcal = new Board(playBoard4.getBoard());
+
+									// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
+									pervalueJudge = reversiPerceptron.ReversiPerceptronCreate(boardcal, piece);
+
+									if ((pervalueSecond != 100) && (pervalueJudge >= pervalueSecond)) {
+										loop1 = false;
+										loop2 = false;
+										break loop1;
+									}
+
+									// より評価値の高い値で更新していく
+									if (pervalueThird < pervalueJudge) {
+										pervalueThird = pervalueJudge;
+									}
+									playBoard4 = new Board(playBoard6.getBoard());
+								}
 							}
-							// 末端
-							playBoard1.putPiece(k, l, piece);
-
-							Board boardcal = new Board(playBoard1.getBoard());
-
-							// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
-							pervalueJudge = reversiPerceptron.ReversiPerceptronCreate(boardcal,piece);
-							// System.out.println("pervalueJudge"+pervalueJudge);
-
-							if ((pervalueSecond != 100) && (pervalueJudge >= pervalueSecond)) {
-								loop1 = false;
-								loop2 = false;
-								break loop1;
-							}
-							//System.out.println("pervalueThird" + pervalueJudge);
-
-							// より評価値の高い値で更新していく
-							if (pervalueThird < pervalueJudge) {
-								// System.out.println("pervalueJudge" + pervalueJudge);
-
-								pervalueThird = pervalueJudge;
-								// System.out.println("pervalueThird"+pervalueThird);
-							}
-							playBoard1 = playBoard3;
 						}
 					}
+
+					loop1 = true;
+
+					if ((pervalueSecond > pervalueThird) && (loop2)) {
+
+						pervalueSecond = pervalueThird;
+					}
+					tryBoardLylarTwo = new Board(playBoard5.getBoard());
 				}
-
-				loop1 = true;
-
-				// System.out.println("pervalueThird" + pervalueThird);
-				// System.out.println("pervalueThird"+pervalueThird);
-
-				if ((pervalueSecond > pervalueThird) && (loop2)) {
-					// System.out.println("pervalueThird"+pervalueThird);
-
-					pervalueSecond = pervalueThird;
-				}
-				// System.out.println("pervalueSecond下段"+pervalueSecond);
-
-				tryBoard = playBoard2;
-				//System.out.println("pervalueSecond" + pervalueSecond);
-
+				loop2 = true;
 			}
 		}
-		//System.out.println("bbb" + pervalueSecond);
 
 		return pervalueSecond;
 

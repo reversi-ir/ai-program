@@ -14,9 +14,11 @@ public class AlphaBetaProcessor extends Processor {
 
 	// コンストラクタ
 	AlphaBeta alphaBeta;
+	AlphaBetaLylarTwo alphaBetaLylarTwo;
 
 	public AlphaBetaProcessor() {
 		this.alphaBeta = new AlphaBeta();
+		this.alphaBetaLylarTwo = new AlphaBetaLylarTwo();
 	}
 
 	/**
@@ -48,23 +50,46 @@ public class AlphaBetaProcessor extends Processor {
 				// 候補手をコンソールに出力
 				System.out.println(i + "," + j);
 
-				// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
-				Board next_board = new Board(board.getBoard());
+				// 残りの置けるマス目が５マス以下の場合
+				if (board.countPiece(piece) + board.countPiece(Piece.opposite(piece)) >= 60) {
 
-				next_board.putPiece(i, j, piece);
+					// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
+					Board next_board = new Board(board.getBoard());
 
-				// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
-				arg = alphaBeta._getMaxValue(next_board, piece);
+					next_board.putPiece(i, j, piece);
 
-				System.out.println(arg);
+					// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
+					arg = alphaBetaLylarTwo._getMaxValue(next_board, piece);
 
-				// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
-				if (arg > finalValue) {
-					x = i;
-					y = j;
+					System.out.println(arg);
 
-					finalValue = arg;
+					// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
+					if (arg > finalValue) {
+						x = i;
+						y = j;
 
+						finalValue = arg;
+					}
+
+				} else {
+					// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
+					Board next_board = new Board(board.getBoard());
+
+					next_board.putPiece(i, j, piece);
+
+					// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
+					arg = alphaBeta._getMaxValue(next_board, piece);
+
+					System.out.println(arg);
+
+					// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
+					if (arg > finalValue) {
+						x = i;
+						y = j;
+
+						finalValue = arg;
+
+					}
 				}
 
 				/**
@@ -85,6 +110,6 @@ public class AlphaBetaProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "AlphaBeta+ニューラルネットワーク";
+		return "AlphaBeta+ニューラルネットワークv1.1";
 	}
 }
