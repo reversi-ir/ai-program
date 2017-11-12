@@ -17,11 +17,11 @@ public class Standalone {
 		testBoard.putPiece(4, 3, Piece.BLACK);
 
 		// 自分(black) ←ここを更新
-		MonteCarloProcessor myProcessor = new MonteCarloProcessor();
+		TestMinMaxProcessor myProcessor = new TestMinMaxProcessor();
 		Piece piece = Piece.BLACK;
 
 		// 相手(white) ←ここを更新
-		MinMaxProcessor opponentProcessor = new MinMaxProcessor();
+		MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
 		Piece opponentPiece = Piece.WHITE;
 
 		System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());

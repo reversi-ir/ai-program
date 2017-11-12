@@ -123,7 +123,7 @@ public class TestPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final float MAX_GAP = 0.0001f; // 出力値で許容する誤差の最大値
+	protected static final float MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;

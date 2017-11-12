@@ -10,7 +10,7 @@ import jp.takedarts.reversi.Processor;
  *
  * @author Atsushi TAKEDA
  */
-public class MinMaxProcessor extends Processor {
+public class TestMinMaxProcessor extends Processor {
 	/**
 	 * 評価テーブル。
 	 */
@@ -49,8 +49,8 @@ public class MinMaxProcessor extends Processor {
 
 				next_board.putPiece(i, j, piece);
 
-				// 駒を置いた後の盤面に、さらに相手が評価テーブルに基づいて駒を置いた場合の最大評価値を計算する
-				int value = _getMaxValue(next_board, piece);
+				// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最小評価値を計算する
+				int value = _getMinValue(next_board, piece);
 
 				// ログに出力
 				log(String.format("(%d, %d) : %d", i, j, value));
@@ -61,7 +61,6 @@ public class MinMaxProcessor extends Processor {
 					x = i;
 					y = j;
 				}
-
 			}
 		}
 
@@ -79,7 +78,7 @@ public class MinMaxProcessor extends Processor {
 	 *            盤面の状態
 	 * @param piece
 	 *            自分の駒
-	 * @return value 評価値
+	 * @return 評価値
 	 */
 	private int _getValue(Board board, Piece piece) {
 		int value = 0;
@@ -98,90 +97,42 @@ public class MinMaxProcessor extends Processor {
 	}
 
 	/**
-	 * 相手の駒を置いたときの最大評価値を返す。
+	 * 相手の駒を置いたときの最小評価値を返す。
 	 *
 	 * @param board
 	 *            盤面の状態
 	 * @param piece
 	 *            自分の駒
-	 * @return maxvalue 最大評価値
+	 * @return 最小評価値
 	 */
-
-	private int _getMaxValue(Board board, Piece piece) {
-		// 次に置ける場所の中で、もっとも評価の高い場所を探す
+	private int _getMinValue(Board board, Piece piece) {
+		// 相手の駒を置ける場所に駒を置いてみて、その中の評価値の最小値を求める
 		Piece enemy = Piece.opposite(piece);
-		int value = 0;
-		int x = -1;
-		int y = -1;
+		int min = Integer.MAX_VALUE;
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if (board.isEnablePosition(i, j, enemy) && _VALUES[i][j] > value) {
-					value = _VALUES[i][j];
-					x = i;
-					y = j;
+				// 駒を置けない場合は何もしない
+				if (!board.isEnablePosition(i, j, enemy)) {
+					continue;
 				}
-			}
-		}
-		// 盤面の状態をコピーして、相手の駒を置く
-		Board next_board = new Board(board.getBoard());
 
-		next_board.putPiece(x, y, enemy);
+				// 盤面の状態をコピーして、相手の駒を置く
+				Board next_board = new Board(board.getBoard());
 
-		// 予想した相手の手をログに出力
-		log(String.format("enemy -> (%d, %d)", x, y));
+				next_board.putPiece(i, j, enemy);
 
-		// 駒を置いた後の盤面を評価し、最大の評価値を判定する
-		int maxvalue = _getValue(next_board, piece);
+				// 駒を置いた後の盤面を評価し、最小の評価値を判定する
+				int value = _getValue(next_board, piece);
 
-		return maxvalue;
-	}
-
-	private Position _getMaxPosition(Board board, Piece piece) {
-		// 次に置ける場所の中で、もっとも評価の高い場所を探す
-		Piece enemy = Piece.opposite(piece);
-		int value = 0;
-		int x = -1;
-		int y = -1;
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (board.isEnablePosition(i, j, enemy) && _VALUES[i][j] > value) {
-					value = _VALUES[i][j];
-					x = i;
-					y = j;
+				if (min > value) {
+					min = value;
 				}
 			}
 		}
 
-		return new Position(x, y);
+		return min;
 	}
-
-	// // 相手の駒を置ける場所に駒を置いてみて、その中の評価値の最小値を求める
-	// Piece enemy = Piece.opposite(piece);
-	// int min = Integer.MAX_VALUE;
-	//
-	// for (int i = 0; i < 8; i++) {
-	// for (int j = 0; j < 8; j++) {
-	// // 駒を置けない場合は何もしない
-	// if (!board.isEnablePosition(i, j, enemy)) {
-	// continue;
-	// }
-	//
-	// // 盤面の状態をコピーして、相手の駒を置く
-	// Board next_board = new Board(board.getBoard());
-	//
-	// next_board.putPiece(i, j, enemy);
-	//
-	// // 駒を置いた後の盤面を評価し、最小の評価値を判定する
-	// int value = _getValue(next_board, piece);
-	//
-	// if (min > value) {
-	// min = value;
-	// }
-	// }
-	// }
-	//
 
 	/**
 	 * この人工知能の名前を返す。
@@ -190,6 +141,6 @@ public class MinMaxProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "改良版MIN-MAX法を用いたプログラム5";
+		return "MIN-MAX法を用いたプログラム";
 	}
 }
