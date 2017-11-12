@@ -43,17 +43,18 @@ public class TestPerceptron {
 		try {
 
 			// 標準出力をファイルに関連付ける
+
 			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
 			PrintWriter logOut = new PrintWriter(fileName);
 			// PrintStream out = new PrintStream(fileName);
 			// System.setOut(out);
 
 			// 教師データの指定
-			//String answerFileName = System.getProperty("user.dir") + "/" + "test.ggf.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844.csv";
 			//String answerFileName =
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
-			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
+			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -122,7 +123,7 @@ public class TestPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final float MAX_GAP = 0.005f; // 出力値で許容する誤差の最大値
+	protected static final float MAX_GAP = 0.0001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -217,7 +218,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 答えの設定
-			ans = answer.get(num) *0.01f;
+			ans = answer.get(num) *0.0001f;
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 
@@ -367,7 +368,7 @@ class MultiLayerPerceptron {
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
 		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.05f; // 学習係数η
+		protected float eater = 0.5f; // 学習係数η
 
 		/**
 		 * 初期化

@@ -15,7 +15,7 @@ public class Standalone_writerLog {
 		try {
 
 			//出力先を作成する
-			FileWriter fw = new FileWriter("C:\\ocero\\log\\log.csv", false);
+			FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/" + "log.csv", false);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
 
@@ -60,6 +60,7 @@ public class Standalone_writerLog {
 						pw.print(myProcessor.getValue()+",");
 
 					} else if (!playBoard.hasEnablePositions(piece)) {
+						
 						//TODO パスの際の挙動あれば追記
 					}
 
