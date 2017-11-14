@@ -11,7 +11,7 @@ import java.util.List;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
-import subClass.TestMinMaxProcessor;
+import subClass.MonteCarloProcessor;
 
 public class ConvertAnswer {
 
@@ -76,11 +76,11 @@ public class ConvertAnswer {
 					int value = 0;
 
 					// 自分(black) ←ここを更新
-					TestMinMaxProcessor myProcessor = new TestMinMaxProcessor();
+					MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 					Piece piece = Piece.BLACK;
 
 					// 相手(white) ←ここを更新
-					TestMinMaxProcessor opponentProcessor = new TestMinMaxProcessor();
+					MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
 					Piece opponentPiece = Piece.WHITE;
 
 					Board playBoard = new Board();
