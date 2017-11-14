@@ -50,11 +50,11 @@ public class TestPerceptron {
 			// System.setOut(out);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844.csv";
+			//String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844.csv";
 			//String answerFileName =
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
-			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher.csv";
+			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -218,7 +218,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 答えの設定
-			ans = answer.get(num) *0.0001f;
+			ans = answer.get(num) *0.001f;
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 
@@ -368,7 +368,8 @@ class MultiLayerPerceptron {
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
 		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.5f; // 学習係数η
+		protected float eater = 0.20f; // 学習係数η
+
 
 		/**
 		 * 初期化

@@ -11,7 +11,7 @@ import java.util.List;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
-import subClass.MinMaxProcessor;
+import subClass.TestMinMaxProcessor;
 
 public class ConvertAnswer {
 
@@ -44,7 +44,7 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_280844.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv", true);
 			// fw = new
 			// FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv",
 			// true);
@@ -76,11 +76,11 @@ public class ConvertAnswer {
 					int value = 0;
 
 					// 自分(black) ←ここを更新
-					MinMaxProcessor myProcessor = new MinMaxProcessor();
+					TestMinMaxProcessor myProcessor = new TestMinMaxProcessor();
 					Piece piece = Piece.BLACK;
 
 					// 相手(white) ←ここを更新
-					MinMaxProcessor opponentProcessor = new MinMaxProcessor();
+					TestMinMaxProcessor opponentProcessor = new TestMinMaxProcessor();
 					Piece opponentPiece = Piece.WHITE;
 
 					Board playBoard = new Board();
