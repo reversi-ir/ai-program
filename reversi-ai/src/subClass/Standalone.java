@@ -17,7 +17,7 @@ public class Standalone {
 		testBoard.putPiece(4, 3, Piece.BLACK);
 
 		// 自分(black) ←ここを更新
-		PerceptronProcessor myProcessor = new  PerceptronProcessor();
+		AlphaBetaProcessor myProcessor = new  AlphaBetaProcessor();
 		Piece piece = Piece.BLACK;
 
 		// 相手(white) ←ここを更新
