@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/p2p-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/reversi-1.0b.jar"/>
 	<classpathentry kind="lib" path="lib/takedarts-util-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/aparapi.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/reversi-1.0b.jar"/>
+	<classpathentry kind="lib" path="data"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

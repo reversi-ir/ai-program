@@ -40,7 +40,7 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			// fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
+			//fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
 			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			while ((line = br.readLine()) != null) {
@@ -91,20 +91,21 @@ public class ConvertAnswer {
 						pw.print(yPosition.get(outNum) + ",");
 
 						if (outNum < answer.size() - 1) {
-							// pw.print(value + ",");
+							//pw.print(value + ",");
 							pw.print(answer.get(outNum) + ",");
 						} else {
-							// pw.print(value);
+							//pw.print(value);
 							pw.print(answer.get(outNum));
 						}
 					}
-					pw.println("");
 				}
 
 				xPosition = new ArrayList<Integer>();
 				yPosition = new ArrayList<Integer>();
 				color = new ArrayList<String>();
 				answer = new ArrayList<Double>();
+
+				pw.println("");
 
 			}
 
