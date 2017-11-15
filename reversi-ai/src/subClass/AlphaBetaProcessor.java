@@ -1,5 +1,7 @@
 package subClass;
 
+
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
@@ -39,6 +41,7 @@ public class AlphaBetaProcessor extends Processor {
 		int y = -1;
 		double arg = -1000;
 		double finalValue = -1000;
+		Bean bean = null;
 		boolean lastWord = false;
 		boolean enemyCantPut = true;
 
@@ -55,17 +58,18 @@ public class AlphaBetaProcessor extends Processor {
 				// 残りの置けるマス目が５マス以下の場合
 				if (board.countPiece(piece) + board.countPiece(Piece.opposite(piece)) >= 60) {
 
+					// 残りの置けるマス目が２マス以下の場合
 					if (board.countPiece(piece) + board.countPiece(Piece.opposite(piece)) >= 62) {
 
 						Board next_board = new Board(board.getBoard());
 
 						next_board.putPiece(i, j, piece);
 
-						Board next_boar1 = new Board(next_board.getBoard());
+						Board next_board1 = new Board(next_board.getBoard());
 
 						for (int k = 0; k < 8; k++) {
 							for (int l = 0; l < 8; l++) {
-								if (!next_boar1.isEnablePosition(k, l, Piece.opposite(piece))) {
+								if (!next_board1.isEnablePosition(k, l, Piece.opposite(piece))) {
 									continue;
 								}
 
@@ -73,12 +77,11 @@ public class AlphaBetaProcessor extends Processor {
 
 								next_board2.putPiece(k, l, Piece.opposite(piece));
 
-								enemyCantPut=false;
+								enemyCantPut = false;
 
 								Board next_board3 = new Board(next_board2.getBoard());
 
-								int tempMaxTotalCount = 64
-										- next_board3.countPiece(Piece.opposite(piece));
+								int tempMaxTotalCount = 64 - next_board3.countPiece(Piece.opposite(piece));
 
 								if (finalValue < tempMaxTotalCount) {
 									finalValue = tempMaxTotalCount;
@@ -88,16 +91,18 @@ public class AlphaBetaProcessor extends Processor {
 							}
 						}
 
-						if(enemyCantPut) {
+						if (enemyCantPut) {
 
-							Board next_board2 = new Board(next_board.getBoard());
+							Board next_board2 = new Board(next_board1.getBoard());
 
-							next_board2.putPiece(i, j, piece);
+							// next_board2.putPiece(i, j, piece);
 
 							Board next_board3 = new Board(next_board2.getBoard());
-
-							finalValue = 63
-									- next_board3.countPiece(Piece.opposite(piece));
+							if (next_board3.countPiece(piece) + next_board3.countPiece(Piece.opposite(piece)) == 64) {
+								finalValue = 64 - next_board3.countPiece(Piece.opposite(piece));
+							} else {
+								finalValue = 63 - next_board3.countPiece(Piece.opposite(piece));
+							}
 							x = i;
 							y = j;
 						}
@@ -112,7 +117,7 @@ public class AlphaBetaProcessor extends Processor {
 						next_board.putPiece(i, j, piece);
 
 						// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
-						arg = alphaBetaLylarTwo._getMaxValue(next_board, piece);
+						bean = alphaBetaLylarTwo._getMaxValue(next_board, piece);
 
 						System.out.println(arg);
 						log(String.format("(%d, %d)に置いた時の評価値は%f", i, j, finalValue));
@@ -134,11 +139,17 @@ public class AlphaBetaProcessor extends Processor {
 					next_board.putPiece(i, j, piece);
 
 					// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
-					arg = alphaBeta._getMaxValue(next_board, piece);
+					bean = alphaBeta._getMaxValue(next_board, piece);
 
-					System.out.println(arg);
-					log(String.format("(%d, %d)に置いた時の評価値は%f", i, j, finalValue));
+					if (arg == -100) {
+						log(String.format("(%d, %d)時は自分がPASSする可能性の高いworstな手)", i, j));
+					} else if (arg == 100) {
+						log(String.format("(%d, %d)時は相手がPASSする可能性の高いbestな手)", i, j));
+					} else {
 
+						System.out.println(arg);
+						log(String.format("(%d, %d)に置いた時の評価値は%f", i, j, finalValue));
+					}
 					// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
 					if (arg > finalValue) {
 						x = i;
@@ -156,7 +167,7 @@ public class AlphaBetaProcessor extends Processor {
 			System.out.println("最多駒数は" + (int) finalValue);
 			log(String.format("next -> (%d, %d) : 最多駒数%d", x, y, (int) finalValue));
 		} else {
-			System.out.println("最評価値は" + finalValue);
+			System.out.println("最終評価値は" + finalValue);
 			log(String.format("next -> (%d, %d) : 最高評価値%f", x, y, finalValue));
 		}
 
