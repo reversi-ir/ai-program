@@ -98,11 +98,16 @@ public class AlphaBetaProcessor extends Processor {
 							// next_board2.putPiece(i, j, piece);
 
 							Board next_board3 = new Board(next_board2.getBoard());
+
 							if (next_board3.countPiece(piece) + next_board3.countPiece(Piece.opposite(piece)) == 64) {
 								finalValue = 64 - next_board3.countPiece(Piece.opposite(piece));
 							} else {
 								finalValue = 63 - next_board3.countPiece(Piece.opposite(piece));
 							}
+
+
+							finalValue = 63 - next_board3.countPiece(Piece.opposite(piece));
+
 							x = i;
 							y = j;
 						}
@@ -182,6 +187,6 @@ public class AlphaBetaProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "AlphaBeta+ニューラルネットワークv1.1";
+		return "AlphaBeta+NN v1.2";
 	}
 }
