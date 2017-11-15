@@ -12,7 +12,6 @@ import subClass.AlphaBeta;
  */
 public class AIProcessor extends Processor {
 
-
 	// コンストラクタ
 	AlphaBeta alphaBeta;
 
@@ -86,6 +85,6 @@ public class AIProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "AlphaBeta+ニューラルネットワーク";
+		return "AlphaBeta+NN v1.2";
 	}
 }
