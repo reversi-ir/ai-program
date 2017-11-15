@@ -73,12 +73,11 @@ public class AlphaBetaProcessor extends Processor {
 
 								next_board2.putPiece(k, l, Piece.opposite(piece));
 
-								enemyCantPut=false;
+								enemyCantPut = false;
 
 								Board next_board3 = new Board(next_board2.getBoard());
 
-								int tempMaxTotalCount = 64
-										- next_board3.countPiece(Piece.opposite(piece));
+								int tempMaxTotalCount = 64 - next_board3.countPiece(Piece.opposite(piece));
 
 								if (finalValue < tempMaxTotalCount) {
 									finalValue = tempMaxTotalCount;
@@ -88,7 +87,7 @@ public class AlphaBetaProcessor extends Processor {
 							}
 						}
 
-						if(enemyCantPut) {
+						if (enemyCantPut) {
 
 							Board next_board2 = new Board(next_board.getBoard());
 
@@ -96,8 +95,7 @@ public class AlphaBetaProcessor extends Processor {
 
 							Board next_board3 = new Board(next_board2.getBoard());
 
-							finalValue = 63
-									- next_board3.countPiece(Piece.opposite(piece));
+							finalValue = 63 - next_board3.countPiece(Piece.opposite(piece));
 							x = i;
 							y = j;
 						}
@@ -171,6 +169,6 @@ public class AlphaBetaProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "AlphaBeta+ニューラルネットワークv1.1";
+		return "AlphaBeta+NN v1.2";
 	}
 }
