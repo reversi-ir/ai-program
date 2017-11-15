@@ -60,7 +60,7 @@ public class PerceptronProcessor extends Processor {
 
 		// 置く場所をログに出力
 		log(String.format("next -> (%d, %d) : %f", x, y, max));
-		System.out.println("評価値：" + max);
+		// ystem.out.println("評価値：" + max);
 
 		// 置く場所をPositionオブジェクトに変換して返す
 		return new Position(x, y);
