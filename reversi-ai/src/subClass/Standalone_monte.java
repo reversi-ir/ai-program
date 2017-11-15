@@ -44,12 +44,11 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			//black　←ここを更新
-			PerceptronProcessor myProcessor = new  PerceptronProcessor();
+			MinMaxProcessor opponentProcessor = new MinMaxProcessor();
 			Piece piece = Piece.BLACK;
 
 			//white　←ここを更新
-			RandomProcessor opponentProcessor = new RandomProcessor();
-
+			MonteCarloProcessor myProcessor = new MonteCarloProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			//System.out.println("AI(BLACK)(自分)：　" + myProcessor.getName());
@@ -61,12 +60,12 @@ public class Standalone_monte {
 
 			pw.print("AI(BLACK)：");
 			pw.print(",");
-			pw.print(myProcessor.getName());
+			pw.print(opponentProcessor.getName());
 			pw.println();
 
 			pw.print("AI(WHITE)：");
 			pw.print(",");
-			pw.print(opponentProcessor.getName());
+			pw.print(myProcessor.getName());
 
 			pw.println();
 
@@ -99,7 +98,6 @@ public class Standalone_monte {
 					if (playBoard.hasEnablePositions(piece)) {
 
 						Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
-
 						playBoard.putPiece(myPosition, piece);
 
 						//System.out.println(playBoard);

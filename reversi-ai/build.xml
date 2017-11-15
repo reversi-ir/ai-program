@@ -3,7 +3,7 @@
   <!-- properties -->
   <property name="version" value="1.0" />
 
-  <property name="target.jar" value="reversi-ai-teamB.jar" />
+  <property name="target.jar" value="reversi-ai.jar" />
 
   <property name="build.dir" value="build" />
   <property name="src.dir" value="src" />

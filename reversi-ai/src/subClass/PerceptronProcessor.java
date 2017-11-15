@@ -8,13 +8,6 @@ import nuralNetwork.ReversiPerceptron;
 
 public class PerceptronProcessor extends Processor {
 
-	// コンストラクタ
-	ReversiPerceptron reversiPerceptron;
-
-	public PerceptronProcessor() {
-		this.reversiPerceptron = new ReversiPerceptron();
-	}
-
 	/**
 	 * 手番が来たときに、次の手を決定するメソッド。
 	 *
@@ -47,7 +40,9 @@ public class PerceptronProcessor extends Processor {
 
 				next_board.putPiece(i, j, piece);
 
-				value = reversiPerceptron.ReversiPerceptronCreate(next_board, piece);
+				ReversiPerceptron reversiPerceptron =new ReversiPerceptron();
+
+				value=reversiPerceptron.ReversiPerceptronCreate(next_board);
 
 				// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
 				if (value > max) {
@@ -60,7 +55,7 @@ public class PerceptronProcessor extends Processor {
 
 		// 置く場所をログに出力
 		log(String.format("next -> (%d, %d) : %f", x, y, max));
-		//ystem.out.println("評価値：" + max);
+		System.out.println("評価値：" + max);
 
 		// 置く場所をPositionオブジェクトに変換して返す
 		return new Position(x, y);
