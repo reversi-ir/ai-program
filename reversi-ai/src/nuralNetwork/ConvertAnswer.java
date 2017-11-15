@@ -10,6 +10,8 @@ import java.util.List;
 
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
+import jp.takedarts.reversi.Position;
+import subClass.MonteCarloProcessor;
 
 public class ConvertAnswer {
 
@@ -30,8 +32,9 @@ public class ConvertAnswer {
 		try {
 
 			// 教師データの指定
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
-			//String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
+			// String answerFileName =
+			// "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.ggf.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -41,8 +44,10 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			// fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher.csv", true);
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv", true);
+			// fw = new
+			// FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv",
+			// true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			while ((line = br.readLine()) != null) {
 
@@ -70,22 +75,111 @@ public class ConvertAnswer {
 					// 評価値（駒の最終獲得数）
 					int value = 0;
 
+					// 自分(black) ←ここを更新
+					MonteCarloProcessor myProcessor = new MonteCarloProcessor();
+					Piece piece = Piece.BLACK;
+
+					// 相手(white) ←ここを更新
+					MonteCarloProcessor opponentProcessor = new MonteCarloProcessor();
+					Piece opponentPiece = Piece.WHITE;
+
+					Board playBoard = new Board();
+
 					// 最終局面まで進める
 					for (int num = 0; num < answer.size(); num++) {
 
 						// 配列に格納した座標を盤面にセット
 						if (color.get(num).equals("B")) {
 							testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+							playBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+
+							while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
+
+								// 自分の手を置く
+								if (playBoard.hasEnablePositions(piece)) {
+
+									Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
+									playBoard.putPiece(myPosition, piece);
+
+								} else if (!playBoard.hasEnablePositions(piece)) {
+
+									// TODO パスの際の挙動あれば追記
+								}
+
+								if (playBoard.hasEnablePositions(opponentPiece)) {
+
+									Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece,
+											30000);
+									playBoard.putPiece(opponentPosition, opponentPiece);
+
+								} else if (!playBoard.hasEnablePositions(opponentPiece)) {
+
+									// TODO パスの際の挙動あれば追記
+
+								}
+
+							}
+
+							value = playBoard.countPiece(Piece.BLACK) - playBoard.countPiece(Piece.WHITE);
+
+							if (playBoard.countPiece(Piece.WHITE) == 0 || playBoard.countPiece(Piece.BLACK) == 0) {
+								value = value * 10;
+							}
+
+							// 評価値の設定
+							answer.set(num, (double) value);
+							playBoard = new Board(testBoard.getBoard());
+
 						} else {
 							testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+							playBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+
+							while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
+
+								// 自分の手を置く
+								if (playBoard.hasEnablePositions(piece)) {
+
+									Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
+									playBoard.putPiece(myPosition, piece);
+
+								} else if (!playBoard.hasEnablePositions(piece)) {
+
+									// TODO パスの際の挙動あれば追記
+								}
+
+								if (playBoard.hasEnablePositions(opponentPiece)) {
+
+									Position opponentPosition = opponentProcessor.nextPosition(playBoard, opponentPiece,
+											30000);
+									playBoard.putPiece(opponentPosition, opponentPiece);
+
+								} else if (!playBoard.hasEnablePositions(opponentPiece)) {
+
+									// TODO パスの際の挙動あれば追記
+
+								}
+
+							}
+
+							value = playBoard.countPiece(Piece.BLACK) - playBoard.countPiece(Piece.WHITE);
+							if (playBoard.countPiece(Piece.WHITE) == 0 || playBoard.countPiece(Piece.BLACK) == 0) {
+								value = value * 10;
+							}
+							// 評価値の設定
+							answer.set(num, (double) value);
+							playBoard = new Board(testBoard.getBoard());
+							;
 						}
+
 					}
 
 					// 評価値の設定
-					value = testBoard.countPiece(Piece.BLACK) - testBoard.countPiece(Piece.WHITE);
+					// value = testBoard.countPiece(Piece.BLACK) -
+					// testBoard.countPiece(Piece.WHITE);
 
 					// 配列の出力
 					for (int outNum = 0; outNum < answer.size(); outNum++) {
+
 
 						pw.print(color.get(outNum) + ",");
 						pw.print(xPosition.get(outNum) + ",");
