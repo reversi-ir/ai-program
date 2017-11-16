@@ -17,7 +17,7 @@ public class Standalone {
 		testBoard.putPiece(4, 3, Piece.BLACK);
 
 		// 自分(black) ←ここを更新
-		AlphaBetaProcessor myProcessor = new AlphaBetaProcessor();
+		AIProcessor myProcessor = new AIProcessor();
 		Piece piece = Piece.BLACK;
 
 		// 相手(white) ←ここを更新

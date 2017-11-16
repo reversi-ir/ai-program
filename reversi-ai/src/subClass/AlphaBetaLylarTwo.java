@@ -1,5 +1,7 @@
 package subClass;
 
+import java.util.ArrayList;
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import nuralNetwork.ReversiPerceptron;
@@ -13,7 +15,7 @@ public class AlphaBetaLylarTwo {
 		this.reversiPerceptron = new ReversiPerceptron();
 	}
 
-	public double _getMaxValue(Board board, Piece piece) {
+	public Bean _getMaxValue(Board board, Piece piece) {
 
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
 		Piece enemy = Piece.opposite(piece);
@@ -23,15 +25,21 @@ public class AlphaBetaLylarTwo {
 		Board tryBoardLylarTwo = new Board(board.getBoard());
 		boolean loop1 = true;
 		boolean loop2 = true;
+		boolean enemnycantputFlag = true;
 		double pervalueThird = -100;
 		double pervalueJudge = -100;
 		double pervalueSecond = 100;
+		ArrayList<String> messagesList = new ArrayList<String>();
+
+		Bean bean =new Bean();
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 
 				// 置けるかどうかを確認し、置けないのなら何もしない(4手目)
 				if (tryBoardLylarTwo.isEnablePosition(i, j, enemy)) {
+
+					enemnycantputFlag = false;
 
 					tryBoardLylarTwo.putPiece(i, j, enemy);
 
@@ -74,17 +82,33 @@ public class AlphaBetaLylarTwo {
 
 					loop1 = true;
 
-					if ((pervalueSecond > pervalueThird) && (loop2)) {
+					if ((pervalueSecond > pervalueThird) && (loop2)  && pervalueThird!=-100) {
 
 						pervalueSecond = pervalueThird;
 					}
+					if (pervalueSecond == 100 && !enemnycantputFlag) {
+						//System.out.println("暫定pervalueSecond" + "自分がpassする可能性が高い（worst）");
+						messagesList.add("暫定3手先の評価値>>" + "自分がpassする可能性が高い（worst）");
+						pervalueSecond=-100;
+					} else if (pervalueSecond == 100 && enemnycantputFlag) {
+						//System.out.println("暫定pervalueSecond" + "相手passする可能性の高い（best）");
+						messagesList.add("暫定3手先の評価値>>" + "相手passする可能性の高い（best）");
+						pervalueSecond=100;
+					}else if (pervalueSecond != 100 && pervalueSecond!=-100){
+						messagesList.add("暫定3手先の評価値>>" + pervalueSecond);
+					}
+
+
+
 					tryBoardLylarTwo = new Board(playBoard5.getBoard());
 				}
 				loop2 = true;
 			}
 		}
+		bean.setMessagesList(messagesList);
+		bean.setPervalueSecond(pervalueSecond);
 
-		return pervalueSecond;
+		return bean;
 
 	}
 

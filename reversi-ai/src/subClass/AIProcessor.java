@@ -1,3 +1,4 @@
+package subClass;
 
 import java.util.ArrayList;
 
@@ -5,9 +6,6 @@ import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
 import jp.takedarts.reversi.Processor;
-import subClass.AlphaBeta;
-import subClass.AlphaBetaLylarTwo;
-import subClass.Bean;
 
 /**
  * Reversi人工知能のサンプルプログラム。
@@ -114,23 +112,10 @@ public class AIProcessor extends Processor {
 
 						// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
 						bean = alphaBetaLylarTwo._getMaxValue(next_board, piece);
-						arg = bean.getPervalueSecond();
-						ArrayList<String> messagesList = bean.getMessagesList();
-
-						log(String.format("(%d, %d)", i, j));
-
-						for (String messages : messagesList) {
-							log(messages);
-						}
 
 						System.out.println(bean.getPervalueSecond());
-						if (finalValue == -1000) {
+						log(String.format("(%d, %d)に置いた時の評価値は%f", i, j, finalValue));
 
-							log(String.format("(%d, %d)までの最高評価値は%f", x, y, arg));
-
-						} else if(arg !=100){
-							log(String.format("(%d, %d)までの最高評価値は%f", x, y, finalValue));
-						}
 						// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
 						if (arg > finalValue) {
 							x = i;
@@ -157,17 +142,13 @@ public class AIProcessor extends Processor {
 					}
 
 					if (arg == -100) {
-						log(String.format("(%d, %d)は自分がPASSする可能性の高いworstな手", i, j));
+						log(String.format("(%d, %d)時は自分がPASSする可能性の高いworstな手)", i, j));
 					} else if (arg == 100) {
-						log(String.format("(%d, %d)は相手がPASSする可能性の高いbestな手", i, j));
+						log(String.format("(%d, %d)時は相手がPASSする可能性の高いbestな手)", i, j));
 					} else {
 
 						System.out.println(arg);
-						if (finalValue == -1000) {
-							log(String.format("(%d, %d)に置いた時点の最高評価値>>%f",i,j, arg));
-						} else if(finalValue !=-100) {
-							log(String.format("(%d, %d)に置いた時点の最高評価値>>%f", i, j, finalValue));
-						}
+						log(String.format("(%d, %d)に置いた時の評価値は%f", i, j, finalValue));
 					}
 					// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
 					if (arg > finalValue) {

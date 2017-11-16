@@ -1,5 +1,7 @@
 package subClass;
 
+import java.util.ArrayList;
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 
@@ -12,7 +14,7 @@ public class AlphaBeta {
 		this.alphaBetaLylarTwo = new AlphaBetaLylarTwo();
 	}
 
-	public double _getMaxValue(Board board, Piece piece) {
+	public Bean _getMaxValue(Board board, Piece piece) {
 
 		// 次に置ける場所の中で、もっとも評価の高い場所を探す
 		Piece enemy = Piece.opposite(piece);
@@ -22,15 +24,21 @@ public class AlphaBeta {
 		Board tryBoard = new Board(board.getBoard());
 		boolean loop1 = true;
 		boolean loop2 = true;
+		boolean enemnycantputFlag = true;
 		double pervalueThird = -100;
 		double pervalueJudge = -100;
 		double pervalueSecond = 100;
+		ArrayList<String> messagesList = new ArrayList<String>();
+
+		Bean bean = new Bean();
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 
 				// 置けるかどうかを確認し、置けないのなら何もしない(２手目)
 				if (tryBoard.isEnablePosition(i, j, enemy)) {
+
+					enemnycantputFlag = false;
 
 					tryBoard.putPiece(i, j, enemy);
 
@@ -52,7 +60,7 @@ public class AlphaBeta {
 									Board boardcal = new Board(playBoard1.getBoard());
 
 									// 自分が置いた後の盤面の評価値をニューラルネットワークにより算出
-									pervalueJudge = alphaBetaLylarTwo._getMaxValue(boardcal, piece);
+									pervalueJudge = alphaBetaLylarTwo._getMaxValue(boardcal, piece).getPervalueSecond();
 
 									if ((pervalueSecond != 100) && (pervalueJudge >= pervalueSecond)) {
 										loop1 = false;
@@ -74,20 +82,33 @@ public class AlphaBeta {
 
 					loop1 = true;
 
-					if ((pervalueSecond > pervalueThird) && (loop2)) {
+					if ((pervalueSecond > pervalueThird) && (loop2) && pervalueThird != -100) {
 
 						pervalueSecond = pervalueThird;
 					}
-
-					System.out.println("pervalueSecond" + pervalueSecond);
+					if (pervalueSecond == 100 && !enemnycantputFlag) {
+						System.out.println("暫定6手先の評価値>>" + "自分がpassする可能性が高い（worst）");
+						messagesList.add("暫定6手先の評価値>>" + "自分がpassする可能性が高い（worst）");
+						pervalueSecond = -100;
+					} else if (pervalueSecond == 100 && enemnycantputFlag) {
+						System.out.println("暫定6手先の評価値>>" + "相手passする可能性の高い（best）");
+						messagesList.add("暫定6手先の評価値>>" + "相手passする可能性の高い（best）");
+						pervalueSecond = 100;
+					} else if (pervalueSecond != 100 && pervalueSecond!=-100) {
+						System.out.println("暫定6手先の評価値>>" + pervalueSecond);
+						messagesList.add("暫定6手先の評価値>>" + pervalueSecond);
+					}
 
 					tryBoard = new Board(playBoard2.getBoard());
 				}
 				loop2 = true;
 			}
 
+			bean.setMessagesList(messagesList);
+			bean.setPervalueSecond(pervalueSecond);
+
 		}
-		return pervalueSecond;
+		return bean;
 
 	}
 
