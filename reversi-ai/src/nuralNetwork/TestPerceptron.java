@@ -370,7 +370,7 @@ class MultiLayerPerceptron {
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
 		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.20f; // 学習係数η
+		protected float eater = 0.2f; // 学習係数η
 
 
 		/**
