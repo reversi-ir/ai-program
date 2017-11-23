@@ -44,11 +44,11 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			// 自分(black) ←ここを更新
-			PerceptronProcessor myProcessor = new PerceptronProcessor();
+			AIProcessor myProcessor = new AIProcessor();
 			Piece piece = Piece.BLACK;
 
 			// 相手(white) ←ここを更新
-			RandomProcessor opponentProcessor = new RandomProcessor();
+			TableProcessor opponentProcessor = new TableProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			// System.out.println("AI(BLACK)(自分)： " + myProcessor.getName());
@@ -83,7 +83,7 @@ public class Standalone_monte {
 			// pw_board.print(testBoard);
 			// pw_board.println();
 
-			for (int test = 1; test <= 100; test++) { // test:対戦回数
+			for (int test = 1; test <= 10; test++) { // test:対戦回数
 
 				long to; // 処理時間を所持
 				long time; // 実行時間を所持
