@@ -56,7 +56,7 @@ public class TestPerceptron {
 			//String answerFileName =
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
 			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
-			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844.csv";
+			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
