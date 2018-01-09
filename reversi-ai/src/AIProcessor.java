@@ -1,188 +1,197 @@
-import java.util.Random;
+
+import java.util.ArrayList;
 
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
 import jp.takedarts.reversi.Processor;
+import subClass.AlphaBeta;
+import subClass.AlphaBetaLylarTwo;
+import subClass.Bean;
 
 /**
- * Reversi 原始モンテカルロ法プログラム
+ * Reversi人工知能のサンプルプログラム。
  *
- * @author IR 若手B-Team
+ * @author Nakanishi
  */
-public class AIProcessor
-		extends Processor {
+public class AIProcessor extends Processor {
 
-	/*
-	 * 乱数を発生させるオブジェクト。
-	 */
-
-	private Random _random = new Random(System.currentTimeMillis());
+	AlphaBeta alphaBeta = new AlphaBeta();
+	AlphaBetaLylarTwo alphaBetaLylarTwo = new AlphaBetaLylarTwo();
 
 	/**
-	 * 手番が来たときに、次の手を決定するメソッド。<br>
+	 * 手番が来たときに、次の手を決定するメソッド。
 	 *
-	 * @param board 盤面の状態
-	 * @param piece 自分が打つ駒
-	 * @param thinkingTime 思考時間
+	 * @param board
+	 *            盤面の状態
+	 * @param piece
+	 *            自分が打つ駒
+	 * @param thinkingTime
+	 *            思考時間
 	 * @return 次の手を置く場所
 	 */
 	@Override
-
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 
-		// 次に置ける場所の一覧を探す
-		int[][] positions = new int[64][2];
-		int count = 0;
+		int x = -1;
+		int y = -1;
+		double arg = -1000;
+		Bean bean = null;
+		double finalValue = -1000;
+		boolean lastWord = false;
+		boolean enemyCantPut = true;
 
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if (board.isEnablePosition(i, j, piece)) {
-					positions[count][0] = i;
-					positions[count][1] = j;
-					count++;
+				// 置けるかどうかを確認し、置けないのなら何もしない
+				if (!board.isEnablePosition(i, j, piece)) {
+					continue;
 				}
-			}
-		}
 
-		//それぞれの手で評価値（勝った回数or自分の石-相手の石の数）を格納
-		int[] winCount = new int[count];
+				// 候補手をコンソールに出力
+				System.out.println(i + "," + j);
 
-		//相手の石の色
-		Piece opponentPiece = Piece.opposite(piece);
+				// 残りの置けるマス目が５マス以下の場合
+				if (board.countPiece(piece) + board.countPiece(Piece.opposite(piece)) >= 60) {
 
-		//次に置ける場所全ての勝率を求める
-		for (int t = 0; t < count; t++) {
+					// 残りの置けるマス目が２マス以下の場合
+					if (board.countPiece(piece) + board.countPiece(Piece.opposite(piece)) >= 62) {
 
-			//次における場所に置いた想定の盤面
-			Board nextBoard = new Board(board.getBoard());
-			nextBoard.putPiece(positions[t][0], positions[t][1], piece);
+						Board next_board = new Board(board.getBoard());
 
-			//プレイアウトの結果を保持する盤面
-			Board playBoard = new Board(nextBoard.getBoard());
+						next_board.putPiece(i, j, piece);
 
-			//			//判定フラグ（次駒を置くのが自分か相手か(自分の場合:0 /相手の場合：1)）
-			//			int playFlag = 1;
+						Board next_board1 = new Board(next_board.getBoard());
 
-			//評価値（勝った回数or駒の最終獲得数）
-			int value = 0;
+						for (int k = 0; k < 8; k++) {
+							for (int l = 0; l < 8; l++) {
+								if (!next_board1.isEnablePosition(k, l, Piece.opposite(piece))) {
+									continue;
+								}
 
-			//次の一手を置いたと仮定し、その後1000回プレイアウト
-			for (int s = 0; s < 1000; s++) {
+								Board next_board2 = new Board(next_board.getBoard());
 
-				//1回プレイアウト(ランダム)
-				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
+								next_board2.putPiece(k, l, Piece.opposite(piece));
 
-					//相手ターン
-					if (playBoard.hasEnablePositions(opponentPiece)) {
+								enemyCantPut = false;
 
-						// 次に置ける場所の一覧を探す
-						int[][] opponentPositions = new int[64][2];
-						int opponentCount = 0;
+								Board next_board3 = new Board(next_board2.getBoard());
 
-						for (int p = 0; p < 8; p++) {
-							for (int q = 0; q < 8; q++) {
-								if (playBoard.isEnablePosition(p, q, opponentPiece)) {
-									opponentPositions[opponentCount][0] = p;
-									opponentPositions[opponentCount][1] = q;
-									opponentCount++;
+								int tempMaxTotalCount = 64 - next_board3.countPiece(Piece.opposite(piece));
 
+								if (finalValue < tempMaxTotalCount) {
+									finalValue = tempMaxTotalCount;
+									x = i;
+									y = j;
 								}
 							}
 						}
 
-						// 次に置く場所をランダムに決定する
-						Random opponentRandom = new Random();
-						int opponentIndex = opponentRandom.nextInt(opponentCount);
+						if (enemyCantPut) {
 
-						int a = opponentPositions[opponentIndex][0];
-						int b = opponentPositions[opponentIndex][1];
+							Board next_board2 = new Board(next_board1.getBoard());
 
-						playBoard.putPiece(a, b, opponentPiece);
-					}
+							// next_board2.putPiece(i, j, piece);
 
-					//自分のターン
-					if (playBoard.hasEnablePositions(piece)) {
-
-						//自分のターン
-
-						// 次に置ける場所の一覧を探す
-						int[][] myPositions = new int[64][2];
-						int myCount = 0;
-
-						for (int n = 0; n < 8; n++) {
-							for (int m = 0; m < 8; m++) {
-								if (playBoard.isEnablePosition(n, m, piece)) {
-									myPositions[myCount][0] = n;
-									myPositions[myCount][1] = m;
-									myCount++;
-
-								}
+							Board next_board3 = new Board(next_board2.getBoard());
+							if (next_board3.countPiece(piece) + next_board3.countPiece(Piece.opposite(piece)) == 64) {
+								finalValue = 64 - next_board3.countPiece(Piece.opposite(piece));
+							} else {
+								finalValue = 63 - next_board3.countPiece(Piece.opposite(piece));
 							}
+							x = i;
+							y = j;
 						}
 
-						// 次に置く場所をランダムに決定する
-						Random myRandom = new Random();
+						// 最後の手だったらlogの文言を「評価値」から「駒数」に変える。
+						lastWord = true;
+					} else {
 
-						int myIndex = myRandom.nextInt(myCount);
+						// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
+						Board next_board = new Board(board.getBoard());
 
-						int c = myPositions[myIndex][0];
-						int d = myPositions[myIndex][1];
+						next_board.putPiece(i, j, piece);
 
-						playBoard.putPiece(c, d, piece);
+						// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
+						bean = alphaBetaLylarTwo._getMaxValue(next_board, piece);
+						arg = bean.getPervalueSecond();
+						ArrayList<String> messagesList = bean.getMessagesList();
+
+						log(String.format("(%d, %d)", i, j));
+
+						for (String messages : messagesList) {
+							log(messages);
+						}
+
+						System.out.println(bean.getPervalueSecond());
+						if (finalValue == -1000) {
+
+							log(String.format("(%d, %d)までの最高評価値は%f", x, y, arg));
+
+						} else if(arg !=100){
+							log(String.format("(%d, %d)までの最高評価値は%f", x, y, finalValue));
+						}
+						// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
+						if (arg > finalValue) {
+							x = i;
+							y = j;
+
+							finalValue = arg;
+						}
 
 					}
 
+				} else {
+					// 同じ盤面を表すオブジェクトを作成し、自分の駒を置く(１手目)
+					Board next_board = new Board(board.getBoard());
+
+					next_board.putPiece(i, j, piece);
+
+					// 駒を置いた後の盤面に、さらに相手が駒を置いた場合の最大評価値を計算する
+					bean = alphaBeta._getMaxValue(next_board, piece);
+					arg = bean.getPervalueSecond();
+					ArrayList<String> messagesList = bean.getMessagesList();
+
+					for (String messages : messagesList) {
+						log(messages);
+					}
+
+					if (arg == -100) {
+						log(String.format("(%d, %d)は自分がPASSする可能性の高いworstな手", i, j));
+					} else if (arg == 100) {
+						log(String.format("(%d, %d)は相手がPASSする可能性の高いbestな手", i, j));
+					} else {
+
+						System.out.println(arg);
+						if (finalValue == -1000) {
+							log(String.format("(%d, %d)に置いた時点の最高評価値>>%f",i,j, arg));
+						} else if(finalValue !=-100) {
+							log(String.format("(%d, %d)に置いた時点の最高評価値>>%f", i, j, finalValue));
+						}
+					}
+					// 求めた盤面の最小評価値が最大となる駒の置き場所を保存する
+					if (arg > finalValue) {
+						x = i;
+						y = j;
+
+						finalValue = arg;
+
+					}
 				}
 
-				//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-				//	    		value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
-
-				int countPiece = playBoard.countPiece(piece);
-				int countOpponentPiece = playBoard.countPiece(opponentPiece);
-
-				//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-				if (countPiece > countOpponentPiece) {
-					value += 1;
-				}
-				//	    		System.out.println(s);
-				//	    		System.out.println(value);
-
-				playBoard = new Board(nextBoard.getBoard());
-
-			}
-			//			System.out.println(value);
-
-			winCount[t] = value;
-
-			//			System.out.println(winCount);
-
-		}
-
-		//評価値配列の中の最大値を計算
-		int maxValue = 0;
-		int maxIndex = 0;
-		maxValue = winCount[0];
-
-		for (int k = 0; k < count; k++) {
-			if (maxValue < winCount[k]) {
-				maxValue = winCount[k];
-				maxIndex = k;
 			}
 		}
 
-		// 次に置く場所を評価値から決定する
-		int x = positions[maxIndex][0];
-		int y = positions[maxIndex][1];
+		if (lastWord) {
+			System.out.println("最多駒数は" + (int) finalValue);
+			log(String.format("next -> (%d, %d) : 最多駒数%d", x, y, (int) finalValue));
+		} else {
+			System.out.println("最終評価値は" + finalValue);
+			log(String.format("next -> (%d, %d) : 最高評価値%f", x, y, finalValue));
+		}
 
-		// 置く場所をログに出力
-		log(String.format("next -> (%d, %d)", x, y));
-		log(String.format("評価値 -> %d", maxValue));
-
-		System.out.println("評価値：" + maxValue);
-
-		// 置く場所をPositionオブジェクトに変換して返す
 		return new Position(x, y);
+
 	}
 
 	/**
@@ -192,7 +201,6 @@ public class AIProcessor
 	 */
 	@Override
 	public String getName() {
-		return "チームB MasterProgram";
+		return "AlphaBeta+ニューラルネットワーク";
 	}
-
 }
