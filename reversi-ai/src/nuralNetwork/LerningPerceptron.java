@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 
-public class TestPerceptron {
+public class LerningPerceptron {
 	/**
 	 * 多層パーセプトロンの実装
 	 *
@@ -21,13 +21,13 @@ public class TestPerceptron {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new TestPerceptron();
+		new LerningPerceptron();
 	}
 
 	/**
 	 * 処理関数
 	 */
-	public TestPerceptron() {
+	public LerningPerceptron() {
 
 		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
 
@@ -46,16 +46,10 @@ public class TestPerceptron {
 
 			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
 			PrintWriter logOut = new PrintWriter(fileName);
-			// PrintStream out = new PrintStream(fileName);
-			// System.setOut(out);
+
 
 			// 教師データの指定
-			//
-
 			//String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844.csv";
-			//String answerFileName =
-			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv";
-			//"C:/Users/kamat/Desktop/GGFConvert/Othello.latest.280844.csv";
 			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
 			// 教師データ読み込み
