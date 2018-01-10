@@ -9,13 +9,11 @@ import jp.takedarts.reversi.Processor;
 
 public class Writer_MonteCalro extends Processor {
 
-	
-	int maxValue = 0;
+
+	float maxValue = 0;
 	/*
 	 * 乱数を発生させるオブジェクト。
 	 */
-
-	private Random _random = new Random(System.currentTimeMillis());
 
 	/**
 	 * 手番が来たときに、次の手を決定するメソッド。<br>
@@ -28,10 +26,12 @@ public class Writer_MonteCalro extends Processor {
 	@Override
 	public Position nextPosition(Board board, Piece piece, long thinkingTime) {
 
-		long to; //処理時間を所持
-		long time; //実行時間を所持
+		//オブジェクト作成
+		Random myRandom = new Random();
+		Random opponentRandom = new Random();
+		Board nextBoard = new Board(board.getBoard());
+		float playout = 1000;
 
-		to = System.currentTimeMillis();
 
 		// 次に置ける場所の一覧を探す
 		int[][] positions = new int[64][2];
@@ -47,8 +47,8 @@ public class Writer_MonteCalro extends Processor {
 			}
 		}
 
-		//それぞれの手で評価値（勝った回数or自分の石-相手の石の数）を格納
-		int[] winCount = new int[count];
+		//着手可能手数分の配列を作成
+		float[] winCount = new float[count];
 
 		//相手の石の色
 		Piece opponentPiece = Piece.opposite(piece);
@@ -57,20 +57,16 @@ public class Writer_MonteCalro extends Processor {
 			for (int t = 0; t < count; t++) {
 
 				//次における場所に置いた想定の盤面
-				Board nextBoard = new Board(board.getBoard());
 				nextBoard.putPiece(positions[t][0], positions[t][1], piece);
 
 				//プレイアウトの結果を保持する盤面
 				Board playBoard = new Board(nextBoard.getBoard());
 
-				//			//判定フラグ（次駒を置くのが自分か相手か(自分の場合:0 /相手の場合：1)）
-				//			int playFlag = 1;
-
 				//評価値（勝った回数or駒の最終獲得数）
-				int value = 0;
+				float value = 0;
 
 				//次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-				for (int s = 0; s < 1000; s++) {
+				for (int s = 0; s < playout; s++) {
 
 					//1回プレイアウト(ランダム)
 					while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
@@ -94,7 +90,6 @@ public class Writer_MonteCalro extends Processor {
 							}
 
 							// 次に置く場所をランダムに決定する
-							Random opponentRandom = new Random();
 							int opponentIndex = opponentRandom.nextInt(opponentCount);
 
 							int a = opponentPositions[opponentIndex][0];
@@ -122,8 +117,6 @@ public class Writer_MonteCalro extends Processor {
 							}
 
 							// 次に置く場所をランダムに決定する
-							Random myRandom = new Random();
-
 							int myIndex = myRandom.nextInt(myCount);
 
 							int c = myPositions[myIndex][0];
@@ -135,28 +128,24 @@ public class Writer_MonteCalro extends Processor {
 
 					}
 
-					//プレイアウト後の盤面を基に評価値を更新（ここでは自分の石 - 相手の石の数）
-					value += playBoard.countPiece(piece) - playBoard.countPiece(opponentPiece);
-
 					int countPiece = playBoard.countPiece(piece);
 					int countOpponentPiece = playBoard.countPiece(opponentPiece);
 
 					//プレイアウト後の盤面を基に評価値を更新（ここでは勝利した回数）
-//					if (countPiece > countOpponentPiece) {
-//						value += 1;
-//					}
+					if (countPiece > countOpponentPiece) {
+						value += 1;
+					}
 
 					playBoard = new Board(nextBoard.getBoard());
 
 				}
 
-				//勝った回数を格納
-				winCount[t] = value;
+				//勝率を格納
+				winCount[t] = value/playout;
 
 			}
 
 			//評価値配列の中の最大値を計算
-//			int maxValue = 0;
 			int maxIndex = 0;
 			maxValue = winCount[0];
 
@@ -177,13 +166,13 @@ public class Writer_MonteCalro extends Processor {
 			return new Position(x, y);
 
 	}
-	
-	public int getValue() {
+
+	public float getValue() {
 		return maxValue;
-		
+
 	}
-	
-	
+
+
 
 	/**
 	 * この人工知能の名前を返す。

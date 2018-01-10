@@ -18,7 +18,6 @@ public class MonteCarloProcessor extends Processor {
 	 * 乱数を発生させるオブジェクト。
 	 */
 
-	private Random _random = new Random(System.currentTimeMillis());
 	Random myRandom = new Random();
 	Random opponentRandom = new Random();
 
@@ -73,7 +72,7 @@ public class MonteCarloProcessor extends Processor {
 			int value = 0;
 
 			// 次の一手を置いたと仮定し、その後XX回プレイアウト s:プレイアウト回数
-			for (int s = 0; s < 500; s++) {
+			for (int s = 0; s < 1000; s++) {
 
 				// 1回プレイアウト(ランダム)
 				while (playBoard.hasEnablePositions(piece) || playBoard.hasEnablePositions(opponentPiece)) {
