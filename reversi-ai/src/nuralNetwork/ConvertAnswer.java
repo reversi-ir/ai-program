@@ -27,14 +27,14 @@ public class ConvertAnswer {
 		List<Integer> yPosition = new ArrayList<Integer>();
 		List<String> color = new ArrayList<String>();
 		List<Double> answer = new ArrayList<Double>();
+		List<Double> draw = new ArrayList<Double>();
 
 		// データの変換
 		try {
 
 			// 教師データの指定
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/test.ggf.csv";
-			// String answerFileName =
-			// "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
+			// String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/test.ggf.csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042.ggf.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -44,10 +44,9 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			// fw = new
-			// FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_278042_ver2.csv",
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_278042.csv", true);
+			// fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/test_teacher.csv",
 			// true);
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/test_teacher.csv", true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			while ((line = br.readLine()) != null) {
 
@@ -72,8 +71,9 @@ public class ConvertAnswer {
 					// 初期盤面の作成
 					Board testBoard = new Board();
 
-					// 評価値（駒の最終獲得数）
+					// 評価値
 					double winCount = 0;
+					double drawCount = 0;
 
 					// 自分(black) ←ここを更新
 					RandomProcessor myProcessor = new RandomProcessor();
@@ -99,17 +99,6 @@ public class ConvertAnswer {
 								while (playBoard.hasEnablePositions(piece)
 										|| playBoard.hasEnablePositions(opponentPiece)) {
 
-									// 自分の手を置く
-									if (playBoard.hasEnablePositions(piece)) {
-
-										Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
-										playBoard.putPiece(myPosition, piece);
-
-									} else if (!playBoard.hasEnablePositions(piece)) {
-
-										// TODO パスの際の挙動あれば追記
-									}
-
 									if (playBoard.hasEnablePositions(opponentPiece)) {
 
 										Position opponentPosition = opponentProcessor.nextPosition(playBoard,
@@ -122,11 +111,28 @@ public class ConvertAnswer {
 
 									}
 
+									// 自分の手を置く
+									if (playBoard.hasEnablePositions(piece)) {
+
+										Position myPosition = myProcessor.nextPosition(playBoard, piece, 30000);
+										playBoard.putPiece(myPosition, piece);
+
+									} else if (!playBoard.hasEnablePositions(piece)) {
+
+										// TODO パスの際の挙動あれば追記
+									}
+
 								}
 
 								// 黒が勝った場合
 								if (playBoard.countPiece(Piece.BLACK) > playBoard.countPiece(Piece.WHITE)) {
 									winCount = winCount + 1;
+
+								}
+
+								// 引き分けの場合
+								if (playBoard.countPiece(Piece.BLACK) == playBoard.countPiece(Piece.WHITE)) {
+									drawCount = drawCount + 1;
 
 								}
 
@@ -137,6 +143,7 @@ public class ConvertAnswer {
 
 							// 評価値の設定
 							answer.set(num, (double) winCount / 1000);
+							draw.add(num, (double) drawCount / 1000);
 							playBoard = new Board(testBoard.getBoard());
 							winCount = 0;
 
@@ -159,6 +166,7 @@ public class ConvertAnswer {
 									} else if (!playBoard.hasEnablePositions(piece)) {
 
 										// TODO パスの際の挙動あれば追記
+
 									}
 
 									if (playBoard.hasEnablePositions(opponentPiece)) {
@@ -181,6 +189,12 @@ public class ConvertAnswer {
 
 								}
 
+								// 引き分けの場合
+								if (playBoard.countPiece(Piece.BLACK) == playBoard.countPiece(Piece.WHITE)) {
+									drawCount = drawCount + 1;
+
+								}
+
 								// 盤面リセット
 								playBoard = new Board(testBoard.getBoard());
 
@@ -188,6 +202,7 @@ public class ConvertAnswer {
 
 							// 評価値の設定
 							answer.set(num, (double) winCount / 1000);
+							draw.add(num, (double) drawCount / 1000);
 							playBoard = new Board(testBoard.getBoard());
 							winCount = 0;
 						}
@@ -200,13 +215,12 @@ public class ConvertAnswer {
 						pw.print(color.get(outNum) + ",");
 						pw.print(xPosition.get(outNum) + ",");
 						pw.print(yPosition.get(outNum) + ",");
+						pw.print(answer.get(outNum) + ",");
 
-						if (outNum < answer.size() - 1) {
-							// pw.print(value + ",");
-							pw.print(answer.get(outNum) + ",");
+						if (outNum < draw.size() - 1) {
+							pw.print(draw.get(outNum) + ",");
 						} else {
-							// pw.print(value);
-							pw.print(answer.get(outNum));
+							pw.print(draw.get(outNum));
 						}
 					}
 					pw.println("");
@@ -216,6 +230,7 @@ public class ConvertAnswer {
 				yPosition = new ArrayList<Integer>();
 				color = new ArrayList<String>();
 				answer = new ArrayList<Double>();
+				draw = new ArrayList<Double>();
 
 			}
 

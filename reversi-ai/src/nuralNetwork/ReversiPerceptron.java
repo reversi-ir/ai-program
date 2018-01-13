@@ -32,7 +32,7 @@ public class ReversiPerceptron {
 		answer = EvaluationValueCalculation(120, 1, board, mlp);
 
 		if (piece.equals(Piece.WHITE)) {
-			answer = answer * -1;
+			answer = 1-answer;
 		}
 
 		return EvaluationValueCalculation(120, 1, board, mlp);

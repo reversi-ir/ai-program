@@ -49,8 +49,8 @@ public class LerningPerceptron {
 
 
 			// 教師データの指定
-			//String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844.csv";
-			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_278042.csv";
+			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -77,6 +77,7 @@ public class LerningPerceptron {
 					color.add(csvAll[i]);
 					xPosition.add(Integer.parseInt(csvAll[i + 1].replace("[", "")) - 1);
 					yPosition.add(Integer.parseInt(csvAll[i + 2].replace("]", "").trim()) - 1);
+
 					answer.add(Float.parseFloat(csvAll[i + 3]));
 
 				}
@@ -214,7 +215,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 答えの設定
-			ans = answer.get(num) *0.001f;
+			ans = answer.get(num);
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 
@@ -364,7 +365,7 @@ class MultiLayerPerceptron {
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
 		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.2f; // 学習係数η
+		protected float eater = 0.1f; // 学習係数η
 
 
 		/**

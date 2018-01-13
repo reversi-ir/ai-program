@@ -23,12 +23,12 @@ public class Standalone_monte {
 		try {
 
 			// 出力先を作成する
-			FileOutputStream fos = new FileOutputStream("C:\\tmp\\result.csv", false);
+			FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + "/"+"result.csv", false);
 			OutputStreamWriter osw = new OutputStreamWriter(fos, "SJIS");
 			BufferedWriter fw = new BufferedWriter(osw);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-			FileOutputStream fos_board = new FileOutputStream("C:\\tmp\\resultBoard.csv", false);
+			FileOutputStream fos_board = new FileOutputStream(System.getProperty("user.dir") + "/"+"resultBoard.csv", false);
 			OutputStreamWriter osw_board = new OutputStreamWriter(fos_board, "SJIS");
 			BufferedWriter fw_board = new BufferedWriter(osw_board);
 			PrintWriter pw_board = new PrintWriter(new BufferedWriter(fw_board));
@@ -44,11 +44,11 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			// 自分(black) ←ここを更新
-			AIProcessor myProcessor = new AIProcessor();
+			PerceptronProcessor myProcessor = new PerceptronProcessor();
 			Piece piece = Piece.BLACK;
 
 			// 相手(white) ←ここを更新
-			TableProcessor opponentProcessor = new TableProcessor();
+			RandomProcessor opponentProcessor = new RandomProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			// System.out.println("AI(BLACK)(自分)： " + myProcessor.getName());
@@ -83,7 +83,7 @@ public class Standalone_monte {
 			// pw_board.print(testBoard);
 			// pw_board.println();
 
-			for (int test = 1; test <= 10; test++) { // test:対戦回数
+			for (int test = 1; test <= 100; test++) { // test:対戦回数
 
 				long to; // 処理時間を所持
 				long time; // 実行時間を所持
