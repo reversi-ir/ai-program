@@ -47,10 +47,10 @@ public class LerningPerceptron {
 			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
 			PrintWriter logOut = new PrintWriter(fileName);
 
-
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_278042.csv";
-			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844_ver2.csv";
+			// String answerFileName
+			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -120,7 +120,7 @@ public class LerningPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final float MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
+	protected static final float MAX_GAP = 0.00001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -179,16 +179,29 @@ class MultiLayerPerceptron {
 
 		float[] in = null; // i回目の試行で利用する教師入力データ
 		float ans = 0; // i回目の試行で利用する教師出力データ
+		float ansMax = 0; // 教師出力データの最大値
+		float ansSum = 0; // i回目の試行で利用する教師出力データの合計
 		float[] h = new float[middleNumber]; // 中間層の出力
 		float[] o = new float[outputNumber]; // 出力層の出力
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
-		boolean successFlg = true;// 成功フラグ
-		int succeed = 0; // 連続正解回数を初期化
 		float delta = 0;
+		float sumDelta = 0;
+		float loss = 0;
+		float sumLoss = 0;
+		float outputSum = 0;
+		int trialCount = 0;
 
 		// 初期盤面の作成
 		Board testBoard = new Board();
+
+		// 教師データ中の最大値を取得
+		for (int num = 0; num < answer.size(); num++) {
+
+			if (Math.abs(answer.get(num)) > ansMax) {
+				ansMax = Math.abs(answer.get(num));
+			}
+		}
 
 		// 学習
 		for (int num = 0; num < answer.size(); num++) {
@@ -211,92 +224,113 @@ class MultiLayerPerceptron {
 			in = new float[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt])*0.1f;
+				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt]);
 			}
 
 			// 答えの設定
-			ans = answer.get(num);
+			// 0～1の範囲で正規化する
 
-			for (int i = 0; i < MAX_TRIAL; i++) {
+			ans = answer.get(num) / ansMax;
+			ansSum += ans;
 
-				// 出力値を推定：中間層の出力計算
-				for (int j = 0; j < middleNumber; j++) {
-					h[j] = middleNeurons[j].outputMiddle(in);
+			// 出力値を推定：中間層の出力計算
+			for (int j = 0; j < middleNumber; j++) {
+				h[j] = middleNeurons[j].outputMiddle(in);
+			}
+
+			// 出力値を推定：出力層の出力計算
+			for (int j = 0; j < outputNumber; j++) {
+
+				o[j] = outputNeurons[j].output(h);
+				outputSum += o[j];
+
+				// 損失関数を計算
+				loss = +(float) Math.pow((ans - o[j]), 2.0f);
+
+			}
+
+		}
+
+		for (int i = 0; i < MAX_TRIAL; i++) {
+
+			// データ全体の損失関数を計算
+			sumLoss = loss / answer.size();
+
+			// データ全体の勾配を計算
+			delta = (ansSum - outputSum) * outputSum * (1.0f - outputSum);
+
+			if (ansSum < outputSum) {
+				delta = delta * -1;
+			}
+
+			outOut.print(String.format("Trial:%d", i));
+			outOut.println(String.format("[sumLoss] %f", sumLoss));
+			outOut.println(String.format("[answer] %f", answer.get(0) / ansMax));
+			outOut.println(String.format("[output] %f", o[0]));
+
+			// 評価・判定
+			// 損失関数が十分小さい場合は次の処理へ
+			// そうでなければ正解フラグを初期化
+			if (Math.abs(sumLoss) < MAX_GAP) {
+				break;
+			} else {
+				trialCount += 1;
+			}
+
+			// 学習
+			for (int j = 0; j < outputNumber; j++) {
+				outputNeurons[j].learn(delta, h);
+			}
+
+			// 中間層の更新
+			for (int j = 0; j < middleNumber; j++) {
+				// 中間層ニューロンの学習定数δを計算
+				for (int k = 0; k < outputNumber; k++) {
+					Neuron n = outputNeurons[k];
+					sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
+				}
+				delta = h[j] * (1.0f - h[j]) * sumDelta;
+
+				if (ans < h[j]) {
+					delta = delta * -1;
 				}
 
-				// 出力値を推定：出力層の出力計算
-				for (int j = 0; j < outputNumber; j++) {
-					o[j] = outputNeurons[j].output(h);
-				}
+				// 学習
+				middleNeurons[j].learn(delta, in);
 
-				// 評価・判定
-				successFlg = true;
-				for (int j = 0; j < outputNumber; j++)
+			}
 
-				{
-					// 出力層ニューロンの学習定数δを計算
-					//delta = (ans - o[j]) * o[j] * (0.1f - o[j]);
-					delta = (float) (0.5f * Math.pow((ans - o[j]), 2));
+			loss = 0;
+			sumLoss = 0;
+			delta = 0;
+			sumDelta = 0;
+			outputSum = 0;
 
-					// 教師データとの誤差が十分小さい場合は次の処理へ
-					// そうでなければ正解フラグを初期化
-					if (Math.abs(ans - o[j]) < MAX_GAP) {
+			// 出力値を推定：中間層の出力計算
+			for (int j = 0; j < middleNumber; j++) {
+				h[j] = middleNeurons[j].outputMiddle(in);
+			}
 
-						continue;
-					} else {
-						successFlg = false;
-					}
+			// 出力値を推定：出力層の出力計算
+			for (int j = 0; j < outputNumber; j++) {
+				o[j] = outputNeurons[j].output(h);
 
-					if (ans < o[j]) {
-						delta = delta * -1;
-					}
+				outputSum += o[j];
 
-					// 学習
-					outputNeurons[j].learn(delta, h);
-
-				}
-
-				// 連続成功回数による終了判定
-				if (successFlg) {
-					// 連続成功回数をインクリメントして、
-					// 終了条件を満たすか確認
-					succeed++;
-					if (succeed >= answer.size()) {
-						outOut.print(String.format("Trial:%d", i));
-						outOut.print(String.format("[answer] %f", ans));
-						outOut.println(String.format("[output] %f", o[0]));
-
-						break;
-					} else {
-						continue;
-					}
-				} else {
-					succeed = 0;
-				}
-
-				// 中間層の更新
-				for (int j = 0; j < middleNumber; j++) {
-					// 中間層ニューロンの学習定数δを計算
-					float sumDelta = 0;
-					for (int k = 0; k < outputNumber; k++) {
-						Neuron n = outputNeurons[k];
-						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
-					}
-					delta = (float) (h[j] * (1.0d - h[j]) * sumDelta);
-					//delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
-
-					if (ans < h[j]) {
-						delta = delta * -1;
-					}
-
-					middleNeurons[j].learn(delta, in);
-				}
+				// 損失関数を計算
+				loss = +(float) Math.pow((ans - o[j]), 2.0f);
 
 			}
 		}
 
+		// 連続成功回数による終了判定
+
+		// outOut.print(String.format("Trial:%d", trialCount));
+		// outOut.println(String.format("[output] %f", o[0]));
+
 		// 結合加重をCSVファイルへ出力する。
 		fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+
 		PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
 		fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
 		PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
@@ -364,9 +398,8 @@ class MultiLayerPerceptron {
 		protected int inputNeuronNum = 0; // 入力の数
 		protected float[] inputWeights = null; // 入力ごとの結合加重
 		protected float delta = 0; // 学習定数δ
-		protected float threshold = 0; // 閾値θ
-		protected float eater = 0.1f; // 学習係数η
-
+		protected float threshold = 1; // 閾値θ
+		protected float eater = 0.01f; // 学習係数η
 
 		/**
 		 * 初期化
@@ -453,15 +486,15 @@ class MultiLayerPerceptron {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
 				}
-				//閾値の設定
-				this.threshold=Float.parseFloat(middlethreshold [middleNeuronNum]);
+				// 閾値の設定
+				this.threshold = Float.parseFloat(middlethreshold[middleNeuronNum]);
 
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
 				}
-				//閾値の設定
-				this.threshold=Float.parseFloat(outputthreshold [middleNeuronNum]);
+				// 閾値の設定
+				this.threshold = Float.parseFloat(outputthreshold[middleNeuronNum]);
 			}
 
 		}
@@ -475,6 +508,7 @@ class MultiLayerPerceptron {
 		 *            δ
 		 */
 		public void learn(float delta, float[] inputValues) {
+
 			// 内部変数の更新
 			this.delta = delta;
 
@@ -483,10 +517,8 @@ class MultiLayerPerceptron {
 				// バックプロパゲーション学習
 				inputWeights[i] += eater * delta * inputValues[i];
 			}
-
 			// 閾値の更新
 			threshold -= eater * delta;
-
 		}
 
 		/**
@@ -568,6 +600,16 @@ class MultiLayerPerceptron {
 		 */
 		protected float activationKoutou(float x) {
 			return x;
+		}
+
+		/**
+		 * 活性化関数（シグモイド関数）
+		 *
+		 * @param x
+		 * @return
+		 */
+		protected float activationSigmoid(double x) {
+			return (float) (1.0f / (1.0f + Math.pow(Math.E, -x)));
 		}
 
 		/**
