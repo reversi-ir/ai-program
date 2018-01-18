@@ -32,10 +32,8 @@ public class LerningPerceptron {
 		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
 
 		String[] csvAll;
-		List<Integer> xPosition = new ArrayList<Integer>();
-		List<Integer> yPosition = new ArrayList<Integer>();
-		List<String> color = new ArrayList<String>();
-		List<Float> answer = new ArrayList<Float>();
+		List<InputData> InputDataList = new ArrayList<InputData>();
+		InputData inputData = new InputData();
 		FileWriter fwMiddle = null;
 		FileWriter fwOutput = null;
 
@@ -47,17 +45,17 @@ public class LerningPerceptron {
 			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
 			PrintWriter logOut = new PrintWriter(fileName);
 
-
 			// 教師データの指定
 			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_278042.csv";
-			//String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
+			// String answerFileName
+			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
 			BufferedReader br = new BufferedReader(fr);
 
 			// 多層パーセプトロンの作成
-			MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 1);
+			MultiLayerPerceptron mlp = new MultiLayerPerceptron(64, 120, 3);
 
 			// 読み込んだファイルを１行ずつ処理する
 			String line;
@@ -71,25 +69,25 @@ public class LerningPerceptron {
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
 
-				for (int i = 0; i < csvAll.length; i += 4) {
+				for (int i = 0; i < csvAll.length; i += 5) {
 
-					// 1手ずつ情報を配列へ格納していく
-					color.add(csvAll[i]);
-					xPosition.add(Integer.parseInt(csvAll[i + 1].replace("[", "")) - 1);
-					yPosition.add(Integer.parseInt(csvAll[i + 2].replace("]", "").trim()) - 1);
+					// 1手ずつ情報をリストへ格納していく
+					inputData.setColor(csvAll[i]);
+					inputData.setxPotision(Integer.parseInt(csvAll[i + 1].replace("[", "")) - 1);
+					inputData.setyPotision(Integer.parseInt(csvAll[i + 2].replace("]", "").trim()) - 1);
+					inputData.setWinPercentage(Float.parseFloat(csvAll[i + 3]));
+					inputData.setDrawPercentage(Float.parseFloat(csvAll[i + 4]));
+					inputData.setLosePercentage(1 - Float.parseFloat(csvAll[i + 3]));
 
-					answer.add(Float.parseFloat(csvAll[i + 3]));
+					InputDataList.add(inputData);
 
 				}
 
 				// 学習
-				mlp.learn(xPosition, yPosition, color, answer, logOut, fwMiddle, fwOutput);
+				mlp.learn(InputDataList, logOut, fwMiddle, fwOutput);
 
 				// 配列のクリア
-				xPosition.clear();
-				yPosition.clear();
-				color.clear();
-				answer.clear();
+				InputDataList.clear();
 
 				// 出力の書き込み
 				logOut.flush();
@@ -107,6 +105,72 @@ public class LerningPerceptron {
 			e.printStackTrace();
 		}
 	}
+}
+
+/**
+ * 入力値を格納するクラス
+ *
+ *
+ * @author Kamata
+ *
+ */
+class InputData {
+
+	public int xPotision;
+	public int yPotision;
+	public String color;
+	public float winPercentage;
+	public float drawPercentage;
+	public float losePercentage;
+
+	public int getxPotision() {
+		return xPotision;
+	}
+
+	public void setxPotision(int xPotision) {
+		this.xPotision = xPotision;
+	}
+
+	public int getyPotision() {
+		return yPotision;
+	}
+
+	public void setyPotision(int yPotision) {
+		this.yPotision = yPotision;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public float getWinPercentage() {
+		return winPercentage;
+	}
+
+	public void setWinPercentage(float winPercentage) {
+		this.winPercentage = winPercentage;
+	}
+
+	public float getDrawPercentage() {
+		return drawPercentage;
+	}
+
+	public void setDrawPercentage(float drawPercentage) {
+		this.drawPercentage = drawPercentage;
+	}
+
+	public float getLosePercentage() {
+		return losePercentage;
+	}
+
+	public void setLosePercentage(float losePercentage) {
+		this.losePercentage = losePercentage;
+	}
+
 }
 
 /**
@@ -173,8 +237,8 @@ class MultiLayerPerceptron {
 	 * @param answer
 	 * @throws IOException
 	 */
-	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Float> answer,
-			PrintWriter outOut, FileWriter fwMiddle, FileWriter fwOutput) throws IOException {
+	public void learn(List<InputData> InputDataList, PrintWriter outOut, FileWriter fwMiddle, FileWriter fwOutput)
+			throws IOException {
 		// 変数初期化
 
 		float[] in = null; // i回目の試行で利用する教師入力データ
@@ -191,13 +255,15 @@ class MultiLayerPerceptron {
 		Board testBoard = new Board();
 
 		// 学習
-		for (int num = 0; num < answer.size(); num++) {
+		for (int num = 0; num < InputDataList.size(); num++) {
 
 			// 配列に格納した座標を盤面にセット
-			if (color.get(num).equals("B")) {
-				testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.BLACK);
+			if (InputDataList.get(num).getColor().equals("B")) {
+				testBoard.putPiece(InputDataList.get(num).getxPotision(), InputDataList.get(num).getyPotision(),
+						Piece.BLACK);
 			} else {
-				testBoard.putPiece(xPosition.get(num), yPosition.get(num), Piece.WHITE);
+				testBoard.putPiece(InputDataList.get(num).getxPotision(), InputDataList.get(num).getyPotision(),
+						Piece.WHITE);
 			}
 			;
 
@@ -211,11 +277,8 @@ class MultiLayerPerceptron {
 			in = new float[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt])*0.1f;
+				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt])/10;
 			}
-
-			// 答えの設定
-			ans = answer.get(num);
 
 			for (int i = 0; i < MAX_TRIAL; i++) {
 
@@ -234,14 +297,23 @@ class MultiLayerPerceptron {
 				for (int j = 0; j < outputNumber; j++)
 
 				{
+
+					// 答えの設定
+					if (j == 0) {
+						ans = InputDataList.get(j).getWinPercentage();
+					} else if (j == 1) {
+						ans = InputDataList.get(j).getDrawPercentage();
+					} else {
+						ans = InputDataList.get(j).getLosePercentage();
+					}
+
 					// 出力層ニューロンの学習定数δを計算
-					//delta = (ans - o[j]) * o[j] * (0.1f - o[j]);
+					// delta = (ans - o[j]) * o[j] * (0.1f - o[j]);
 					delta = (float) (0.5f * Math.pow((ans - o[j]), 2));
 
 					// 教師データとの誤差が十分小さい場合は次の処理へ
 					// そうでなければ正解フラグを初期化
 					if (Math.abs(ans - o[j]) < MAX_GAP) {
-
 						continue;
 					} else {
 						successFlg = false;
@@ -261,7 +333,7 @@ class MultiLayerPerceptron {
 					// 連続成功回数をインクリメントして、
 					// 終了条件を満たすか確認
 					succeed++;
-					if (succeed >= answer.size()) {
+					if (succeed >= outputNumber) {
 						outOut.print(String.format("Trial:%d", i));
 						outOut.print(String.format("[answer] %f", ans));
 						outOut.println(String.format("[output] %f", o[0]));
@@ -283,12 +355,11 @@ class MultiLayerPerceptron {
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
 					}
 					delta = (float) (h[j] * (1.0d - h[j]) * sumDelta);
-					//delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
+					// delta = (float) (0.5f * Math.pow((ans - h[j]), 2)* sumDelta);
 
 					if (ans < h[j]) {
 						delta = delta * -1;
 					}
-
 					middleNeurons[j].learn(delta, in);
 				}
 
@@ -297,6 +368,7 @@ class MultiLayerPerceptron {
 
 		// 結合加重をCSVファイルへ出力する。
 		fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+
 		PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
 		fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
 		PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
@@ -367,7 +439,6 @@ class MultiLayerPerceptron {
 		protected float threshold = 0; // 閾値θ
 		protected float eater = 0.1f; // 学習係数η
 
-
 		/**
 		 * 初期化
 		 *
@@ -417,7 +488,6 @@ class MultiLayerPerceptron {
 				brMiddle.close();
 
 				// 出力層結合加重ファイルの読み込み
-
 				// 読み込んだファイルを１行ずつ処理する
 				String lineOutput;
 				lineOutput = brOutput.readLine();
@@ -441,27 +511,32 @@ class MultiLayerPerceptron {
 				e.printStackTrace();
 			}
 
-			int weightNumber = 0;
+			int weightNumberMiddle = 0;
+			int weightNumberOutput = 0;
 
 			if (middleNeuronNum != 0) {
-				weightNumber = middleNeuronNum * 64;
+				weightNumberMiddle = middleNeuronNum * 64;
+			}
+
+			if (middleNeuronNum != 0) {
+				weightNumberOutput = middleNeuronNum * 120;
 			}
 
 			// 結合加重を設定
 			// 中間層の初期化の場合
 			if (inputNeuronNum == 64) {
 				for (int i = 0; i < inputWeights.length; i++) {
-					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
+					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumberMiddle + i]);
 				}
-				//閾値の設定
-				this.threshold=Float.parseFloat(middlethreshold [middleNeuronNum]);
+				// 閾値の設定
+				this.threshold = Float.parseFloat(middlethreshold[middleNeuronNum]);
 
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
-					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
+					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[weightNumberOutput + i]);
 				}
-				//閾値の設定
-				this.threshold=Float.parseFloat(outputthreshold [middleNeuronNum]);
+				// 閾値の設定
+				this.threshold = Float.parseFloat(outputthreshold[middleNeuronNum]);
 			}
 
 		}

@@ -44,7 +44,8 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_278042.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/teacher_278042_answer"
+					+ ".csv", true);
 			// fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/test_teacher.csv",
 			// true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
