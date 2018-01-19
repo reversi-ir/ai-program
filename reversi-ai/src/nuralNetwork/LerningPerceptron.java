@@ -48,7 +48,7 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "teacher_280844_ver2.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "test_teacher1.csv";
 			// String answerFileName
 			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
@@ -179,7 +179,8 @@ class MultiLayerPerceptron {
 
 		float[] in = null; // i回目の試行で利用する教師入力データ
 		float ans = 0; // i回目の試行で利用する教師出力データ
-		float ansMax = 0; // 教師出力データの最大値
+		float ansMax = -64; // 教師出力データの最大値
+		float ansMin = 64; // 教師出力データの最小値
 		float ansSum = 0; // i回目の試行で利用する教師出力データの合計
 		float[] h = new float[middleNumber]; // 中間層の出力
 		float[] o = new float[outputNumber]; // 出力層の出力
@@ -196,8 +197,10 @@ class MultiLayerPerceptron {
 		// 教師データ中の最大値を取得
 		for (int num = 0; num < answer.size(); num++) {
 
-			if (Math.abs(answer.get(num)) > ansMax) {
-				ansMax = Math.abs(answer.get(num));
+			if (answer.get(num) > ansMax) {
+				ansMax = answer.get(num);
+			}else if(answer.get(num) < ansMin) {
+				ansMin = answer.get(num);
 			}
 		}
 
@@ -227,7 +230,7 @@ class MultiLayerPerceptron {
 
 			// 答えの設定
 			// 0～1の範囲で正規化する
-			ans = answer.get(num) / ansMax;
+			ans = (answer.get(num) - ansMin)/(ansMax - ansMin);
 			ansSum += ans;
 
 			// 出力値を推定：中間層の出力計算
@@ -241,11 +244,11 @@ class MultiLayerPerceptron {
 				o[j] = outputNeurons[j].output(h);
 				outputSum += o[j];
 
-				// 損失関数を計算
-				loss = loss + (float) Math.pow(ans - o[j], 2.0f)/2;
+				// 損失関数を計算（2乗誤差）
+				loss = loss + (float) Math.pow(o[j] - ans, 2.0f) / 2;
 
-				// 勾配計算
-				delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+				// δ計算
+				delta = delta + -(ans - o[j]) * o[j] * (1.0f - o[j]);
 
 			}
 
@@ -256,19 +259,20 @@ class MultiLayerPerceptron {
 			// データ全体の損失関数を計算
 			loss = loss / answer.size();
 
-			// データ全体の勾配を計算
-			//delta = delta / answer.size();
+			// データ全体のδを計算
+			delta  = delta  / answer.size();
 
-			outOut.print(String.format(" Trial:%d", i));
+			outOut.println(String.format(" Trial:%d", i));
 			outOut.println(String.format("  [loss] %f", loss));
+			outOut.println(String.format("  [delta] %f", delta));
 			outOut.println(String.format("  [answer] %f", ansSum));
 			outOut.println(String.format("  [output] %f", outputSum));
-			outOut.println(String.format("  [sumLoss] %f",  Math.pow(ansSum - outputSum, 2.0f)));
+			outOut.println(String.format("  [sumLoss] %f", Math.pow(ansSum - outputSum, 2.0f)));
 
 			// 評価・判定
 			// 損失関数が十分小さい場合は次の処理へ
 			// そうでなければ正解フラグを初期化
-			if (loss < MAX_GAP) {
+			if (Math.pow(ansSum - outputSum, 2.0f) < MAX_GAP) {
 				break;
 			}
 
@@ -323,7 +327,7 @@ class MultiLayerPerceptron {
 
 				// 答えの設定
 				// 0～1の範囲で正規化する
-				ans = answer.get(num) / ansMax;
+				ans = (answer.get(num) - ansMin)/(ansMax - ansMin);
 
 				// 出力値を推定：中間層の出力計算
 				for (int j = 0; j < middleNumber; j++) {
@@ -336,11 +340,11 @@ class MultiLayerPerceptron {
 					o[j] = outputNeurons[j].output(h);
 					outputSum += o[j];
 
-					// 損失関数を計算
-					loss = loss + (float) Math.pow(ans - o[j], 2.0f)/2;
+					// 損失関数を計算（2乗誤差）
+					loss = loss + (float) Math.pow(o[j] - ans, 2.0f) / 2;
 
-					// 勾配計算
-					delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+					// δ計算
+					delta = delta + -(ans - o[j]) * o[j] * (1.0f - o[j]);
 
 				}
 
@@ -534,8 +538,7 @@ class MultiLayerPerceptron {
 			// 結合加重の更新
 			for (int i = 0; i < inputWeights.length; i++) {
 				// バックプロパゲーション学習
-				//inputWeights[i] += eater * delta * inputValues[i];
-				inputWeights[i] =inputWeights[i]- (eater * delta);
+				inputWeights[i] = -eater * delta * inputValues[i];
 			}
 			// 閾値の更新
 			threshold -= eater * delta;
@@ -628,7 +631,7 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationSigmoid(double x) {
+		protected float activationSigmoid(float x) {
 			return (float) (1.0f / (1.0f + Math.pow(Math.E, -x)));
 		}
 
