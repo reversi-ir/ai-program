@@ -35,7 +35,7 @@ public class LerningPerceptron {
 		List<Integer> xPosition = new ArrayList<Integer>();
 		List<Integer> yPosition = new ArrayList<Integer>();
 		List<String> color = new ArrayList<String>();
-		List<Float> answer = new ArrayList<Float>();
+		List<Double> answer = new ArrayList<Double>();
 		FileWriter fwMiddle = null;
 		FileWriter fwOutput = null;
 
@@ -48,7 +48,7 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "test_teacher1.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test.csv";
 			// String answerFileName
 			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
@@ -78,7 +78,7 @@ public class LerningPerceptron {
 					xPosition.add(Integer.parseInt(csvAll[i + 1]));
 					yPosition.add(Integer.parseInt(csvAll[i + 2]));
 
-					answer.add(Float.parseFloat(csvAll[i + 3]));
+					answer.add(Double.parseDouble(csvAll[i + 3]));
 
 				}
 
@@ -120,7 +120,7 @@ public class LerningPerceptron {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final float MAX_GAP = 0.0001f; // 出力値で許容する誤差の最大値
+	protected static final double MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -132,9 +132,9 @@ class MultiLayerPerceptron {
 	// ロガー
 	protected Logger logger = Logger.getAnonymousLogger(); // ログ出力
 	public Object[] inputWeights;
-	public float eater;
-	public float[] inputValues;
-	public float delta;
+	public double eater;
+	public double[] inputValues;
+	public double delta;
 
 	/**
 	 * 三層パーセプトロンの初期化
@@ -173,23 +173,23 @@ class MultiLayerPerceptron {
 	 * @param answer
 	 * @throws IOException
 	 */
-	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Float> answer,
+	public void learn(List<Integer> xPosition, List<Integer> yPosition, List<String> color, List<Double> answer,
 			PrintWriter outOut, FileWriter fwMiddle, FileWriter fwOutput) throws IOException {
 		// 変数初期化
 
-		float[] in = null; // i回目の試行で利用する教師入力データ
-		float ans = 0; // i回目の試行で利用する教師出力データ
-		float ansMax = -64; // 教師出力データの最大値
-		float ansMin = 64; // 教師出力データの最小値
-		float ansSum = 0; // i回目の試行で利用する教師出力データの合計
-		float[] h = new float[middleNumber]; // 中間層の出力
-		float[] o = new float[outputNumber]; // 出力層の出力
+		double[] in = null; // i回目の試行で利用する教師入力データ
+		double ans = 0; // i回目の試行で利用する教師出力データ
+		double ansMax = -64; // 教師出力データの最大値
+		double ansMin = 64; // 教師出力データの最小値
+		double ansSum = 0; // i回目の試行で利用する教師出力データの合計
+		double[] h = new double[middleNumber]; // 中間層の出力
+		double[] o = new double[outputNumber]; // 出力層の出力
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
-		float delta = 0;
-		float sumDelta = 0;
-		float loss = 0;
-		float outputSum = 0;
+		double delta = 0;
+		double sumDelta = 0;
+		double loss = 0;
+		double outputSum = 0;
 
 		// 初期盤面の作成
 		Board testBoard = new Board();
@@ -199,7 +199,7 @@ class MultiLayerPerceptron {
 
 			if (answer.get(num) > ansMax) {
 				ansMax = answer.get(num);
-			}else if(answer.get(num) < ansMin) {
+			} else if (answer.get(num) < ansMin) {
 				ansMin = answer.get(num);
 			}
 		}
@@ -221,16 +221,16 @@ class MultiLayerPerceptron {
 			// 文字列配列化
 			BoardValueArry = BoardValue.split(",", 0);
 
-			// float型の配列へ変換
-			in = new float[BoardValueArry.length];
+			// double型の配列へ変換
+			in = new double[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Float.parseFloat(BoardValueArry[intCnt]);
+				in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
 			}
 
 			// 答えの設定
 			// 0～1の範囲で正規化する
-			ans = (answer.get(num) - ansMin)/(ansMax - ansMin);
+			ans = (answer.get(num) - ansMin) / (ansMax - ansMin);
 			ansSum += ans;
 
 			// 出力値を推定：中間層の出力計算
@@ -245,10 +245,10 @@ class MultiLayerPerceptron {
 				outputSum += o[j];
 
 				// 損失関数を計算（2乗誤差）
-				loss = loss + (float) Math.pow(o[j] - ans, 2.0f) / 2;
+				loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 				// δ計算
-				delta = delta + -(ans - o[j]) * o[j] * (1.0f - o[j]);
+				delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
 
 			}
 
@@ -260,7 +260,7 @@ class MultiLayerPerceptron {
 			loss = loss / answer.size();
 
 			// データ全体のδを計算
-			delta  = delta  / answer.size();
+			// delta = delta / answer.size();
 
 			outOut.println(String.format(" Trial:%d", i));
 			outOut.println(String.format("  [loss] %f", loss));
@@ -273,6 +273,7 @@ class MultiLayerPerceptron {
 			// 損失関数が十分小さい場合は次の処理へ
 			// そうでなければ正解フラグを初期化
 			if (Math.pow(ansSum - outputSum, 2.0f) < MAX_GAP) {
+				// if (loss < MAX_GAP) {
 				break;
 			}
 
@@ -318,16 +319,16 @@ class MultiLayerPerceptron {
 				// 文字列配列化
 				BoardValueArry = BoardValue.split(",", 0);
 
-				// float型の配列へ変換
-				in = new float[BoardValueArry.length];
+				// double型の配列へ変換
+				in = new double[BoardValueArry.length];
 
 				for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-					in[intCnt] = Float.parseFloat(BoardValueArry[intCnt]);
+					in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
 				}
 
 				// 答えの設定
 				// 0～1の範囲で正規化する
-				ans = (answer.get(num) - ansMin)/(ansMax - ansMin);
+				ans = (answer.get(num) - ansMin) / (ansMax - ansMin);
 
 				// 出力値を推定：中間層の出力計算
 				for (int j = 0; j < middleNumber; j++) {
@@ -341,10 +342,10 @@ class MultiLayerPerceptron {
 					outputSum += o[j];
 
 					// 損失関数を計算（2乗誤差）
-					loss = loss + (float) Math.pow(o[j] - ans, 2.0f) / 2;
+					loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 					// δ計算
-					delta = delta + -(ans - o[j]) * o[j] * (1.0f - o[j]);
+					delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
 
 				}
 
@@ -419,10 +420,10 @@ class MultiLayerPerceptron {
 
 		// 内部変数
 		protected int inputNeuronNum = 0; // 入力の数
-		protected float[] inputWeights = null; // 入力ごとの結合加重
-		protected float delta = 0; // 学習定数δ
-		protected float threshold = 1; // 閾値θ
-		protected float eater = 0.1f; // 学習係数η
+		protected double[] inputWeights = null; // 入力ごとの結合加重
+		protected double delta = 0; // 学習定数δ
+		protected double threshold = 0.01f; // 閾値θ
+		protected double eater = 0.1f; // 学習係数η
 
 		/**
 		 * 初期化
@@ -436,8 +437,7 @@ class MultiLayerPerceptron {
 			// 変数初期化
 			// Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
-			this.inputWeights = new float[inputNeuronNum];
-			// this.threshold = r.nextFloat(); // 閾値をランダムに生成
+			this.inputWeights = new double[inputNeuronNum];
 			String[] middleWeightsAll = null;
 			String[] middlethreshold = null;
 			String[] outputWeightsAll = null;
@@ -507,17 +507,17 @@ class MultiLayerPerceptron {
 			// 中間層の初期化の場合
 			if (inputNeuronNum == 64) {
 				for (int i = 0; i < inputWeights.length; i++) {
-					this.inputWeights[i] = Float.parseFloat(middleWeightsAll[weightNumber + i]);
+					this.inputWeights[i] = Double.parseDouble(middleWeightsAll[weightNumber + i]);
 				}
 				// 閾値の設定
-				this.threshold = Float.parseFloat(middlethreshold[middleNeuronNum]);
+				this.threshold = Double.parseDouble(middlethreshold[middleNeuronNum]);
 
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
-					this.inputWeights[i] = Float.parseFloat(outputWeightsAll[i]);
+					this.inputWeights[i] = Double.parseDouble(outputWeightsAll[i]);
 				}
 				// 閾値の設定
-				this.threshold = Float.parseFloat(outputthreshold[middleNeuronNum]);
+				this.threshold = Double.parseDouble(outputthreshold[middleNeuronNum]);
 			}
 
 		}
@@ -530,7 +530,7 @@ class MultiLayerPerceptron {
 		 * @param delta
 		 *            δ
 		 */
-		public void learn(float delta, float[] inputValues) {
+		public void learn(double delta, double[] inputValues) {
 
 			// 内部変数の更新
 			this.delta = delta;
@@ -538,7 +538,8 @@ class MultiLayerPerceptron {
 			// 結合加重の更新
 			for (int i = 0; i < inputWeights.length; i++) {
 				// バックプロパゲーション学習
-				inputWeights[i] = -eater * delta * inputValues[i];
+				inputWeights[i] = inputWeights[i]-(eater * delta * inputValues[i]);
+
 			}
 			// 閾値の更新
 			threshold -= eater * delta;
@@ -551,16 +552,16 @@ class MultiLayerPerceptron {
 		 *            入力ニューロンからの入力値
 		 * @return 推定値
 		 */
-		public float outputMiddle(float[] inputValues) {
+		public double outputMiddle(double[] inputValues) {
 
 			// 入力値の総和を計算
-			float sum = -threshold;
+			double sum = -threshold;
 			for (int i = 0; i < inputNeuronNum; i++) {
 				sum += inputValues[i] * inputWeights[i];
 			}
 
 			// 活性化関数を適用して、出力値を計算
-			float out = activationtanh(sum);
+			double out = activationReLU(sum);
 
 			return out;
 		}
@@ -572,15 +573,15 @@ class MultiLayerPerceptron {
 		 *            中間ニューロンからの入力値
 		 * @return 推定値
 		 */
-		public float output(float[] inputValues) {
+		public double output(double[] inputValues) {
 			// 入力値の総和を計算
-			float sum = -threshold;
+			double sum = -threshold;
 			for (int i = 0; i < inputNeuronNum; i++) {
 				sum += inputValues[i] * inputWeights[i];
 			}
 
 			// 活性化関数を適用して、出力値を計算
-			float out = activationKoutou(sum);
+			double out = activationKoutou(sum);
 
 			return out;
 		}
@@ -591,7 +592,7 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationReLU(float x) {
+		protected double activationReLU(double x) {
 			return Math.max(0, x);
 		}
 
@@ -601,8 +602,8 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationLReL(float x) {
-			return (float) Math.max(0.01 * x, x);
+		protected double activationLReL(double x) {
+			return (double) Math.max(0.01 * x, x);
 		}
 
 		/**
@@ -611,8 +612,8 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationtanh(float x) {
-			return (float) Math.tanh(x);
+		protected double activationtanh(double x) {
+			return (double) Math.tanh(x);
 		}
 
 		/**
@@ -621,7 +622,7 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationKoutou(float x) {
+		protected double activationKoutou(double x) {
 			return x;
 		}
 
@@ -631,8 +632,8 @@ class MultiLayerPerceptron {
 		 * @param x
 		 * @return
 		 */
-		protected float activationSigmoid(float x) {
-			return (float) (1.0f / (1.0f + Math.pow(Math.E, -x)));
+		protected double activationSigmoid(double x) {
+			return (double) (1.0f / (1.0f + Math.pow(Math.E, -x)));
 		}
 
 		/**
@@ -642,7 +643,7 @@ class MultiLayerPerceptron {
 		 * @param i
 		 * @return
 		 */
-		public float getInputWeightIndexOf(int i) {
+		public double getInputWeightIndexOf(int i) {
 			if (i >= inputNumber) {
 				new RuntimeException("outbound of index");
 			}
@@ -654,7 +655,7 @@ class MultiLayerPerceptron {
 		 *
 		 * @return 学習定数δ
 		 */
-		public float getDelta() {
+		public double getDelta() {
 			return delta;
 		}
 
