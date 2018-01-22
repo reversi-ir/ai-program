@@ -1,4 +1,5 @@
 
+
 import jp.takedarts.reversi.Board;
 import jp.takedarts.reversi.Piece;
 import jp.takedarts.reversi.Position;
@@ -72,7 +73,7 @@ public class AIProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "ニューラルネットワークによる評価値を使ったプログラム";
+		return "ニューラルネットワーク";
 	}
 
 }

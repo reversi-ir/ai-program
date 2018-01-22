@@ -16,7 +16,7 @@ public class ReversiPerceptron {
 
 	// コンストラクタ
 	public ReversiPerceptron() {
-		this.mlp = new MultiLayerPerceptron(64, 120, 1);
+		this.mlp = new MultiLayerPerceptron(64, 128, 1);
 	}
 
 	/**
