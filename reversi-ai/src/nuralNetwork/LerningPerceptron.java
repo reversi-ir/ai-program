@@ -260,7 +260,7 @@ class MultiLayerPerceptron {
 			loss = loss / answer.size();
 
 			// データ全体のδを計算
-			// delta = delta / answer.size();
+			delta = delta / answer.size();
 
 			outOut.println(String.format(" Trial:%d", i));
 			outOut.println(String.format("  [loss] %f", loss));
@@ -423,7 +423,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 0.01f; // 閾値θ
-		protected double eater = 0.1f; // 学習係数η
+		protected double eater = 0.005f; // 学習係数η
 
 		/**
 		 * 初期化
@@ -538,7 +538,7 @@ class MultiLayerPerceptron {
 			// 結合加重の更新
 			for (int i = 0; i < inputWeights.length; i++) {
 				// バックプロパゲーション学習
-				inputWeights[i] = inputWeights[i]-(eater * delta * inputValues[i]);
+				inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
 
 			}
 			// 閾値の更新
