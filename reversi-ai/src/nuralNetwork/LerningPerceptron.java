@@ -176,8 +176,6 @@ class MultiLayerPerceptron {
 	protected int outputNumber = 0;
 	protected Neuron[] middleNeurons = null; // 中間層のニューロン
 	protected Neuron[] outputNeurons = null; // 出力層のニューロン
-	public static double middleThreshold = 1; // 閾値θ
-	public static double outputThreshold = 1; // 閾値θ
 
 	// ロガー
 	protected Logger logger = Logger.getAnonymousLogger(); // ログ出力
@@ -278,7 +276,7 @@ class MultiLayerPerceptron {
 			in = new double[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
+				in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]) + 1;
 			}
 
 			// 答えの設定
@@ -376,7 +374,7 @@ class MultiLayerPerceptron {
 				in = new double[BoardValueArry.length];
 
 				for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-					in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
+					in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]) + 1;
 				}
 
 				// 答えの設定
@@ -420,8 +418,9 @@ class MultiLayerPerceptron {
 		pwMiddle.println();
 
 		// 入力→中間時の閾値を出力
-
-		pwMiddle.print(middleThreshold);
+		for (Neuron n : middleNeurons) {
+			pwMiddle.print(n.threshold + " , ");
+		}
 
 		// 中間→出力の結合加重を出力
 		for (Neuron n : outputNeurons) {
@@ -431,8 +430,9 @@ class MultiLayerPerceptron {
 		pwoutPut.println();
 
 		// 中間→出力の閾値を出力
-
-		pwoutPut.print(outputThreshold);
+		for (Neuron n : outputNeurons) {
+			pwoutPut.print(n.threshold + " , ");
+		}
 
 		// 出力
 		pwMiddle.close();
@@ -473,8 +473,8 @@ class MultiLayerPerceptron {
 		protected int inputNeuronNum = 0; // 入力の数
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
-		// protected double threshold = 0.01f; // 閾値θ
-		protected double eater = 0.00001d; // 学習係数η
+		protected double threshold = -1; // 閾値θ
+		protected double eater = 0.1d; // 学習係数η
 
 		/**
 		 * 初期化
@@ -549,6 +549,7 @@ class MultiLayerPerceptron {
 			}
 
 			int weightNumber = 0;
+			boolean newNeuron = false;
 
 			if (middleNeuronNum != 0) {
 				weightNumber = middleNeuronNum * 64;
@@ -564,17 +565,24 @@ class MultiLayerPerceptron {
 						this.inputWeights[i] = Double.parseDouble(middleWeightsAll[weightNumber + i]);
 					} else {
 						this.inputWeights[i] = r.nextDouble();
+						newNeuron = true;
 					}
 				}
-				// 閾値の設定
-				middleThreshold = Double.parseDouble(middlethreshold[0]);
+
+				if (!newNeuron) {
+					// 閾値の設定
+					this.threshold = Double.parseDouble(middlethreshold[middleNeuronNum]);
+				} else {
+					this.threshold = r.nextDouble();
+				}
 
 			} else if (inputNeuronNum == 120) {
 				for (int i = 0; i < inputWeights.length; i++) {
 					this.inputWeights[i] = Double.parseDouble(outputWeightsAll[i]);
 				}
+
 				// 閾値の設定
-				outputThreshold = Double.parseDouble(outputthreshold[0]);
+				this.threshold = Double.parseDouble(outputthreshold[middleNeuronNum]);
 			}
 
 		}
@@ -599,11 +607,7 @@ class MultiLayerPerceptron {
 
 			}
 			// 閾値の更新
-			if (layer.equals("middle")) {
-				middleThreshold -= eater * delta;
-			} else if (layer.equals("output")) {
-				outputThreshold -= eater * delta;
-			}
+			threshold -= eater * delta;
 		}
 
 		/**
@@ -616,7 +620,7 @@ class MultiLayerPerceptron {
 		public double outputMiddle(double[] inputValues) {
 
 			// 入力値の総和を計算
-			double sum = -middleThreshold;
+			double sum = -threshold;
 			for (int i = 0; i < inputNeuronNum; i++) {
 				sum += inputValues[i] * inputWeights[i];
 			}
@@ -636,7 +640,7 @@ class MultiLayerPerceptron {
 		 */
 		public double output(double[] inputValues) {
 			// 入力値の総和を計算
-			double sum = -outputThreshold;
+			double sum = -threshold;
 			for (int i = 0; i < inputNeuronNum; i++) {
 				sum += inputValues[i] * inputWeights[i];
 			}

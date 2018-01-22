@@ -73,7 +73,7 @@ public class PerceptronProcessor extends Processor {
 	 */
 	@Override
 	public String getName() {
-		return "ニューラルネットワークによる評価値を使ったプログラム";
+		return "ニューラルネットワーク";
 	}
 
 }

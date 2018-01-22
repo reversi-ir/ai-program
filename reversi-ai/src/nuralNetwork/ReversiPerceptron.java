@@ -29,13 +29,13 @@ public class ReversiPerceptron {
 		double answer;
 
 		// 評価値計算
-		answer = EvaluationValueCalculation(120, 1, board, mlp);
+		answer = EvaluationValueCalculation(128, 1, board, mlp);
 
 		if (piece.equals(Piece.WHITE)) {
 			answer = 1-answer;
 		}
 
-		return EvaluationValueCalculation(120, 1, board, mlp);
+		return EvaluationValueCalculation(128, 1, board, mlp);
 
 	}
 
@@ -65,7 +65,7 @@ public class ReversiPerceptron {
 		in = new double[BoardValueArry.length];
 
 		for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-			in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]) / 10;
+			in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
 		}
 
 		// 出力値を推定：中間層の出力計算
