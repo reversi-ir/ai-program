@@ -65,7 +65,7 @@ public class ReversiPerceptron {
 		in = new double[BoardValueArry.length];
 
 		for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-			in[intCnt] = Double.parseDouble(BoardValueArry[intCnt]);
+			in[intCnt] = (Double.parseDouble(BoardValueArry[intCnt]) - 0) / (2 - 0);;
 		}
 
 		// 出力値を推定：中間層の出力計算
