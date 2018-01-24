@@ -171,7 +171,7 @@ class InputData {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final double MAX_GAP = 0.01f; // 出力値で許容する誤差の最大値
+	protected static final double MAX_GAP = 0.037f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
@@ -251,6 +251,16 @@ class MultiLayerPerceptron {
 		double loss = 0;
 		double outputSum = 0;
 
+		// 変数初期化
+		loss = 0;
+		delta = 0;
+		thresholdDelta = 0;
+		sumDelta = 0;
+		outputSum = 0;
+		ans = 0;
+		deltaList.clear();
+		thresholdDeltaList.clear();
+
 		// 初期盤面の作成
 		Board testBoard = new Board();
 
@@ -308,13 +318,12 @@ class MultiLayerPerceptron {
 				outputSum += o[j];
 
 				// 損失関数を計算（2乗誤差）
-				loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
+				loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 				// δ計算
 				// delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
-				// delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
-				// thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans,
-				// o[j]);
+				delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
+				thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans, o[j]);
 				deltaList.add(outputNeurons[j].deltaClac(ans, o[j], h));
 				thresholdDeltaList.add(outputNeurons[j].thresholdDeltaClac(ans, o[j]));
 
@@ -348,22 +357,22 @@ class MultiLayerPerceptron {
 			// 出力層閾値更新幅
 			for (int num = 0; num < thresholdDeltaList.size(); num++) {
 
-				if (thresholdDeltaList.get(num) > deltaMax) {
+				if (thresholdDeltaList.get(num) > thresholdDeltaMax) {
 					thresholdDeltaMax = thresholdDeltaList.get(num);
 				}
-				if (thresholdDeltaList.get(num) < deltaMin) {
+				if (thresholdDeltaList.get(num) < thresholdDeltaMin) {
 					thresholdDeltaMin = thresholdDeltaList.get(num);
 				}
 			}
 
 			// 正規化
 			for (int num = 0; num < deltaList.size(); num++) {
-				deltaList.set(num, (deltaList.get(num) - deltaMin) / (deltaMax - deltaMin));
+				deltaList.set(num, (deltaList.get(num) - deltaMin) / (deltaMax - deltaMin) * (1 - (-1) + 1));
 			}
 
 			for (int num = 0; num < thresholdDeltaList.size(); num++) {
-				thresholdDeltaList.set(num,
-						(thresholdDeltaList.get(num) - thresholdDeltaMin) / (thresholdDeltaMax - thresholdDeltaMin));
+				thresholdDeltaList.set(num, (thresholdDeltaList.get(num) - thresholdDeltaMin)
+						/ (thresholdDeltaMax - thresholdDeltaMin) * (1 - (-1) + 1));
 			}
 
 			// 再集計
@@ -376,10 +385,10 @@ class MultiLayerPerceptron {
 			}
 
 			// データ全体の平均δを計算
-			delta = delta / InputDataList.size();
+			delta = delta / InputDataList.size() ;
 
 			// データ全体の平均δ(閾値)を計算
-			thresholdDelta = thresholdDelta / InputDataList.size();
+			thresholdDelta = thresholdDelta / InputDataList.size() ;
 
 			outOut.println(String.format(" Trial:%d", i));
 			outOut.println(String.format("  [loss] %f", loss));
@@ -468,13 +477,12 @@ class MultiLayerPerceptron {
 					outputSum += o[j];
 
 					// 損失関数を計算（2乗誤差）
-					loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
+					loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 					// δ計算
 					// delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
-					// delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
-					// thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans,
-					// o[j]);
+					delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
+					thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans, o[j]);
 					deltaList.add(outputNeurons[j].deltaClac(ans, o[j], h));
 					thresholdDeltaList.add(outputNeurons[j].thresholdDeltaClac(ans, o[j]));
 				}
