@@ -50,8 +50,7 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test"
-					+ ".csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test" + ".csv";
 			// String answerFileName
 			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
@@ -235,16 +234,20 @@ class MultiLayerPerceptron {
 		double ans = 0; // i回目の試行で利用する教師出力データ
 		double ansMax = -64; // 教師出力データの最大値
 		double ansMin = 64; // 教師出力データの最小値
-		double deltaMax = 0; // 教師出力データの最大値
-		double deltaMin = 0; // 教師出力データの最小値
+		double deltaMax = 0; // 出力層重み更新幅データの最大値
+		double deltaMin = 0; // 出力層重み更新幅の最小値
+		double thresholdDeltaMax = 0; // 出力層閾値更新幅の最大値
+		double thresholdDeltaMin = 0; // 出力層閾値更新幅の最小値
 		double ansSum = 0; // i回目の試行で利用する教師出力データの合計
 		double[] h = new double[middleNumber]; // 中間層の出力
 		double[] o = new double[outputNumber]; // 出力層の出力
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
 		List<Double> deltaList = new ArrayList<Double>();
+		List<Double> thresholdDeltaList = new ArrayList<Double>();
 		double delta = 0;
 		double sumDelta = 0;
+		double thresholdDelta = 0;
 		double loss = 0;
 		double outputSum = 0;
 
@@ -308,7 +311,12 @@ class MultiLayerPerceptron {
 				loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
 
 				// δ計算
-				delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+				// delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+				// delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
+				// thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans,
+				// o[j]);
+				deltaList.add(outputNeurons[j].deltaClac(ans, o[j], h));
+				thresholdDeltaList.add(outputNeurons[j].thresholdDeltaClac(ans, o[j]));
 
 			}
 
@@ -319,12 +327,14 @@ class MultiLayerPerceptron {
 			// データ全体の平均損失関数を計算
 			loss = loss / InputDataList.size();
 
-			// データ全体の平均δを計算
-			delta = delta / InputDataList.size();
+			// δの正規化
+			// 最大値と最小値を取得
+			deltaMax = deltaList.get(0);
+			deltaMin = deltaList.get(0);
+			thresholdDeltaMax = thresholdDeltaList.get(0);
+			thresholdDeltaMin = thresholdDeltaList.get(0);
 
-			// δの最大値と最小値を取得
-			deltaMax = 0;
-			deltaMin = 0;
+			// 出力層重み更新幅
 			for (int num = 0; num < deltaList.size(); num++) {
 
 				if (deltaList.get(num) > deltaMax) {
@@ -335,9 +345,46 @@ class MultiLayerPerceptron {
 				}
 			}
 
+			// 出力層閾値更新幅
+			for (int num = 0; num < thresholdDeltaList.size(); num++) {
+
+				if (thresholdDeltaList.get(num) > deltaMax) {
+					thresholdDeltaMax = thresholdDeltaList.get(num);
+				}
+				if (thresholdDeltaList.get(num) < deltaMin) {
+					thresholdDeltaMin = thresholdDeltaList.get(num);
+				}
+			}
+
+			// 正規化
+			for (int num = 0; num < deltaList.size(); num++) {
+				deltaList.set(num, (deltaList.get(num) - deltaMin) / (deltaMax - deltaMin));
+			}
+
+			for (int num = 0; num < thresholdDeltaList.size(); num++) {
+				thresholdDeltaList.set(num,
+						(thresholdDeltaList.get(num) - thresholdDeltaMin) / (thresholdDeltaMax - thresholdDeltaMin));
+			}
+
+			// 再集計
+			for (int num = 0; num < thresholdDeltaList.size(); num++) {
+				delta = delta + deltaList.get(num);
+			}
+
+			for (int num = 0; num < deltaList.size(); num++) {
+				thresholdDelta = thresholdDelta + thresholdDeltaList.get(num);
+			}
+
+			// データ全体の平均δを計算
+			delta = delta / InputDataList.size();
+
+			// データ全体の平均δ(閾値)を計算
+			thresholdDelta = thresholdDelta / InputDataList.size();
+
 			outOut.println(String.format(" Trial:%d", i));
 			outOut.println(String.format("  [loss] %f", loss));
 			outOut.println(String.format("  [delta] %f", delta));
+			outOut.println(String.format("  [thresholdDelta] %f", thresholdDelta));
 			outOut.println(String.format("  [answer] %f", ansSum));
 			outOut.println(String.format("  [output] %f", outputSum));
 			outOut.println(String.format("  [sumLoss] %f", Math.pow(ansSum - outputSum, 2.0f)));
@@ -349,11 +396,10 @@ class MultiLayerPerceptron {
 				break;
 			}
 
-
 			// 学習
-			//出力層の更新
+			// 出力層の更新
 			for (int j = 0; j < outputNumber; j++) {
-				outputNeurons[j].learn(delta, h, "output");
+				outputNeurons[j].learn(delta, thresholdDelta, h, "o");
 			}
 
 			// 中間層の更新
@@ -366,17 +412,20 @@ class MultiLayerPerceptron {
 				delta = h[j] * (1.0f - h[j]) * sumDelta;
 
 				// 学習
-				middleNeurons[j].learn(delta, in, "middle");
+				middleNeurons[j].learn(delta, thresholdDelta, in, "h");
 
 			}
 
+			// 変数初期化
 			loss = 0;
 			delta = 0;
-			deltaList.clear();
+			thresholdDelta = 0;
 			sumDelta = 0;
 			outputSum = 0;
 			testBoard = new Board();
 			ans = 0;
+			deltaList.clear();
+			thresholdDeltaList.clear();
 
 			// 再計算
 			for (int num = 0; num < InputDataList.size(); num++) {
@@ -422,7 +471,12 @@ class MultiLayerPerceptron {
 					loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
 
 					// δ計算
-					delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+					// delta = delta + (ans - o[j]) * o[j] * (1.0f - o[j]);
+					// delta = delta + outputNeurons[j].deltaClac(ans, o[j], h);
+					// thresholdDelta = thresholdDelta + outputNeurons[j].thresholdDeltaClac(ans,
+					// o[j]);
+					deltaList.add(outputNeurons[j].deltaClac(ans, o[j], h));
+					thresholdDeltaList.add(outputNeurons[j].thresholdDeltaClac(ans, o[j]));
 				}
 
 			}
@@ -501,7 +555,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.001d; // 学習係数η
+		protected double eater = 0.00019d; // 学習係数η
 
 		/**
 		 * 初期化
@@ -622,6 +676,43 @@ class MultiLayerPerceptron {
 		}
 
 		/**
+		 * δ計算
+		 *
+		 * @param ans
+		 *            教師データ
+		 * @param layerValues
+		 *            出力値
+		 * @param beforeLayerValues
+		 *            前層の出力値
+		 *
+		 */
+
+		public double deltaClac(double ans, double layerValues, double[] beforeLayerValues) {
+
+			double clacDelta = 0;
+			// 結合加重の更新
+			for (int i = 0; i < inputWeights.length; i++) {
+				// δ計算
+				clacDelta += (ans - layerValues) * layerValues * (1.0f - layerValues) * beforeLayerValues[i];
+
+			}
+
+			return clacDelta;
+
+		}
+
+		// 閾値のδ計算
+		public double thresholdDeltaClac(double ans, double layerValues) {
+
+			double clacThresholdDelta = 0;
+
+			clacThresholdDelta += (ans - layerValues) * layerValues * (1.0f - layerValues);
+
+			return clacThresholdDelta;
+
+		}
+
+		/**
 		 * 学習（バックプロパゲーション学習）
 		 *
 		 * @param inputValues
@@ -629,20 +720,33 @@ class MultiLayerPerceptron {
 		 * @param delta
 		 *            δ
 		 */
-		public void learn(double delta, double[] inputValues, String layer) {
+		public void learn(double delta, double thresholdDelta, double[] inputValues, String layer) {
 
 			// 内部変数の更新
-			// this.delta = delta;
+			this.delta = delta;
+			if (layer.equals("o")) {
+				// 内部変数の更新
+				this.delta = delta;
 
-			// 結合加重の更新
-			for (int i = 0; i < inputWeights.length; i++) {
-				// バックプロパゲーション学習
-				inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
+				// 結合加重の更新
+				for (int i = 0; i < inputWeights.length; i++) {
+					// バックプロパゲーション学習
+					inputWeights[i] = inputWeights[i] - (eater * delta);
+					// inputWeights[i] = inputWeights[i] - (eater * delta);
 
+				}
+
+			} else {
+
+				// 結合加重の更新
+				for (int i = 0; i < inputWeights.length; i++) {
+					// バックプロパゲーション学習
+					inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
+				}
 			}
 
 			// 閾値の更新
-			this.threshold = threshold - (eater * delta);
+			this.threshold = threshold - (eater * thresholdDelta);
 			// if (layer.equals("m")) {
 			// middleThreshold = middleThreshold - (-eater * delta);
 			// } else if (layer.equals("o")) {

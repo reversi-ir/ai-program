@@ -16,7 +16,7 @@ public class ReversiPerceptron {
 
 	// コンストラクタ
 	public ReversiPerceptron() {
-		this.mlp = new MultiLayerPerceptron(64, 128, 1);
+		this.mlp = new MultiLayerPerceptron(64, 120, 1);
 	}
 
 	/**
@@ -29,13 +29,13 @@ public class ReversiPerceptron {
 		double answer;
 
 		// 評価値計算
-		answer = EvaluationValueCalculation(128, 1, board, mlp);
+		answer = EvaluationValueCalculation(120, 1, board, mlp);
 
 		if (piece.equals(Piece.WHITE)) {
 			answer = 1-answer;
 		}
 
-		return EvaluationValueCalculation(128, 1, board, mlp);
+		return EvaluationValueCalculation(120, 1, board, mlp);
 
 	}
 
