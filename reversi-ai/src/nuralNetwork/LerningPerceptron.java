@@ -311,7 +311,7 @@ class MultiLayerPerceptron {
 			in = new double[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0) ;
+				in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0);
 			}
 
 			// 答えの設定
@@ -372,10 +372,8 @@ class MultiLayerPerceptron {
 				}
 
 				// 正規化
-				if (deltaMax != deltaMin) {
-					for (int num = 0; num < deltaList.size(); num++) {
-						deltaList.set(num, (deltaList.get(num) - deltaMin) / (deltaMax - deltaMin) * (1 - (-1)) + (-1));
-					}
+				for (int num = 0; num < deltaList.size(); num++) {
+					deltaList.set(num, (deltaList.get(num) - deltaMin) / (deltaMax - deltaMin) * (1 - (-1)) + (-1));
 				}
 
 				// 再集計
@@ -461,16 +459,12 @@ class MultiLayerPerceptron {
 					in = new double[BoardValueArry.length];
 
 					for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-						in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0) ;
+						in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0);
 					}
 
 					// 答えの設定
 					// 0～1の範囲で正規化する
-					if (ansMin != ansMax) {
-						ans = (InputDataList.get(num).getAnswer() - ansMin) / (ansMax - ansMin);
-					} else {
-						ans = (InputDataList.get(num).getAnswer() - (-64)) / (64 - (-64));
-					}
+					ans = (InputDataList.get(num).getAnswer() - ansMin) / (ansMax - ansMin);
 
 					// 出力値を推定：中間層の出力計算
 					for (int j = 0; j < middleNumber; j++) {
@@ -574,7 +568,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.00000001; // 学習係数η
+		protected double eater = 0.0001; // 学習係数η
 		protected double[] v = null;
 		protected double α = 0.9;
 
@@ -752,9 +746,9 @@ class MultiLayerPerceptron {
 
 				// バックプロパゲーション学習
 				inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
-//				wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
-//				inputWeights[i] = inputWeights[i] + wk_v;
-//				v[i] = wk_v;
+				// wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
+				// inputWeights[i] = inputWeights[i] + wk_v;
+				// v[i] = wk_v;
 			}
 
 			// 閾値の更新
