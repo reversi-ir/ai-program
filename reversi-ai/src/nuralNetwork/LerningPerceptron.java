@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -264,14 +265,14 @@ class MultiLayerPerceptron {
 		deltaList.clear();
 		thresholdDeltaList.clear();
 
-//		// 前回更新量配列の初期化
-//		for (int j = 0; j < middleNumber; j++) {
-//			Arrays.fill(middleNeurons[j].v, 0);
-//		}
-//
-//		for (int j = 0; j < outputNumber; j++) {
-//			Arrays.fill(outputNeurons[j].v, 0);
-//		}
+		// 前回更新量配列の初期化
+		for (int j = 0; j < middleNumber; j++) {
+			Arrays.fill(middleNeurons[j].v, 0);
+		}
+
+		for (int j = 0; j < outputNumber; j++) {
+			Arrays.fill(outputNeurons[j].v, 0);
+		}
 
 		// 初期盤面の作成
 		Board testBoard = new Board();
@@ -310,7 +311,7 @@ class MultiLayerPerceptron {
 			in = new double[BoardValueArry.length];
 
 			for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-				in[intCnt] = (Double.parseDouble(BoardValueArry[intCnt]) - 0) / (2 - 0);
+				in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0) ;
 			}
 
 			// 答えの設定
@@ -336,7 +337,7 @@ class MultiLayerPerceptron {
 				outputSum += o[j];
 
 				// 損失関数を計算（2乗誤差）
-				loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
+				loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 				// δ計算
 				deltaList.add(-(ans - o[j]) * o[j] * (1.0f - o[j]));
@@ -383,9 +384,7 @@ class MultiLayerPerceptron {
 				}
 
 				// データ全体の平均δを計算
-				if (Math.abs(delta / deltaList.size()) > 0) {
-					delta = delta / deltaList.size();
-				}
+				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
 				// outOut.println(String.format(" [loss] %f", loss));
@@ -462,7 +461,7 @@ class MultiLayerPerceptron {
 					in = new double[BoardValueArry.length];
 
 					for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-						in[intCnt] = (Double.parseDouble(BoardValueArry[intCnt]) - 0) / (2 - 0);
+						in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0) ;
 					}
 
 					// 答えの設定
@@ -485,7 +484,7 @@ class MultiLayerPerceptron {
 						outputSum += o[j];
 
 						// 損失関数を計算（2乗誤差）
-						loss = loss + (double) Math.pow(o[j] - ans, 2.0f);
+						loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
 
 						// δ計算
 						deltaList.add(-(ans - o[j]) * o[j] * (1.0f - o[j]));
@@ -575,7 +574,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.0001; // 学習係数η
+		protected double eater = 0.00000001; // 学習係数η
 		protected double[] v = null;
 		protected double α = 0.9;
 
@@ -752,9 +751,10 @@ class MultiLayerPerceptron {
 			for (int i = 0; i < inputWeights.length; i++) {
 
 				// バックプロパゲーション学習
-				wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
-				inputWeights[i] = inputWeights[i] + wk_v;
-				v[i] = wk_v;
+				inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
+//				wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
+//				inputWeights[i] = inputWeights[i] + wk_v;
+//				v[i] = wk_v;
 			}
 
 			// 閾値の更新
