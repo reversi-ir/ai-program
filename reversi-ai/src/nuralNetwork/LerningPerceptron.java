@@ -51,7 +51,7 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test" + ".csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
 			// String answerFileName
 			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
 
@@ -66,14 +66,15 @@ public class LerningPerceptron {
 			String line;
 			int fileRowNum = 0;
 
-			logOut.print(String.format("[RowNum],"));
+			// logOut.print(String.format("[RowNum],"));
+			logOut.print(String.format("[Trial],"));
 			logOut.println(String.format("[loss] "));
 
 			while ((line = br.readLine()) != null) {
 
 				fileRowNum = +fileRowNum + 1;
 				// logOut.println(String.format("[RowNum] %d", fileRowNum));
-				logOut.print(fileRowNum + ",");
+				// logOut.print(fileRowNum + ",");
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -385,6 +386,8 @@ class MultiLayerPerceptron {
 				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
+				//outOut.print(i + 1 + ",");
+				//outOut.println(loss);
 				// outOut.println(String.format(" [loss] %f", loss));
 				// outOut.println(String.format(" [delta] %f", delta));
 				// outOut.println(String.format(" [answer] %f", ansSum));
@@ -402,10 +405,10 @@ class MultiLayerPerceptron {
 
 				// NaNエラー対策
 				// δの絶対値が１以上（正規化から外れた）の場合、強制的に学習を打ち切る
-				if (Math.abs(delta) > 1) {
-					breakFlag = true;
-					break;
-				}
+				// if (Math.abs(delta) > 1) {
+				// breakFlag = true;
+				// break;
+				// }
 
 				// 学習
 				// 出力層の更新
@@ -489,9 +492,9 @@ class MultiLayerPerceptron {
 			}
 
 			if (breakFlag) {
-				outOut.println("error");
+				// outOut.println("error");
 			} else {
-				outOut.println(loss);
+				// outOut.println(loss)/InputDataList.size();
 			}
 
 			// 結合加重をCSVファイルへ出力する。
@@ -568,7 +571,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.0001; // 学習係数η
+		protected double eater = 0.00001; // 学習係数η
 		protected double[] v = null;
 		protected double α = 0.9;
 
