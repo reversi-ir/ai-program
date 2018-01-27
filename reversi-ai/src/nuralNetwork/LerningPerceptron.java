@@ -47,13 +47,13 @@ public class LerningPerceptron {
 
 			// 標準出力をファイルに関連付ける
 
-			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.csv";
+			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron_Momentum.csv";
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			// String answerFileName = System.getProperty("user.dir") + "/" +
-			// "koutou_278042_test" + ".csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
+			// String answerFileName =
+			// "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -66,7 +66,6 @@ public class LerningPerceptron {
 			String line;
 			int fileRowNum = 0;
 
-			// logOut.print(String.format("[RowNum],"));
 			logOut.print(String.format("[Trial],"));
 			logOut.println(String.format("[loss] "));
 
@@ -74,7 +73,7 @@ public class LerningPerceptron {
 
 				fileRowNum = +fileRowNum + 1;
 				// logOut.println(String.format("[RowNum] %d", fileRowNum));
-				logOut.print(fileRowNum + ",");
+				// logOut.print(fileRowNum + ",");
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -398,14 +397,14 @@ class MultiLayerPerceptron {
 				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
-				// outOut.print(i + 1 + ",");
-				// outOut.println(loss);
+				outOut.print(i + 1 + ",");
+				outOut.println(loss);
 				// outOut.println(String.format(" [loss] %f", loss));
 				// outOut.println(String.format(" [delta] %f", delta));
 				// outOut.println(String.format(" [answer] %f", ansSum));
 				// outOut.println(String.format(" [output] %f", outputSum));
 				// outOut.println(String.format(" [sumLoss] %f", Math.pow(ansSum - outputSum,
-				// 2.0f)));
+				// 2.0f) / 2));
 
 				// 評価・判定
 				// 損失関数が十分小さい場合は次のデータへ
@@ -467,24 +466,24 @@ class MultiLayerPerceptron {
 						loss = loss + (double) Math.pow(o[j] - answerList.get(num), 2.0f) / 2;
 
 						// δ計算
-						deltaList.set(num,-(answerList.get(num) - o[j]) * o[j] * (1.0f - o[j]));
+						deltaList.set(num, -(answerList.get(num) - o[j]) * o[j] * (1.0f - o[j]));
 
 					}
 
 				}
 			}
 
-			if (breakFlag) {
-				outOut.println("Perfect!");
-			} else {
-				outOut.println(loss / InputDataList.size());
-			}
+			// if (breakFlag) {
+			// outOut.println("Perfect!");
+			// } else {
+			// outOut.println(loss / InputDataList.size());
+			// }
 
 			// 結合加重をCSVファイルへ出力する。
-			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle_Momentum.csv", false);
 
 			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
-			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput_Momentum.csv", false);
 			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 入力→中間時の結合加重を出力
@@ -554,9 +553,9 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.00005; // 学習係数η
+		protected double eater = 0.0001; // 学習係数η
 		protected double[] v = null;
-		protected double α = 0.9;
+		protected double α = 0.1;
 
 		/**
 		 * 初期化
@@ -579,11 +578,11 @@ class MultiLayerPerceptron {
 
 			// 隠れ層結合加重ファイルの読み込み
 			try {
-				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
+				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle_Momentum.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
 				BufferedReader brMiddle = new BufferedReader(frMiddle);
 
-				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
+				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput_Momentum.csv";
 				FileReader frOutput = new FileReader(OutputFileName);
 				BufferedReader brOutput = new BufferedReader(frOutput);
 
@@ -731,10 +730,9 @@ class MultiLayerPerceptron {
 			for (int i = 0; i < inputWeights.length; i++) {
 
 				// バックプロパゲーション学習
-				inputWeights[i] = inputWeights[i] - (eater * delta * inputValues[i]);
-				// wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
-				// inputWeights[i] = inputWeights[i] + wk_v;
-				// v[i] = wk_v;
+				wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
+				inputWeights[i] = inputWeights[i] + wk_v;
+				v[i] = wk_v;
 			}
 
 			// 閾値の更新
