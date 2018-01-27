@@ -51,9 +51,9 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
-			// String answerFileName
-			// ="C:/Users/kamat/Desktop/GGFConvert/teacher_280844_ver2.csv";
+			// String answerFileName = System.getProperty("user.dir") + "/" +
+			// "koutou_278042_test" + ".csv";
+			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -74,7 +74,7 @@ public class LerningPerceptron {
 
 				fileRowNum = +fileRowNum + 1;
 				// logOut.println(String.format("[RowNum] %d", fileRowNum));
-				// logOut.print(fileRowNum + ",");
+				logOut.print(fileRowNum + ",");
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -177,13 +177,13 @@ class InputData {
 class MultiLayerPerceptron {
 	// 定数
 	protected static final int MAX_TRIAL = 10000; // 最大試行回数
-	protected static final double MAX_GAP = 0.037f; // 出力値で許容する誤差の最大値
+	protected static final double MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
 	protected int inputNumber = 0;
 	protected int middleNumber = 0;
 	protected int outputNumber = 0;
-	protected Neuron[] middleNeurons = null; // 中間層のニューロン
+	protected Neuron[] middleNeurons = null; // 隠れ層のニューロン
 	protected Neuron[] outputNeurons = null; // 出力層のニューロン
 	protected static double middleThreshold = 1;
 	protected static double outputThreshold = 1;
@@ -201,7 +201,7 @@ class MultiLayerPerceptron {
 	 * @param input
 	 *            入力層のニューロン数
 	 * @param middle
-	 *            中間層のニューロン数
+	 *            隠れ層のニューロン数
 	 * @param output
 	 *            出力層のニューロン数
 	 */
@@ -213,7 +213,7 @@ class MultiLayerPerceptron {
 		this.middleNeurons = new Neuron[middle];
 		this.outputNeurons = new Neuron[output];
 
-		// 中間層のニューロン作成
+		// 隠れ層のニューロン作成
 		for (int i = 0; i < middle; i++) {
 			middleNeurons[i] = new Neuron(input, i);
 		}
@@ -243,12 +243,15 @@ class MultiLayerPerceptron {
 		double deltaMax = 0; // 出力層重み更新幅データの最大値
 		double deltaMin = 0; // 出力層重み更新幅の最小値
 		double ansSum = 0; // i回目の試行で利用する教師出力データの合計
-		double[] h = new double[middleNumber]; // 中間層の出力
+		double[] h = new double[middleNumber]; // 隠れ層の出力
 		double[] o = new double[outputNumber]; // 出力層の出力
 		String BoardValue = null; // 盤面の値を一時的に格納する文字列
 		String[] BoardValueArry = null; // 盤面の値を一時的に格納する文字型配列
 		List<Double> deltaList = new ArrayList<Double>();
 		List<Double> thresholdDeltaList = new ArrayList<Double>();
+		List<double[]> boardList = new ArrayList<double[]>();
+		List<Double> answerList = new ArrayList<Double>();
+		List<double[]> hiddenList = new ArrayList<double[]>();
 		double delta = 0;
 		double sumDelta = 0;
 		double loss = 0;
@@ -265,6 +268,9 @@ class MultiLayerPerceptron {
 		breakFlag = false;
 		deltaList.clear();
 		thresholdDeltaList.clear();
+		hiddenList.clear();
+		boardList.clear();
+		answerList.clear();
 
 		// 前回更新量配列の初期化
 		for (int j = 0; j < middleNumber; j++) {
@@ -315,6 +321,8 @@ class MultiLayerPerceptron {
 				in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0);
 			}
 
+			boardList.add(in);
+
 			// 答えの設定
 			// 0～1の範囲で正規化する
 			if (ansMin != ansMax) {
@@ -323,13 +331,17 @@ class MultiLayerPerceptron {
 				ans = (InputDataList.get(num).getAnswer() - (-64)) / (64 - (-64));
 			}
 
+			answerList.add(ans);
+
 			// 参考に合計値を算出
 			ansSum += ans;
 
-			// 出力値を推定：中間層の出力計算
+			// 出力値を推定：隠れ層の出力計算
 			for (int j = 0; j < middleNumber; j++) {
 				h[j] = middleNeurons[j].outputMiddle(in);
 			}
+
+			hiddenList.add(h);
 
 			// 出力値を推定：出力層の出力計算
 			for (int j = 0; j < outputNumber; j++) {
@@ -386,8 +398,8 @@ class MultiLayerPerceptron {
 				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
-				//outOut.print(i + 1 + ",");
-				//outOut.println(loss);
+				// outOut.print(i + 1 + ",");
+				// outOut.println(loss);
 				// outOut.println(String.format(" [loss] %f", loss));
 				// outOut.println(String.format(" [delta] %f", delta));
 				// outOut.println(String.format(" [answer] %f", ansSum));
@@ -396,29 +408,24 @@ class MultiLayerPerceptron {
 				// 2.0f)));
 
 				// 評価・判定
-				// 損失関数が十分小さい場合は次の処理へ
-				// そうでなければ正解フラグを初期化
-				// if (loss < MAX_GAP) {
-				// breakFlag = true;
-				// break;
-				// }
-
-				// NaNエラー対策
-				// δの絶対値が１以上（正規化から外れた）の場合、強制的に学習を打ち切る
-				// if (Math.abs(delta) > 1) {
-				// breakFlag = true;
-				// break;
-				// }
+				// 損失関数が十分小さい場合は次のデータへ
+				if (loss < MAX_GAP) {
+					breakFlag = true;
+					break;
+				}
 
 				// 学習
 				// 出力層の更新
-				for (int j = 0; j < outputNumber; j++) {
-					outputNeurons[j].learn(delta, h, "o");
+				// 全ての局面の更新
+				for (int num = 0; num < hiddenList.size(); num++) {
+					for (int j = 0; j < outputNumber; j++) {
+						outputNeurons[j].learn(delta, hiddenList.get(num), "o");
+					}
 				}
 
-				// 中間層の更新
+				// 隠れ層の更新
 				for (int j = 0; j < middleNumber; j++) {
-					// 中間層ニューロンの学習定数δを計算
+					// 隠れ層ニューロンの学習定数δを計算
 					for (int k = 0; k < outputNumber; k++) {
 						Neuron n = outputNeurons[k];
 						sumDelta += n.getInputWeightIndexOf(j) * n.getDelta();
@@ -426,7 +433,10 @@ class MultiLayerPerceptron {
 					delta = h[j] * (1.0f - h[j]) * sumDelta;
 
 					// 学習
-					middleNeurons[j].learn(delta, in, "h");
+					// 全ての局面の更新
+					for (int num = 0; num < boardList.size(); num++) {
+						middleNeurons[j].learn(delta, boardList.get(num), "h");
+					}
 
 				}
 
@@ -435,56 +445,29 @@ class MultiLayerPerceptron {
 				delta = 0;
 				sumDelta = 0;
 				outputSum = 0;
-				testBoard = new Board();
-				ans = 0;
-				deltaList.clear();
-				thresholdDeltaList.clear();
 
 				// 再計算
 				for (int num = 0; num < InputDataList.size(); num++) {
 
-					// 配列に格納した座標を盤面にセット
-					if (InputDataList.get(num).getColor().equals("B")) {
-						testBoard.putPiece(InputDataList.get(num).getxPotision(), InputDataList.get(num).getyPotision(),
-								Piece.BLACK);
-					} else {
-						testBoard.putPiece(InputDataList.get(num).getxPotision(), InputDataList.get(num).getyPotision(),
-								Piece.WHITE);
-					}
-					;
-					// 更新後の盤面を取得
-					BoardValue = testBoard.getBoardString();
-
-					// 文字列配列化
-					BoardValueArry = BoardValue.split(",", 0);
-
-					// double型の配列へ変換
-					in = new double[BoardValueArry.length];
-
-					for (int intCnt = 0; intCnt < BoardValueArry.length; intCnt++) {
-						in[intCnt] = ((Double.parseDouble(BoardValueArry[intCnt])) - 0) / (2 - 0);
-					}
-
-					// 答えの設定
-					// 0～1の範囲で正規化する
-					ans = (InputDataList.get(num).getAnswer() - ansMin) / (ansMax - ansMin);
-
-					// 出力値を推定：中間層の出力計算
+					// 出力値を推定：隠れ層の出力計算
 					for (int j = 0; j < middleNumber; j++) {
-						h[j] = middleNeurons[j].outputMiddle(in);
+						h[j] = middleNeurons[j].outputMiddle(boardList.get(num));
 					}
+
+					hiddenList.set(num, h);
 
 					// 出力値を推定：出力層の出力計算
 					for (int j = 0; j < outputNumber; j++) {
 
 						o[j] = outputNeurons[j].output(h);
+
 						outputSum += o[j];
 
 						// 損失関数を計算（2乗誤差）
-						loss = loss + (double) Math.pow(o[j] - ans, 2.0f) / 2;
+						loss = loss + (double) Math.pow(o[j] - answerList.get(num), 2.0f) / 2;
 
 						// δ計算
-						deltaList.add(-(ans - o[j]) * o[j] * (1.0f - o[j]));
+						deltaList.set(num,-(answerList.get(num) - o[j]) * o[j] * (1.0f - o[j]));
 
 					}
 
@@ -492,9 +475,9 @@ class MultiLayerPerceptron {
 			}
 
 			if (breakFlag) {
-				// outOut.println("error");
+				outOut.println("Perfect!");
 			} else {
-				// outOut.println(loss)/InputDataList.size();
+				outOut.println(loss / InputDataList.size());
 			}
 
 			// 結合加重をCSVファイルへ出力する。
@@ -542,7 +525,7 @@ class MultiLayerPerceptron {
 		// 戻り値変数
 		String str = "";
 
-		// 中間層ニューロン出力
+		// 隠れ層ニューロン出力
 		str += " middle neurons ( ";
 		for (Neuron n : middleNeurons) {
 			str += n;
@@ -571,7 +554,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.00001; // 学習係数η
+		protected double eater = 0.00005; // 学習係数η
 		protected double[] v = null;
 		protected double α = 0.9;
 
@@ -581,7 +564,7 @@ class MultiLayerPerceptron {
 		 * @param inputNeuronNum
 		 *            入力ニューロン数
 		 * @param MiddleNeuronNum
-		 *            初期化する中間層ニューロンの番号
+		 *            初期化する隠れ層ニューロンの番号
 		 */
 		public Neuron(int inputNeuronNum, int middleNeuronNum) {
 			// 変数初期化
@@ -594,7 +577,7 @@ class MultiLayerPerceptron {
 			String[] outputWeightsAll = null;
 			String[] outputthreshold = null;
 
-			// 中間層結合加重ファイルの読み込み
+			// 隠れ層結合加重ファイルの読み込み
 			try {
 				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
@@ -620,7 +603,7 @@ class MultiLayerPerceptron {
 					lineMiddle = brMiddle.readLine();
 				}
 
-				// 中間層結合加重ファイル読み込み終了
+				// 隠れ層結合加重ファイル読み込み終了
 				brMiddle.close();
 
 				// 出力層結合加重ファイルの読み込み
@@ -656,7 +639,7 @@ class MultiLayerPerceptron {
 			}
 
 			// 結合加重を設定
-			// 中間層の初期化の場合
+			// 隠れ層の初期化の場合
 			if (inputNeuronNum == LerningPerceptron.inputNeuronNum) {
 				for (int i = 0; i < inputWeights.length; i++) {
 
