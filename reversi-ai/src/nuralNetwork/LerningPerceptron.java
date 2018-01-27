@@ -34,7 +34,8 @@ public class LerningPerceptron {
 	 */
 	public LerningPerceptron() {
 
-		// 入力データリスト
+		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
+
 		String[] csvAll;
 		List<InputData> InputDataList = new ArrayList<InputData>();
 		InputData inputData = new InputData();
@@ -46,13 +47,12 @@ public class LerningPerceptron {
 
 			// 標準出力をファイルに関連付ける
 
-			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.csv";
+			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron_Momentum.csv";
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			// String answerFileName = System.getProperty("user.dir") + "/" +
-			// "koutou_278042_test" + ".csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+//			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test" + ".csv";
+			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -174,7 +174,7 @@ class InputData {
  */
 class MultiLayerPerceptron {
 	// 定数
-	protected static final int MAX_TRIAL = 5000; // 最大試行回数
+	protected static final int MAX_TRIAL = 3000; // 最大試行回数
 	protected static final double MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
@@ -479,10 +479,10 @@ class MultiLayerPerceptron {
 			}
 
 			// 結合加重をCSVファイルへ出力する。
-			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle_Momentum.csv", false);
 
 			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
-			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput_Momentum.csv", false);
 			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 入力→中間時の結合加重を出力
@@ -577,11 +577,11 @@ class MultiLayerPerceptron {
 
 			// 隠れ層結合加重ファイルの読み込み
 			try {
-				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
+				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle_Momentum.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
 				BufferedReader brMiddle = new BufferedReader(frMiddle);
 
-				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
+				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput_Momentum.csv";
 				FileReader frOutput = new FileReader(OutputFileName);
 				BufferedReader brOutput = new BufferedReader(frOutput);
 
@@ -723,11 +723,15 @@ class MultiLayerPerceptron {
 			// 内部変数の更新
 			this.delta = delta;
 
+			double wk_v = 0;
+
 			// 結合加重の更新
 			for (int i = 0; i < inputWeights.length; i++) {
 
 				// バックプロパゲーション学習
-				inputWeights[i] = inputWeights[i] + -(eater * delta * inputValues[i]);
+				wk_v = (α * v[i]) - (eater * delta * inputValues[i]);
+				inputWeights[i] = inputWeights[i] + wk_v;
+				v[i] = wk_v;
 			}
 
 			// 閾値の更新
