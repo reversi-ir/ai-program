@@ -51,9 +51,8 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
-			// String answerFileName =
-			// "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+//			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test" + ".csv";
+			String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -73,7 +72,7 @@ public class LerningPerceptron {
 
 				fileRowNum = +fileRowNum + 1;
 				// logOut.println(String.format("[RowNum] %d", fileRowNum));
-				// logOut.print(fileRowNum + ",");
+				logOut.print(fileRowNum + ",");
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -175,7 +174,7 @@ class InputData {
  */
 class MultiLayerPerceptron {
 	// 定数
-	protected static final int MAX_TRIAL = 10000; // 最大試行回数
+	protected static final int MAX_TRIAL = 3000; // 最大試行回数
 	protected static final double MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
@@ -397,8 +396,8 @@ class MultiLayerPerceptron {
 				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
-				outOut.print(i + 1 + ",");
-				outOut.println(loss);
+				// outOut.print(i + 1 + ",");
+				// outOut.println(loss);
 				// outOut.println(String.format(" [loss] %f", loss));
 				// outOut.println(String.format(" [delta] %f", delta));
 				// outOut.println(String.format(" [answer] %f", ansSum));
@@ -473,11 +472,11 @@ class MultiLayerPerceptron {
 				}
 			}
 
-			// if (breakFlag) {
-			// outOut.println("Perfect!");
-			// } else {
-			// outOut.println(loss / InputDataList.size());
-			// }
+			if (breakFlag) {
+				outOut.println("Perfect!");
+			} else {
+				outOut.println(loss / InputDataList.size());
+			}
 
 			// 結合加重をCSVファイルへ出力する。
 			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle_Momentum.csv", false);
