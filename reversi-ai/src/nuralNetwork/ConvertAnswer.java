@@ -44,7 +44,7 @@ public class ConvertAnswer {
 			String line;
 			int fileRowNum = 0;
 			FileWriter fw = null;
-			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv", true);
+			fw = new FileWriter("C:/Users/kamat/Desktop/GGFConvert/koutou_278042_ver2.csv", true);
 			// fw = new
 			// FileWriter("C:/Users/kamat/Desktop/GGFConvert/Othello.latest.278042_ver2.csv",
 			// true);
@@ -120,7 +120,6 @@ public class ConvertAnswer {
 
 							value = playBoard.countPiece(Piece.BLACK) - playBoard.countPiece(Piece.WHITE);
 
-
 							// 評価値の設定
 							answer.set(num, (double) value);
 							playBoard = new Board(testBoard.getBoard());
@@ -166,34 +165,32 @@ public class ConvertAnswer {
 
 					}
 
-					// 評価値の設定
-					// value = testBoard.countPiece(Piece.BLACK) -
-					// testBoard.countPiece(Piece.WHITE);
+					if (Math.abs(testBoard.countPiece(Piece.BLACK) - testBoard.countPiece(Piece.WHITE)) == 0
+							|| testBoard.countPiece(Piece.BLACK) + testBoard.countPiece(Piece.WHITE) == 64) {
 
-					// 配列の出力
-					for (int outNum = 0; outNum < answer.size(); outNum++) {
+						// 配列の出力
+						for (int outNum = 0; outNum < answer.size(); outNum++) {
 
+							pw.print(color.get(outNum) + ",");
+							pw.print(xPosition.get(outNum) + ",");
+							pw.print(yPosition.get(outNum) + ",");
 
-						pw.print(color.get(outNum) + ",");
-						pw.print(xPosition.get(outNum) + ",");
-						pw.print(yPosition.get(outNum) + ",");
-
-						if (outNum < answer.size() - 1) {
-							// pw.print(value + ",");
-							pw.print(answer.get(outNum) + ",");
-						} else {
-							// pw.print(value);
-							pw.print(answer.get(outNum));
+							if (outNum < answer.size() - 1) {
+								// pw.print(value + ",");
+								pw.print(answer.get(outNum) + ",");
+							} else {
+								// pw.print(value);
+								pw.print(answer.get(outNum));
+							}
 						}
+						pw.println("");
 					}
-					pw.println("");
 				}
 
 				xPosition = new ArrayList<Integer>();
 				yPosition = new ArrayList<Integer>();
 				color = new ArrayList<String>();
 				answer = new ArrayList<Double>();
-
 
 			}
 
