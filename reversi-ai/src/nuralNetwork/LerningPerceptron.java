@@ -46,13 +46,12 @@ public class LerningPerceptron {
 
 			// 標準出力をファイルに関連付ける
 
-			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.csv";
+			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.log";
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			// String answerFileName = System.getProperty("user.dir") + "/" +
-			// "koutou_278042_test" + ".csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" +"koutou_278042_test1" + ".csv";
+			//String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -395,15 +394,15 @@ class MultiLayerPerceptron {
 				// データ全体の平均δを計算
 				delta = delta / deltaList.size();
 
-				// outOut.println(String.format(" Trial:%d", i));
+				 outOut.println(String.format(" Trial:%d", i));
 				// outOut.print(i + 1 + ",");
 				// outOut.println(loss);
-				// outOut.println(String.format(" [loss] %f", loss));
-				// outOut.println(String.format(" [delta] %f", delta));
-				// outOut.println(String.format(" [answer] %f", ansSum));
-				// outOut.println(String.format(" [output] %f", outputSum));
-				// outOut.println(String.format(" [sumLoss] %f", Math.pow(ansSum - outputSum,
-				// 2.0f) / 2));
+				 outOut.println(String.format(" [loss] %f", loss));
+				 outOut.println(String.format(" [delta] %f", delta));
+				 outOut.println(String.format(" [answer] %f", ansSum));
+				 outOut.println(String.format(" [output] %f", outputSum));
+				 outOut.println(String.format(" [sumLoss] %f", Math.pow(ansSum - outputSum,
+				 2.0f) / 2));
 
 				// 評価・判定
 				// 損失関数が十分小さい場合は次のデータへ
@@ -471,12 +470,12 @@ class MultiLayerPerceptron {
 
 				}
 			}
-
-			if (breakFlag) {
-				outOut.println("Perfect!");
-			} else {
-				outOut.println(loss / InputDataList.size());
-			}
+//
+//			if (breakFlag) {
+//				outOut.println("Perfect!");
+//			} else {
+//				outOut.println(loss / InputDataList.size());
+//			}
 
 			// 結合加重をCSVファイルへ出力する。
 			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
@@ -552,7 +551,7 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.0001; // 学習係数η
+		protected double eater = 0.00025; // 学習係数η
 		protected double[] v = null;
 		protected double α = 0.1;
 
