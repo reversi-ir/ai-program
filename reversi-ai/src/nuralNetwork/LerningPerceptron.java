@@ -51,7 +51,7 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test" + ".csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
 			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
