@@ -1,3 +1,4 @@
+
 package nuralNetwork;
 
 import java.io.BufferedReader;
@@ -34,7 +35,8 @@ public class LerningPerceptron {
 	 */
 	public LerningPerceptron() {
 
-		// 入力データリスト
+		// 入力データ配列 （xPotision ,yPosition)=(x軸,y軸)の配列と,色データ配列 color,正解データ配列 answer
+
 		String[] csvAll;
 		List<InputData> InputDataList = new ArrayList<InputData>();
 		InputData inputData = new InputData();
@@ -46,13 +48,12 @@ public class LerningPerceptron {
 
 			// 標準出力をファイルに関連付ける
 
-			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron.csv";
+			String fileName = System.getProperty("user.dir") + "/" + "TestMultiLayerPerceptron_AdaGrad.csv";
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			// String answerFileName = System.getProperty("user.dir") + "/" +
-			// "koutou_278042_test" + ".csv";
-			String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_test1" + ".csv";
+			// String answerFileName ="C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -72,7 +73,7 @@ public class LerningPerceptron {
 
 				fileRowNum = +fileRowNum + 1;
 				// logOut.println(String.format("[RowNum] %d", fileRowNum));
-				logOut.print(fileRowNum + ",");
+				// logOut.print(fileRowNum + ",");
 
 				// 区切り文字","で分割する
 				csvAll = line.split(",", 0); // 行をカンマ区切りで配列に変換
@@ -174,7 +175,7 @@ class InputData {
  */
 class MultiLayerPerceptron {
 	// 定数
-	protected static final int MAX_TRIAL = 5000; // 最大試行回数
+	protected static final int MAX_TRIAL = 3000; // 最大試行回数
 	protected static final double MAX_GAP = 0.001f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
@@ -272,11 +273,11 @@ class MultiLayerPerceptron {
 
 		// 前回更新量配列の初期化
 		for (int j = 0; j < middleNumber; j++) {
-			Arrays.fill(middleNeurons[j].v, 0);
+			Arrays.fill(middleNeurons[j].D, 0);
 		}
 
 		for (int j = 0; j < outputNumber; j++) {
-			Arrays.fill(outputNeurons[j].v, 0);
+			Arrays.fill(outputNeurons[j].D, 0);
 		}
 
 		// 初期盤面の作成
@@ -396,8 +397,8 @@ class MultiLayerPerceptron {
 				delta = delta / deltaList.size();
 
 				// outOut.println(String.format(" Trial:%d", i));
-				// outOut.print(i + 1 + ",");
-				// outOut.println(loss);
+				outOut.print(i + 1 + ",");
+				outOut.println(loss);
 				// outOut.println(String.format(" [loss] %f", loss));
 				// outOut.println(String.format(" [delta] %f", delta));
 				// outOut.println(String.format(" [answer] %f", ansSum));
@@ -475,14 +476,14 @@ class MultiLayerPerceptron {
 			if (breakFlag) {
 				outOut.println("Perfect!");
 			} else {
-				outOut.println(loss / InputDataList.size());
+				// outOut.println(loss / InputDataList.size());
 			}
 
 			// 結合加重をCSVファイルへ出力する。
-			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle.csv", false);
+			fwMiddle = new FileWriter(System.getProperty("user.dir") + "/" + "resultMiddle_AdaGrad.csv", false);
 
 			PrintWriter pwMiddle = new PrintWriter(new BufferedWriter(fwMiddle));
-			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput.csv", false);
+			fwOutput = new FileWriter(System.getProperty("user.dir") + "/" + "resultOutput_AdaGrad.csv", false);
 			PrintWriter pwoutPut = new PrintWriter(new BufferedWriter(fwOutput));
 
 			// 入力→中間時の結合加重を出力
@@ -552,9 +553,8 @@ class MultiLayerPerceptron {
 		protected double[] inputWeights = null; // 入力ごとの結合加重
 		protected double delta = 0; // 学習定数δ
 		protected double threshold = 1; // 閾値θ
-		protected double eater = 0.0001; // 学習係数η
-		protected double[] v = null;
-		protected double α = 0.1;
+		protected double eater = 0.0005; // 学習係数η
+		protected double[] D = null;
 
 		/**
 		 * 初期化
@@ -569,7 +569,7 @@ class MultiLayerPerceptron {
 			Random r = new Random();
 			this.inputNeuronNum = inputNeuronNum;
 			this.inputWeights = new double[inputNeuronNum];
-			this.v = new double[inputNeuronNum];
+			this.D = new double[inputNeuronNum];
 			String[] middleWeightsAll = null;
 			String[] middlethreshold = null;
 			String[] outputWeightsAll = null;
@@ -577,11 +577,11 @@ class MultiLayerPerceptron {
 
 			// 隠れ層結合加重ファイルの読み込み
 			try {
-				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle.csv";
+				String middleFileName = System.getProperty("user.dir") + "/" + "resultMiddle_AdaGrad.csv";
 				FileReader frMiddle = new FileReader(middleFileName);
 				BufferedReader brMiddle = new BufferedReader(frMiddle);
 
-				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput.csv";
+				String OutputFileName = System.getProperty("user.dir") + "/" + "resultOutput_AdaGrad.csv";
 				FileReader frOutput = new FileReader(OutputFileName);
 				BufferedReader brOutput = new BufferedReader(frOutput);
 
@@ -723,11 +723,20 @@ class MultiLayerPerceptron {
 			// 内部変数の更新
 			this.delta = delta;
 
+			double wk_D = 0;
+
 			// 結合加重の更新
 			for (int i = 0; i < inputWeights.length; i++) {
 
 				// バックプロパゲーション学習
-				inputWeights[i] = inputWeights[i] + -(eater * delta * inputValues[i]);
+				wk_D = D[i] + (delta * inputValues[i]) * (delta * inputValues[i]);
+				if (wk_D > 0) {
+					inputWeights[i] = inputWeights[i] - (eater / Math.sqrt(wk_D) + 1e-7) * (delta * inputValues[i]);
+				} else {
+					inputWeights[i] = inputWeights[i]
+							- (eater / -(Math.sqrt(Math.abs(wk_D)) + 1e-7)) * (delta * inputValues[i]);
+				}
+				D[i] = wk_D;
 			}
 
 			// 閾値の更新
