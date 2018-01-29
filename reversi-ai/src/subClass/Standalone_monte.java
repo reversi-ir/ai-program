@@ -44,11 +44,11 @@ public class Standalone_monte {
 			Board playBoard = new Board(testBoard.getBoard());
 
 			// 自分(black) ←ここを更新
-			PerceptronProcessor myProcessor = new PerceptronProcessor();
+			RandomProcessor myProcessor = new RandomProcessor();
 			Piece piece = Piece.BLACK;
 
 			// 相手(white) ←ここを更新
-			RandomProcessor opponentProcessor = new RandomProcessor();
+			PerceptronProcessor opponentProcessor = new PerceptronProcessor();
 			Piece opponentPiece = Piece.WHITE;
 
 			// System.out.println("AI(BLACK)(自分)： " + myProcessor.getName());

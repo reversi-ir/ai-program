@@ -52,8 +52,9 @@ public class LerningPerceptron {
 			PrintWriter logOut = new PrintWriter(fileName);
 
 			// 教師データの指定
-			String answerFileName = System.getProperty("user.dir") + "/" +"koutou_278042_ver2" + ".csv";
-			//String answerFileName = "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
+			String answerFileName = System.getProperty("user.dir") + "/" + "koutou_278042_ver2" + ".csv";
+			// String answerFileName =
+			// "C:/Users/kamat/Desktop/GGFConvert/koutou_278042.csv";
 
 			// 教師データ読み込み
 			FileReader fr = new FileReader(answerFileName);
@@ -175,7 +176,7 @@ class InputData {
  */
 class MultiLayerPerceptron {
 	// 定数
-	protected static final int MAX_TRIAL = 500; // 最大試行回数
+	protected static final int MAX_TRIAL = 1000; // 最大試行回数
 	protected static final double MAX_GAP = 0.045f; // 出力値で許容する誤差の最大値
 
 	// プロパティ
@@ -257,6 +258,8 @@ class MultiLayerPerceptron {
 		double outputSum = 0;
 		int trialCounts = 0;
 		boolean breakFlag = false;
+		double lastLoss = 0;
+		int lossCounts = 0;
 
 		// 変数初期化
 		loss = 0;
@@ -264,6 +267,8 @@ class MultiLayerPerceptron {
 		outputSum = 0;
 		ans = 0;
 		trialCounts = 0;
+		lossCounts = 0;
+		lastLoss = 0;
 		breakFlag = false;
 		deltaList.clear();
 		thresholdDeltaList.clear();
@@ -271,7 +276,7 @@ class MultiLayerPerceptron {
 		boardList.clear();
 		answerList.clear();
 
-		// 前回更新量配列の初期化
+		// 過去更新量配列の初期化
 		for (int j = 0; j < middleNumber; j++) {
 			Arrays.fill(middleNeurons[j].D, 0);
 		}
@@ -413,11 +418,23 @@ class MultiLayerPerceptron {
 					break;
 				}
 
-				//局所解対策
-				if (trialCounts > 1000) {
+				// 局所解対策
+				if (Math.abs(loss)==0) {
 					delta = delta + r.nextGaussian();
-					trialCounts = 0;
 				}
+
+				// 3回連続で誤った方向へ学習した場合、勾配の向きを変える
+				if (lastLoss > loss) {
+					lossCounts = lossCounts + 1;
+
+					if (lossCounts >= 3) {
+						delta = delta * -1;
+						lossCounts = 0;
+					}
+				}
+
+				//前回損失関数の更新
+				lastLoss = loss;
 
 				// 学習
 				// 出力層の更新
@@ -484,8 +501,8 @@ class MultiLayerPerceptron {
 				outOut.println("," + "Perfect!");
 			} else {
 				outOut.println(loss / InputDataList.size());
-//				outOut.print("," + ansSum);
-//				outOut.println("," + outputSum);
+				// outOut.print("," + ansSum);
+				// outOut.println("," + outputSum);
 			}
 
 			// 結合加重をCSVファイルへ出力する。
