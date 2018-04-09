@@ -1,0 +1,34 @@
+初期化
+geth --datadir C:\Geth\eth_private_net init C:\Geth\eth_private_net\myGenesis.json
+
+実行
+geth --networkid "235871" --datadir C:\Geth\eth_private_net --port 8080 --maxpeers 10 console 2>C:\Geth\eth_private_net\command.log
+
+enodeの追加
+admin.addPeer("enode://2dbb76edd9a6be6758237484b1819079dc583ff9d8df91b7033dab2e74b8cc6b8dd2faecaa75fcba0cee689165c2128be6de7eb26f23fa2a843af036f113a694@[10.38.132.102]:30303?discport=0")
+admin.addPeer("enode://c6350fa71250f542cf4ca0b304c87810659e2ef241390d7bcb6e1bf5e154c1d26dbdddf230937cbc5aaeb9427b3fab365120b5abae41604184cb324e81d71f1a@[10.38.132.102]:30304?discport=0")
+
+pass:kax2404
+
+
+・windows
+geth --networkid "235871" --datadir C:\Geth\eth_private_net --port 8080 --bootnodes enode://8afa73b04a8af385de2c123647bbb917bd9a40f76f464a984bcb48a96bb90e5eef0f7143960c1c5c0507c62b20e38ab444003356c04d57a140e2dc7b40dc0b79@[10.38.132.102]:30301 console 2>C:\Geth\eth_private_net\command.log
+
+geth --networkid "235871" --datadir C:\Geth\eth_testNet --port 8080 --bootnodes enode://8afa73b04a8af385de2c123647bbb917bd9a40f76f464a984bcb48a96bb90e5eef0f7143960c1c5c0507c62b20e38ab444003356c04d57a140e2dc7b40dc0b79@[10.38.132.102]:30301 console 2>C:\Geth\eth_testNet\command.log
+
+
+・rpc接続
+geth --networkid "235871" --datadir C:\Geth\eth_private_net --port 8080 --rpc --rpcaddr 10.60.44.208 --rpcport 8545 --rpccorsdomain "*" --rpcapi "net,eth,web3,personal" --bootnodes enode://8afa73b04a8af385de2c123647bbb917bd9a40f76f464a984bcb48a96bb90e5eef0f7143960c1c5c0507c62b20e38ab444003356c04d57a140e2dc7b40dc0b79@[10.38.132.102]:30301 console 2>C:\Geth\eth_private_net\command.log
+
+・アンロック
+personal.unlockAccount(eth.accounts[0],"kax2404",86400)
+
+・残高確認
+eth.getBalance(eth.accounts[0]);
+
+・アドレス
+0x7a468c901c0ade072ea79b582bfee8cf8532b7bb
+
+・デフォルトアドレス設定
+eth.defaultAccount=eth.accounts[0];
+
